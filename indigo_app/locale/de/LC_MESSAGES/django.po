@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-06-17 16:30+0200\n"
-"PO-Revision-Date: 2026-06-17 13:19\n"
+"PO-Revision-Date: 2026-06-17 14:33\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -530,7 +530,7 @@ msgstr "Melden Sie sich mit %(provider)s an."
 
 #: templates/account/_social_buttons.html:20
 msgid "OR"
-msgstr ""
+msgstr "ODER"
 
 #: templates/account/email.html:16
 msgid "You can use any of these email addresses to log in."
@@ -646,10 +646,8 @@ msgid "Log in"
 msgstr "Einloggen"
 
 #: templates/account/login.html:57
-#, fuzzy
-#| msgid "Connect a social account"
 msgid "Don't have an account?"
-msgstr "Verbinde ein Social-Media-Konto"
+msgstr "Sie haben noch kein Konto?"
 
 #: templates/account/login.html:58 templates/account/signup.html:99
 msgid "Sign up"
@@ -731,10 +729,9 @@ msgid "Sign Up"
 msgstr "Melden Sie sich an"
 
 #: templates/account/signup.html:9
-#, fuzzy, python-format
-#| msgid "Do you already have an account? Then please <a href=\"%(login_url)s\">log in</a>."
+#, python-format
 msgid "If you have an account, please <a href=\"%(login_url)s\">log in</a>."
-msgstr "Haben Sie bereits ein Konto? Dann melden Sie sich bitte <a href=\"%(login_url)s\">an</a>."
+msgstr "Wenn Sie ein Konto haben, melden Sie sich bitte <a href=\"%(login_url)s\">an</a>."
 
 #: templates/allauth/layouts/base.html:17 templates/indigo_app/terms.html:4
 #: templates/indigo_app/terms.html:9
@@ -752,43 +749,35 @@ msgstr "Du bist nicht angemeldet oder es ist ein Fehler aufgetreten."
 
 #: templates/indigo_api/_copy_to_clipboard.html:6
 msgid "Copy to clipboard"
-msgstr ""
+msgstr "In die Zwischenablage kopieren"
 
 #: templates/indigo_api/_copy_to_clipboard.html:8
 msgid "Copied!"
-msgstr ""
+msgstr "Kopiert!"
 
 #: templates/indigo_api/_copy_to_clipboard.html:9
-#, fuzzy
-#| msgid "Not commenced"
 msgid "Not copied :("
-msgstr "Nicht begonnen"
+msgstr "Nicht kopiert :("
 
 #: templates/indigo_api/_copy_to_clipboard.html:10
 msgid "Copy"
-msgstr ""
+msgstr "Kopie"
 
 #: templates/indigo_api/_saved_searches.html:4
 msgid "Saved searches"
 msgstr "Gespeicherte Suchanfragen"
 
 #: templates/indigo_api/amendment/_instruction_detail.html:10
-#, fuzzy
-#| msgid "Apply"
 msgid "Applied"
-msgstr "Anwenden"
+msgstr "Angewandt"
 
 #: templates/indigo_api/amendment/_instruction_detail.html:18
-#, fuzzy
-#| msgid "Approved by"
 msgid "Applied by"
-msgstr "Genehmigt von"
+msgstr "Angewendet von"
 
 #: templates/indigo_api/amendment/_instruction_detail.html:24
-#, fuzzy
-#| msgid "Created"
 msgid "Created by"
-msgstr "Erstellt"
+msgstr "Erstellt von"
 
 #: templates/indigo_api/amendment/_instruction_detail.html:29
 #: templates/indigo_api/amendment/instructions.html:15
@@ -801,32 +790,24 @@ msgstr "Geändert durch"
 #: templates/indigo_api/amendment/_instruction_detail.html:34
 #: templates/indigo_api/amendment/_instruction_detail.html:36
 msgid "Page"
-msgstr ""
+msgstr "Seite"
 
 #: templates/indigo_api/amendment/_instruction_detail.html:41
 #: templates/indigo_api/amendment/_instruction_detail.html:73
-#, fuzzy
-#| msgid "Uncommenced provisions"
 msgid "Amended provision"
-msgstr "Nicht in Kraft getretene Bestimmungen"
+msgstr "Geänderte Bestimmung"
 
 #: templates/indigo_api/amendment/_instruction_detail.html:62
-#, fuzzy
-#| msgid "Amendments"
 msgid "Amendment instruction"
-msgstr "Änderungen"
+msgstr "Änderungsanweisung"
 
 #: templates/indigo_api/amendment/_instruction_detail.html:105
-#, fuzzy
-#| msgid "Save changes"
 msgid "Save and done"
-msgstr "Änderungen speichern"
+msgstr "Speichern und fertig"
 
 #: templates/indigo_api/amendment/_instruction_detail.html:115
-#, fuzzy
-#| msgid "This work has not commenced"
 msgid "Mark as not done"
-msgstr "Diese Arbeiten haben noch nicht begonnen."
+msgstr "Als nicht erledigt markieren"
 
 #: templates/indigo_api/amendment/_instruction_detail.html:129
 #: templates/indigo_api/work/_diff_card.html:43
@@ -889,36 +870,26 @@ msgid "Save"
 msgstr "Speichern"
 
 #: templates/indigo_api/amendment/_instruction_lang_tabs.html:4
-#, fuzzy
-#| msgid "Instructions"
 msgid "Edit instructions"
-msgstr "Anweisungen"
+msgstr "Bearbeitungsanweisungen"
 
 #: templates/indigo_api/amendment/_instruction_list.html:16
-#, fuzzy
-#| msgid "Instructions"
 msgid "Add instruction"
-msgstr "Anweisungen"
+msgstr "Anweisung hinzufügen"
 
 #: templates/indigo_api/amendment/instructions.html:5
 #: templates/indigo_api/amendment/instructions.html:24
 #: templates/indigo_api/timeline/_timeline_entry_event.html:25
-#, fuzzy
-#| msgid "Instructions"
 msgid "Amendment instructions"
-msgstr "Anweisungen"
+msgstr "Änderungsanweisungen"
 
 #: templates/indigo_api/amendment/instructions.html:48
-#, fuzzy
-#| msgid "Are you sure you want to delete this work?"
 msgid "Are you sure you want to delete all instructions?"
-msgstr "Möchten Sie dieses Dokument wirklich löschen?"
+msgstr "Möchten Sie wirklich alle Anweisungen löschen?"
 
 #: templates/indigo_api/amendment/instructions.html:49
-#, fuzzy
-#| msgid "Select all provisions"
 msgid "Delete all instructions"
-msgstr "Alle Bestimmungen auswählen"
+msgstr "Löschen Sie alle Anweisungen"
 
 #: templates/indigo_api/commencement_detail.html:15
 msgid "Really delete this commencement? There is no undo."
@@ -1016,7 +987,7 @@ msgstr "Nicht in Kraft getretene Bestimmungen"
 #: templates/indigo_api/document/_amendments_pane.html:9
 #, python-format
 msgid "No amendments to apply at %(expression_date)s."
-msgstr ""
+msgstr "Bei %(expression_date)s sind keine Änderungen anzuwenden."
 
 #: templates/indigo_api/document/_annotations.html:11
 msgid "Resolve"
@@ -1314,16 +1285,12 @@ msgid "These are terms that are explicitly defined in this document. Always refr
 msgstr "Dies sind Begriffe, die in diesem Dokument explizit definiert werden. Aktualisieren Sie die definierten Begriffe stets vor der Veröffentlichung eines Dokuments, um sicherzustellen, dass alle Verweise auf Begriffe erfasst werden."
 
 #: templates/indigo_api/document/_defined_terms.html:21
-#, fuzzy
-#| msgid "Only uses of defined terms can be linked while editing a provision."
 msgid "Only uses of defined terms can be linked and removed while editing a provision."
-msgstr "Beim Bearbeiten einer Bestimmung können nur Verwendungen definierter Begriffe verknüpft werden."
+msgstr "Nur Verwendungen definierter Begriffe können beim Bearbeiten einer Bestimmung verknüpft und entfernt werden."
 
 #: templates/indigo_api/document/_defined_terms.html:22
-#, fuzzy
-#| msgid "To mark up definitions, edit the full document."
 msgid "To mark up or remove the definitions themselves, edit the full document."
-msgstr "Um Definitionen zu markieren, bearbeiten Sie das gesamte Dokument."
+msgstr "Um die Definitionen selbst zu markieren oder zu entfernen, bearbeiten Sie das gesamte Dokument."
 
 #: templates/indigo_api/document/_defined_terms.html:27
 msgid "Remove defined terms"
@@ -1486,16 +1453,9 @@ msgid "All tasks"
 msgstr "Alle Aufgaben"
 
 #: templates/indigo_api/document/_task_list.html:20
-#, fuzzy, python-format
-#| msgid ""
-#| "\n"
-#| "          No tasks at %(expression_date)s.\n"
-#| "        "
+#, python-format
 msgid "No tasks at %(expression_date)s."
-msgstr ""
-"\n"
-"          Keine Aufgaben bei %(expression_date)s.\n"
-"        "
+msgstr "Keine Aufgaben unter %(expression_date)s."
 
 #: templates/indigo_api/document/_task_overview.html:13
 #: templates/indigo_api/task/_detail.html:25
@@ -1643,16 +1603,12 @@ msgid "Structure"
 msgstr "Struktur"
 
 #: templates/indigo_api/document/_toolbar.html:29
-#, fuzzy
-#| msgid "Restore this revision"
 msgid "View only this provision"
-msgstr "Diese Revision wiederherstellen"
+msgstr "Nur diese Bestimmung anzeigen"
 
 #: templates/indigo_api/document/_toolbar.html:29
-#, fuzzy
-#| msgid "Loading provisions…"
 msgid "Edit provision"
-msgstr "Ladevorschriften…"
+msgstr "Bearbeitungsbestimmung"
 
 #: templates/indigo_api/document/_toolbar.html:33
 msgid "Analysis"
@@ -2905,12 +2861,10 @@ msgstr "Es sieht so aus, als wären Sie offline oder der Server nicht verfügbar
 
 #: templates/indigo_app/actions/_action_amendment.html:4
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "    an amendment at %(date)s on\n"
 "  "
-msgstr ""
-"\n"
+msgstr "\n"
 "    eine Änderung bei %(date)s am\n"
 "  "
 
@@ -2922,23 +2876,19 @@ msgstr "von"
 
 #: templates/indigo_app/actions/_action_arbitraryexpressiondate.html:4
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "    a consolidation at %(date)s on\n"
 "  "
-msgstr ""
-"\n"
+msgstr "\n"
 "    eine Konsolidierung bei %(date)s am\n"
 "  "
 
 #: templates/indigo_app/actions/_action_commencement.html:4
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "    a commencement at %(date)s on\n"
 "  "
-msgstr ""
-"\n"
+msgstr "\n"
 "    eine Abschlussfeier um %(date)s am\n"
 "  "
 
@@ -2989,20 +2939,16 @@ msgstr "%(org)s wird derzeit gewartet. Wir sind bald wieder für Sie da."
 
 #: templates/indigo_app/place/_bulk_approve_form.html:7
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "          Approve %(works_length)s work in progress\n"
 "        "
-msgid_plural ""
-"\n"
+msgid_plural "\n"
 "          Approve %(works_length)s works in progress\n"
 "        "
-msgstr[0] ""
-"\n"
+msgstr[0] "\n"
 "          Genehmigen %(works_length)s In Bearbeitung befindliche Arbeit\n"
 "        "
-msgstr[1] ""
-"\n"
+msgstr[1] "\n"
 "          Genehmigen %(works_length)s Laufende Arbeiten\n"
 "        "
 
@@ -3040,26 +2986,20 @@ msgstr "Änderungsaufgaben werden erstellt"
 
 #: templates/indigo_app/place/_bulk_approve_form.html:158
 #, python-format
-msgid ""
-"\n"
+msgid "\n"
 "                                Create task: %(amended_title)s (%(amended_numbered_title)s) amended by %(amending_title)s (%(amending_numbered_title)s) – %(date)s\n"
 "                              "
-msgstr ""
-"\n"
+msgstr "\n"
 "                                Aufgabe erstellen: %(amended_title)s (%(amended_numbered_title)s) geändert durch %(amending_title)s (%(amending_numbered_title)s) – %(date)s\n"
 "                              "
 
 #: templates/indigo_app/place/_bulk_approve_form.html:163
 #, python-format
-msgid ""
-"\n"
-"Apply the amendments made by %(title)s (%(numbered_title)s) on the given date.\n"
-"\n"
+msgid "\n"
+"Apply the amendments made by %(title)s (%(numbered_title)s) on the given date.\n\n"
 "The amendment has already been linked, so start at Step 3 of https://docs.laws.africa/managing-works/amending-works."
-msgstr ""
-"\n"
-"Wenden Sie die von %(title)s (%(numbered_title)s) vorgenommenen Änderungen zum angegebenen Datum an.\n"
-"\n"
+msgstr "\n"
+"Wenden Sie die von %(title)s (%(numbered_title)s) vorgenommenen Änderungen zum angegebenen Datum an.\n\n"
 "Die Änderung wurde bereits verknüpft. Fahren Sie daher mit Schritt 3 unter https://docs.laws.africa/managing-works/amending-works fort."
 
 #: templates/indigo_app/place/_bulk_approve_form.html:174
@@ -3321,38 +3261,30 @@ msgid "Your account"
 msgstr "Ihr Konto"
 
 #: templates/place/_place_cards.html:15
-msgid ""
-"\n"
+msgid "\n"
 "                    Work\n"
 "                  "
-msgid_plural ""
-"\n"
+msgid_plural "\n"
 "                    Works\n"
 "                  "
-msgstr[0] ""
-"\n"
+msgstr[0] "\n"
 "                    Arbeit\n"
 "                  "
-msgstr[1] ""
-"\n"
+msgstr[1] "\n"
 "                    Werke\n"
 "                  "
 
 #: templates/place/_place_cards.html:23
-msgid ""
-"\n"
+msgid "\n"
 "                    Task\n"
 "                  "
-msgid_plural ""
-"\n"
+msgid_plural "\n"
 "                    Tasks\n"
 "                  "
-msgstr[0] ""
-"\n"
+msgstr[0] "\n"
 "                    Aufgabe\n"
 "                  "
-msgstr[1] ""
-"\n"
+msgstr[1] "\n"
 "                    Aufgaben\n"
 "                  "
 
@@ -3743,37 +3675,3 @@ msgstr "Titelgleichheit"
 msgid "Match on year and number"
 msgstr "Übereinstimmung von Jahr und Nummer"
 
-#~ msgid "Country"
-#~ msgstr "Land"
-
-#~ msgid "Please accept the Terms of Use."
-#~ msgstr "Bitte akzeptieren Sie die Nutzungsbedingungen."
-
-#, python-format
-#~ msgid "I have read and accept the <a href=\"%(tou_url)s\" target=\"_blank\">Terms of Use</a>."
-#~ msgstr "Ich habe die <a href=\"%(tou_url)s\" target=\"_blank\">Nutzungsbedingungen</a> gelesen und akzeptiere sie."
-
-#~ msgid "Choose tasks"
-#~ msgstr "Aufgaben auswählen"
-
-#~ msgid "Convert the input file into a .docx file and remove automatic numbering."
-#~ msgstr "Konvertiere die Eingabedatei in eine .docx-Datei und entferne die automatische Nummerierung."
-
-#~ msgid "Import the content for this work at the appropriate date — usually the publication or consolidation date."
-#~ msgstr "Importieren Sie die Inhalte für dieses Werk zum entsprechenden Datum – in der Regel dem Veröffentlichungs- oder Konsolidierungsdatum."
-
-#~ msgid "Find and link the Gazette (original publication document) for this work."
-#~ msgstr "Suchen und verlinken Sie die Originalveröffentlichung (Gazette) für dieses Werk."
-
-#~ msgid "Accept terms"
-#~ msgstr "Bedingungen akzeptieren"
-
-#~ msgid "To continue, please accept the Terms of Use"
-#~ msgstr "Um fortzufahren, akzeptieren Sie bitte die Nutzungsbedingungen."
-
-#, python-format
-#~ msgid "I have read and accept the <a href=\"%(url)s\" target=\"_blank\">Terms of Use</a>."
-#~ msgstr "Ich habe die <a href=\"%(url)s\" target=\"_blank\">Nutzungsbedingungen</a> gelesen und akzeptiere sie."
-
-#~ msgid "Continue"
-#~ msgstr "Weitermachen"

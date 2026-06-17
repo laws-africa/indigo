@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-04-17 15:58+0200\n"
-"PO-Revision-Date: 2026-06-17 10:20\n"
+"PO-Revision-Date: 2026-06-17 13:19\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -241,7 +241,7 @@ msgstr "Beginndatum unbekannt"
 
 #: forms/works.py:877 views/places.py:57
 msgid "Commenced"
-msgstr "Begonnen"
+msgstr "In Kraft"
 
 #: forms/works.py:878
 msgid "Partially commenced"

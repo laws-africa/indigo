@@ -1,0 +1,649 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-07-23 21:07+0200\n"
+"PO-Revision-Date: 2026-06-17 10:20\n"
+"Last-Translator: \n"
+"Language-Team: Greek\n"
+"Language: el_GR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
+"X-Crowdin-Project-ID: 2\n"
+"X-Crowdin-Language: el\n"
+"X-Crowdin-File: /master/indigo/locale/en/LC_MESSAGES/django.po\n"
+"X-Crowdin-File-ID: 202\n"
+
+#: analysis/toc/base.py:13
+msgid "Act"
+msgstr "Νόμος"
+
+#: analysis/toc/base.py:14
+msgid "Activity Report"
+msgstr "Αναφορά Δραστηριότητας"
+
+#: analysis/toc/base.py:15
+msgid "Agreement"
+msgstr "Συμφωνία"
+
+#: analysis/toc/base.py:16
+msgid "Board Notice"
+msgstr "Ανακοίνωση Διοικητικού Συμβουλίου"
+
+#: analysis/toc/base.py:17
+msgid "By-law"
+msgstr "Κανονισμός"
+
+#: analysis/toc/base.py:18
+msgid "Charter"
+msgstr "Ναύλωση"
+
+#: analysis/toc/base.py:19
+msgid "Code"
+msgstr "Κώδικας"
+
+#: analysis/toc/base.py:20
+msgid "Constitutional Instrument"
+msgstr "Συνταγματικό μέσο"
+
+#: analysis/toc/base.py:21
+msgid "Convention"
+msgstr "Σύμβαση"
+
+#: analysis/toc/base.py:22
+msgid "Corrigendum"
+msgstr "Διορθωτικό"
+
+#: analysis/toc/base.py:23
+msgid "Covenant"
+msgstr "Σύμφωνο"
+
+#: analysis/toc/base.py:24
+msgid "Decision"
+msgstr "Απόφαση"
+
+#: analysis/toc/base.py:25
+msgid "Declaration"
+msgstr "Δήλωση"
+
+#: analysis/toc/base.py:26
+msgid "Decree"
+msgstr "Διάταγμα"
+
+#: analysis/toc/base.py:27
+msgid "Directive"
+msgstr "Διευθυντικός"
+
+#: analysis/toc/base.py:28
+msgid "Executive Instrument"
+msgstr "Εκτελεστικό μέσο"
+
+#: analysis/toc/base.py:29
+msgid "General Notice"
+msgstr "Γενική Ανακοίνωση"
+
+#: analysis/toc/base.py:30
+msgid "Government Notice"
+msgstr "Κυβερνητική Ανακοίνωση"
+
+#: analysis/toc/base.py:31
+msgid "Guidance Note"
+msgstr "Σημείωμα καθοδήγησης"
+
+#: analysis/toc/base.py:32
+msgid "Guidelines"
+msgstr "Οδηγίες"
+
+#: analysis/toc/base.py:33
+msgid "Hansard"
+msgstr "Χάνσαρντ"
+
+#: analysis/toc/base.py:34
+msgid "High Commissioners Notice"
+msgstr "Ειδοποίηση Ύπατου Αρμοστή"
+
+#: analysis/toc/base.py:35
+msgid "Instructions"
+msgstr "Οδηγίες"
+
+#: analysis/toc/base.py:36
+msgid "Instructions of the Registrar General"
+msgstr "Οδηγίες του Γενικού Γραμματέα"
+
+#: analysis/toc/base.py:37
+msgid "Kings Order in Council"
+msgstr "Διάταγμα του Βασιλιά στο Συμβούλιο"
+
+#: analysis/toc/base.py:38
+msgid "Law"
+msgstr "Νόμος"
+
+#: analysis/toc/base.py:39
+msgid "Legal Notice"
+msgstr "Νομική ειδοποίηση"
+
+#: analysis/toc/base.py:40
+msgid "Legislative Instrument"
+msgstr "Νομοθετικό μέσο"
+
+#: analysis/toc/base.py:41
+msgid "Local Authority Notice"
+msgstr "Ειδοποίηση Τοπικής Αρχής"
+
+#: analysis/toc/base.py:42
+msgid "Measure"
+msgstr "Μέτρο"
+
+#: analysis/toc/base.py:43
+msgid "Ministerial Instructions"
+msgstr "Υπουργικές Οδηγίες"
+
+#: analysis/toc/base.py:44
+msgid "Ministerial Order"
+msgstr "Υπουργική Διάταξη"
+
+#: analysis/toc/base.py:45
+msgid "Model Law"
+msgstr "Πρότυπος Νόμος"
+
+#: analysis/toc/base.py:46
+msgid "Municipal Notice"
+msgstr "Δημοτική Ανακοίνωση"
+
+#: analysis/toc/base.py:47
+msgid "Official Notice"
+msgstr "Επίσημη Ανακοίνωση"
+
+#: analysis/toc/base.py:48
+msgid "Order"
+msgstr "Παραγγελία"
+
+#: analysis/toc/base.py:49
+msgid "Ordinance"
+msgstr "Διάταξη"
+
+#: analysis/toc/base.py:50
+msgid "Organic Law"
+msgstr "Οργανικό Δίκαιο"
+
+#: analysis/toc/base.py:51
+msgid "Pact"
+msgstr "Συμφωνία"
+
+#: analysis/toc/base.py:52
+msgid "Practice Direction"
+msgstr "Κατεύθυνση Πρακτικής"
+
+#: analysis/toc/base.py:53
+msgid "Premiers Notice"
+msgstr "Ειδοποίηση Πρωθυπουργού"
+
+#: analysis/toc/base.py:54
+msgid "Presidential Order"
+msgstr "Προεδρικό Διάταγμα"
+
+#: analysis/toc/base.py:55
+msgid "Prime Ministers Order"
+msgstr "Διάταγμα του Πρωθυπουργού"
+
+#: analysis/toc/base.py:56
+msgid "Proclamation"
+msgstr "Προκήρυξη"
+
+#: analysis/toc/base.py:57
+msgid "Proposal"
+msgstr "Πρόταση"
+
+#: analysis/toc/base.py:58
+msgid "Protocol"
+msgstr "Πρωτόκολλο"
+
+#: analysis/toc/base.py:59
+msgid "Provincial Notice"
+msgstr "Επαρχιακή Ειδοποίηση"
+
+#: analysis/toc/base.py:60
+msgid "Questions"
+msgstr "Ερωτήσεις"
+
+#: analysis/toc/base.py:61
+msgid "Recommendation"
+msgstr "Σύσταση"
+
+#: analysis/toc/base.py:62
+msgid "Regulation"
+msgstr "Κανονισμός"
+
+#: analysis/toc/base.py:63
+msgid "Resolution"
+msgstr "Ψήφισμα"
+
+#: analysis/toc/base.py:64
+msgid "Rules"
+msgstr "Κανόνες"
+
+#: analysis/toc/base.py:65
+msgid "Standard"
+msgstr "Πρότυπο"
+
+#: analysis/toc/base.py:66
+msgid "Statement"
+msgstr "Δήλωση"
+
+#: analysis/toc/base.py:67
+msgid "Statute"
+msgstr "Νόμος"
+
+#: analysis/toc/base.py:68
+msgid "Statutory Instrument"
+msgstr "Νομοθετικό μέσο"
+
+#: analysis/toc/base.py:69
+msgid "Study"
+msgstr "Μελέτη"
+
+#: analysis/toc/base.py:70
+msgid "Treaty"
+msgstr "Συνθήκη"
+
+#: analysis/toc/base.py:73
+msgid "Alinea"
+msgstr "Αλίνα"
+
+#: analysis/toc/base.py:74
+msgid "Article"
+msgstr "Αρθρο"
+
+#: analysis/toc/base.py:75
+msgid "Book"
+msgstr "Βιβλίο"
+
+#: analysis/toc/base.py:76
+msgid "Chapter"
+msgstr "Κεφάλαιο"
+
+#: analysis/toc/base.py:77
+msgid "Clause"
+msgstr "Ρήτρα"
+
+#: analysis/toc/base.py:78
+msgid "Division"
+msgstr "Διαίρεση"
+
+#: analysis/toc/base.py:79
+msgid "Indent"
+msgstr "Δαντελώνω"
+
+#: analysis/toc/base.py:80
+msgid "Level"
+msgstr "Επίπεδο"
+
+#: analysis/toc/base.py:81
+msgid "List"
+msgstr "Λίστα"
+
+#: analysis/toc/base.py:82
+msgid "Paragraph"
+msgstr "Παράγραφος"
+
+#: analysis/toc/base.py:83
+msgid "Part"
+msgstr "Μέρος"
+
+#: analysis/toc/base.py:84
+msgid "Point"
+msgstr "Σημείο"
+
+#: analysis/toc/base.py:85
+msgid "Section"
+msgstr "Τμήμα"
+
+#: analysis/toc/base.py:86
+msgid "Preface"
+msgstr "Πρόλογος"
+
+#: analysis/toc/base.py:87
+msgid "Preamble"
+msgstr "Προοίμιο"
+
+#: analysis/toc/base.py:88
+msgid "Proviso"
+msgstr "Επιφύλαξη"
+
+#: analysis/toc/base.py:89
+msgid "Rule"
+msgstr "Κανόνας"
+
+#: analysis/toc/base.py:90
+msgid "Subchapter"
+msgstr "Υποκεφάλαιο"
+
+#: analysis/toc/base.py:91
+msgid "Subclause"
+msgstr "Υπορήτρα"
+
+#: analysis/toc/base.py:92
+msgid "Subdivision"
+msgstr "Υποδιαίρεση"
+
+#: analysis/toc/base.py:93
+msgid "Sublist"
+msgstr "Υπολίστα"
+
+#: analysis/toc/base.py:94
+msgid "Subparagraph"
+msgstr "Υποπαράγραφος"
+
+#: analysis/toc/base.py:95
+msgid "Subpart"
+msgstr "Υπομέρος"
+
+#: analysis/toc/base.py:96
+msgid "Subrule"
+msgstr "Υποκυβέρνηση"
+
+#: analysis/toc/base.py:97
+msgid "Subsection"
+msgstr "Υποδιαίρεση"
+
+#: analysis/toc/base.py:98
+msgid "Subtitle"
+msgstr "Υπότιτλος"
+
+#: analysis/toc/base.py:99
+msgid "Title"
+msgstr "Τίτλος"
+
+#: analysis/toc/base.py:100
+msgid "Tome"
+msgstr "Τόμος"
+
+#: analysis/toc/base.py:101
+msgid "Transitional"
+msgstr "Μεταβατικός"
+
+#: analysis/work_detail/base.py:30
+#, python-format
+msgid "Chapter %(cap)s"
+msgstr "Κεφάλαιο %(cap)s"
+
+#: analysis/work_detail/base.py:51
+#, python-format
+msgid "%(type)s %(number)s of %(year)s"
+msgstr "%(type)s %(number)s από %(year)s"
+
+#: bulk_creator.py:299
+#, python-format
+msgid "Error talking to Google Sheets: %s"
+msgstr "Σφάλμα κατά την επικοινωνία με τα Υπολογιστικά Φύλλα Google: %s"
+
+#: bulk_creator.py:306
+msgid "Your sheet did not import successfully; please check that you have link sharing ON (Anyone with the link)."
+msgstr "Η εισαγωγή του φύλλου σας δεν ολοκληρώθηκε με επιτυχία. Ελέγξτε ότι έχετε ΕΝΕΡΓΟΠΟΙΗΣΕΙ την κοινή χρήση συνδέσμων (Όλοι όσοι έχουν τον σύνδεσμο)."
+
+#: bulk_creator.py:339
+#, python-format
+msgid "Unable to access spreadsheet. Is the URL correct and have you shared it with %s?"
+msgstr "Δεν είναι δυνατή η πρόσβαση στο υπολογιστικό φύλλο. Είναι σωστή η διεύθυνση URL και την έχετε κοινοποιήσει στον χρήστη %s;"
+
+#: bulk_creator.py:345
+#, python-format
+msgid "There doesn't appear to be data in sheet %(name)s of %(id)s"
+msgstr "Δεν φαίνεται να υπάρχουν δεδομένα στο φύλλο %(name)s από %(id)s"
+
+#: bulk_creator.py:417
+msgid "Convert the input file into a .docx file and remove automatic numbering."
+msgstr "Μετατρέψτε το αρχείο εισόδου σε αρχείο .docx και καταργήστε την αυτόματη αρίθμηση."
+
+#: bulk_creator.py:419
+msgid "Import the content for this work at the appropriate date — usually the publication or consolidation date."
+msgstr "Εισαγάγετε το περιεχόμενο για αυτό το έργο την κατάλληλη ημερομηνία — συνήθως την ημερομηνία δημοσίευσης ή ενοποίησης."
+
+#: bulk_creator.py:421
+msgid "Find and link the Gazette (original publication document) for this work."
+msgstr "Βρείτε και συνδέστε την Εφημερίδα (πρωτότυπο έγγραφο δημοσίευσης) για αυτό το έργο."
+
+#: bulk_creator.py:426
+#, python-format
+msgid "Apply the amendments made by %(amending_title)s (%(numbered_title)s) on the given date.\n\n"
+"The amendment has already been linked, so start at Step 3 of https://docs.laws.africa/managing-works/amending-works."
+msgstr "Εφαρμόστε τις τροποποιήσεις που έγιναν από τον χρήστη %(amending_title)s (%(numbered_title)s) κατά την δεδομένη ημερομηνία.\n\n"
+"Η τροποποίηση έχει ήδη συνδεθεί, επομένως ξεκινήστε από το Βήμα 3 του https://docs.laws.africa/managing-works/amending-works."
+
+#: bulk_creator.py:983
+msgid "Link commencement (passive)"
+msgstr "Έναρξη σύνδεσης (παθητική)"
+
+#: bulk_creator.py:984
+#, python-format
+msgid "It looks like this work was commenced by \"%(commenced_by)s\" on %(date)s (see row %(row_num)s of the spreadsheet), but it couldn't be linked automatically. This work has thus been recorded as 'Not commenced'.\n\n"
+"Possible reasons:\n"
+"– a typo in the spreadsheet\n"
+"– the commencing work doesn't exist on the system.\n\n"
+"Please link the commencement date and commencing work manually."
+msgstr "Φαίνεται ότι αυτή η εργασία ξεκίνησε από τον χρήστη \"%(commenced_by)s\" στις %(date)s (βλ. σειρά %(row_num)s του υπολογιστικού φύλλου), αλλά δεν ήταν δυνατή η αυτόματη σύνδεσή της. Επομένως, αυτή η εργασία έχει καταγραφεί ως «Δεν έχει ξεκινήσει».\n\n"
+"Πιθανές αιτίες:\n"
+"– τυπογραφικό λάθος στο υπολογιστικό φύλλο\n"
+"– η εργασία που ξεκινά δεν υπάρχει στο σύστημα.\n\n"
+"Παρακαλούμε συνδέστε την ημερομηνία έναρξης και την εργασία που ξεκινά χειροκίνητα."
+
+#: bulk_creator.py:992
+msgid "(unknown)"
+msgstr "(άγνωστος)"
+
+#: bulk_creator.py:997
+msgid "'Commences on' date missing"
+msgstr "Λείπει η ημερομηνία «Έναρξη στις»"
+
+#: bulk_creator.py:998
+#, python-format
+msgid "It looks like this work commences \"%(commences)s\" (see row %(row_num)s of the spreadsheet), but 'commences_on_date' wasn't given so no action has been taken.\n\n"
+"If it should be linked, please do so manually."
+msgstr "Φαίνεται ότι αυτή η εργασία ξεκινά \"%(commences)s\" (βλ. σειρά %(row_num)s του υπολογιστικού φύλλου), αλλά δεν δόθηκε η τιμή 'commences_on_date', επομένως δεν έχει ληφθεί καμία ενέργεια.\n\n"
+"Εάν πρέπει να συνδεθεί, κάντε το χειροκίνητα."
+
+#: bulk_creator.py:1006
+msgid "Link commencement (active)"
+msgstr "Έναρξη σύνδεσης (ενεργή)"
+
+#: bulk_creator.py:1007
+#, python-format
+msgid "It looks like this work commences \"%(commences)s\" on %(date)s (see row %(row_num)s of the spreadsheet), but \"%(commences)s\" wasn't found, so no action has been taken.\n\n"
+"Possible reasons:\n"
+"– a typo in the spreadsheet\n"
+"– the commenced work doesn't exist on the system.\n\n"
+"If the commencement should be linked, please do so manually."
+msgstr "Φαίνεται ότι αυτή η εργασία ξεκινά \"%(commences)s\" στη σελίδα %(date)s (βλ. σειρά %(row_num)s του υπολογιστικού φύλλου), αλλά δεν βρέθηκε το \"%(commences)s\", επομένως δεν έχει ληφθεί καμία ενέργεια.\n\n"
+"Πιθανές αιτίες:\n"
+"– τυπογραφικό λάθος στο υπολογιστικό φύλλο\n"
+"– η εργασία που ξεκίνησε δεν υπάρχει στο σύστημα.\n\n"
+"Εάν η έναρξη πρέπει να συνδεθεί, κάντε το χειροκίνητα."
+
+#: bulk_creator.py:1020
+msgid "Link amendment (active)"
+msgstr "Τροποποίηση συνδέσμου (ενεργή)"
+
+#: bulk_creator.py:1024
+#, python-format
+msgid "It looks like this work amends \"%(amended_work)s\" (see row %(row_num)s of the spreadsheet), but it couldn't be linked automatically.\n\n"
+"Possible reasons:\n"
+"– a typo in the spreadsheet\n"
+"– more than one amended work was listed (it only works if there's one)\n"
+"– the amended work doesn't exist on the system.\n\n"
+"Please link the amendment manually."
+msgstr "Φαίνεται ότι αυτό το έργο τροποποιεί το \"%(amended_work)s\" (βλ. σειρά %(row_num)s του υπολογιστικού φύλλου), αλλά δεν ήταν δυνατή η αυτόματη σύνδεσή του.\n\n"
+"Πιθανές αιτίες:\n"
+"– τυπογραφικό λάθος στο υπολογιστικό φύλλο\n"
+"– αναφέρθηκαν περισσότερες από μία τροποποιημένες εργασίες (λειτουργεί μόνο αν υπάρχουν)\n"
+"– το τροποποιημένο έργο δεν υπάρχει στο σύστημα.\n\n"
+"Παρακαλώ συνδέστε την τροποποίηση χειροκίνητα."
+
+#: bulk_creator.py:1037
+msgid "Link amendment (passive)"
+msgstr "Τροποποίηση συνδέσμου (παθητική)"
+
+#: bulk_creator.py:1041
+#, python-format
+msgid "It looks like this work is amended by \"%(amending_work)s\" (see row %(row_num)s of the spreadsheet), but it couldn't be linked automatically.\n\n"
+"Possible reasons:\n"
+"– a typo in the spreadsheet\n"
+"– more than one amending work was listed (it only works if there's one)\n"
+"– the amending work doesn't exist on the system.\n\n"
+"Please link the amendment manually."
+msgstr "Φαίνεται ότι αυτή η εργασία τροποποιείται από το \"%(amending_work)s\" (βλ. σειρά %(row_num)s του υπολογιστικού φύλλου), αλλά δεν ήταν δυνατή η αυτόματη σύνδεσή της.\n\n"
+"Πιθανές αιτίες:\n"
+"– τυπογραφικό λάθος στο υπολογιστικό φύλλο\n"
+"– αναφέρθηκαν περισσότερες από μία τροποποιητικές εργασίες (λειτουργεί μόνο αν υπάρχουν)\n"
+"– η τροποποιητική εργασία δεν υπάρχει στο σύστημα.\n\n"
+"Παρακαλώ συνδέστε την τροποποίηση χειροκίνητα."
+
+#: bulk_creator.py:1054
+msgid "Link amendment (pending commencement)"
+msgstr "Τροποποίηση συνδέσμου (εκκρεμεί η έναρξη)"
+
+#: bulk_creator.py:1055
+#, python-format
+msgid "It looks like this work amends %(amended_title)s (%(numbered_title)s), but it couldn't be linked automatically because this work hasn't commenced yet (so there's no date for the amendment).\n\n"
+"Please link the amendment manually (and apply it) when this work comes into force."
+msgstr "Φαίνεται ότι αυτή η εργασία τροποποιεί το %(amended_title)s (%(numbered_title)s), αλλά δεν ήταν δυνατή η αυτόματη σύνδεσή της επειδή η εργασία δεν έχει ξεκινήσει ακόμη (επομένως δεν υπάρχει ημερομηνία για την τροποποίηση).\n\n"
+"Παρακαλώ συνδέστε την τροποποίηση χειροκίνητα (και εφαρμόστε την) όταν η παρούσα εργασία τεθεί σε ισχύ."
+
+#: bulk_creator.py:1063
+msgid "Link repealed by"
+msgstr "Ο σύνδεσμος καταργήθηκε από"
+
+#: bulk_creator.py:1064
+#, python-format
+msgid "It looks like this work was repealed by \"%(repealed_by)s\" (see row %(row_num)s of the spreadsheet), but it couldn't be linked automatically.\n\n"
+"Possible reasons:\n"
+"– a typo in the spreadsheet\n"
+"– the repealing work doesn't exist on the system.\n\n"
+"Please link the repeal manually."
+msgstr "Φαίνεται ότι αυτό το έργο καταργήθηκε από το \"%(repealed_by)s\" (βλ. σειρά %(row_num)s του υπολογιστικού φύλλου), αλλά δεν ήταν δυνατή η αυτόματη σύνδεσή του.\n\n"
+"Πιθανές αιτίες:\n"
+"– τυπογραφικό λάθος στο υπολογιστικό φύλλο\n"
+"– το έργο που καταργεί δεν υπάρχει στο σύστημα.\n\n"
+"Παρακαλώ συνδέστε την κατάργηση χειροκίνητα."
+
+#: bulk_creator.py:1076 bulk_creator.py:1113
+msgid "Link repeal"
+msgstr "Κατάργηση συνδέσμου"
+
+#: bulk_creator.py:1077
+#, python-format
+msgid "It looks like this work repeals \"%(repeals)s\" (see row %(row_num)s of the spreadsheet), but it couldn't be linked automatically.\n\n"
+"Possible reasons:\n"
+"– a typo in the spreadsheet\n"
+"– the repealed work doesn't exist on the system.\n\n"
+"Please link the repeal manually."
+msgstr "Φαίνεται ότι αυτό το έργο καταργεί το \"%(repeals)s\" (βλ. σειρά %(row_num)s του υπολογιστικού φύλλου), αλλά δεν ήταν δυνατή η αυτόματη σύνδεσή του.\n\n"
+"Πιθανές αιτίες:\n"
+"– τυπογραφικό λάθος στο υπολογιστικό φύλλο\n"
+"– το καταργημένο έργο δεν υπάρχει στο σύστημα.\n\n"
+"Παρακαλώ συνδέστε την κατάργηση χειροκίνητα."
+
+#: bulk_creator.py:1089
+msgid "Check / update repeal"
+msgstr "Έλεγχος / ενημέρωση κατάργησης"
+
+#: bulk_creator.py:1090
+#, python-format
+msgid "On the spreadsheet (see row %(row_num)s), it says that this work was repealed by %(repealing_title)s (%(repealing_numbered_title)s).\n\n"
+"But this work is already listed as having been repealed by %(repealed_by)s (%(repealed_by_numbered_title)s), so the repeal information wasn't updated automatically.\n\n"
+"If the old / existing repeal information was wrong, update it manually. Otherwise (if the spreadsheet was wrong), cancel this task with a comment.\n"
+msgstr "Στο υπολογιστικό φύλλο (βλ. σειρά %(row_num)s), αναφέρεται ότι αυτό το έργο καταργήθηκε από %(repealing_title)s (%(repealing_numbered_title)s).\n\n"
+"Αλλά αυτό το έργο αναφέρεται ήδη ως καταργημένο από %(repealed_by)s (%(repealed_by_numbered_title)s), επομένως οι πληροφορίες κατάργησης δεν ενημερώθηκαν αυτόματα.\n\n"
+"Εάν οι παλιές / υπάρχουσες πληροφορίες κατάργησης ήταν λανθασμένες, ενημερώστε τις χειροκίνητα. Διαφορετικά (εάν το υπολογιστικό φύλλο ήταν λάθος), ακυρώστε αυτήν την εργασία με ένα σχόλιο.\n"
+
+#: bulk_creator.py:1104
+msgid "Link repeal (pending commencement)"
+msgstr "Κατάργηση συνδέσμου (εκκρεμεί η έναρξη)"
+
+#: bulk_creator.py:1105
+#, python-format
+msgid "It looks like this work repeals %(title)s (%(numbered_title)s), but it couldn't be linked automatically because this work hasn't commenced yet (so there's no date for the repeal).\n\n"
+"Please link the repeal manually when this work comes into force."
+msgstr "Φαίνεται ότι αυτό το έργο καταργεί το %(title)s (%(numbered_title)s), αλλά δεν ήταν δυνατή η αυτόματη σύνδεσή του επειδή αυτό το έργο δεν έχει ξεκινήσει ακόμη (επομένως δεν υπάρχει ημερομηνία για την κατάργηση).\n\n"
+"Παρακαλούμε συνδέστε την κατάργηση χειροκίνητα όταν αυτό το έργο τεθεί σε ισχύ."
+
+#: bulk_creator.py:1114
+#, python-format
+msgid "It looks like this work was repealed by %(title)s (%(numbered_title)s), but it couldn't be linked automatically.\n\n"
+"Please link it manually."
+msgstr "Φαίνεται ότι αυτό το έργο καταργήθηκε από τον %(title)s (%(numbered_title)s), αλλά δεν ήταν δυνατή η αυτόματη σύνδεσή του.\n\n"
+"Παρακαλώ συνδέστε το χειροκίνητα."
+
+#: bulk_creator.py:1122
+msgid "Link primary work"
+msgstr "Σύνδεση κύριας εργασίας"
+
+#: bulk_creator.py:1123
+#, python-format
+msgid "It looks like this work's primary work is \"%(work)s\" (see row %(row_num)s of the spreadsheet), but it couldn't be linked automatically.\n\n"
+"Possible reasons:\n"
+"– a typo in the spreadsheet\n"
+"– the primary work doesn't exist on the system.\n\n"
+"Please link the primary work manually."
+msgstr "Φαίνεται ότι το κύριο έργο αυτού του έργου είναι το \"%(work)s\" (βλ. σειρά %(row_num)s του υπολογιστικού φύλλου), αλλά δεν ήταν δυνατή η αυτόματη σύνδεσή του.\n\n"
+"Πιθανές αιτίες:\n"
+"– τυπογραφικό λάθος στο υπολογιστικό φύλλο\n"
+"– το κύριο έργο δεν υπάρχει στο σύστημα.\n\n"
+"Παρακαλώ συνδέστε το κύριο έργο χειροκίνητα."
+
+#: bulk_creator.py:1135
+msgid "Link subleg"
+msgstr "Υποσύνδεσμος συνδέσμου"
+
+#: bulk_creator.py:1136
+#, python-format
+msgid "It looks like this work has subleg \"%(subleg)s\" (see row %(row_num)s of the spreadsheet), but it couldn't be linked automatically.\n\n"
+"Possible reasons:\n"
+"– a typo in the spreadsheet\n"
+"– the subleg work doesn't exist on the system.\n\n"
+"Please link the subleg work manually."
+msgstr "Φαίνεται ότι αυτή η εργασία έχει υπο-σκέλος \"%(subleg)s\" (δείτε τη σειρά %(row_num)s του υπολογιστικού φύλλου), αλλά δεν ήταν δυνατή η αυτόματη σύνδεσή της.\n\n"
+"Πιθανές αιτίες:\n"
+"– τυπογραφικό λάθος στο υπολογιστικό φύλλο\n"
+"– η εργασία υπο-σκέλους δεν υπάρχει στο σύστημα.\n\n"
+"Παρακαλώ συνδέστε την εργασία υπο-σκέλους χειροκίνητα."
+
+#: bulk_creator.py:1148
+msgid "Check / update primary work"
+msgstr "Έλεγχος/ενημέρωση κύριας εργασίας"
+
+#: bulk_creator.py:1149
+#, python-format
+msgid "On the spreadsheet (see row %(row_num)s), it says that this work is subleg under %(title)s (%(numbered_title)s).\n\n"
+"But this work is already subleg under %(parent)s, so nothing was done.\n\n"
+"Double-check which work this work is subleg of and update it manually if needed. If the spreadsheet was wrong, cancel this task with a comment."
+msgstr "Στο υπολογιστικό φύλλο (βλ. σειρά %(row_num)s), αναφέρεται ότι αυτή η εργασία είναι υπο-σκέλος στο %(title)s (%(numbered_title)s).\n\n"
+"Αλλά αυτή η εργασία είναι ήδη υπο-σκέλος στο %(parent)s, επομένως δεν έγινε τίποτα.\n\n"
+"Ελέγξτε ξανά ποιας εργασίας είναι υπο-σκέλος και ενημερώστε το χειροκίνητα εάν χρειάζεται. Εάν το υπολογιστικό φύλλο ήταν λάθος, ακυρώστε αυτήν την εργασία με ένα σχόλιο."
+
+#: bulk_creator.py:1161
+msgid "Link taxonomy"
+msgstr "Ταξινόμηση συνδέσμων"
+
+#: bulk_creator.py:1162
+#, python-format
+msgid "It looks like this work has the following taxonomy: \"%(topics)s\" (see row %(row_num)s of the spreadsheet), but it couldn't be linked automatically.\n\n"
+"Possible reasons:\n"
+"– a typo in the spreadsheet\n"
+"– the taxonomy doesn't exist on the system."
+msgstr "Φαίνεται ότι αυτή η εργασία έχει την ακόλουθη ταξινόμηση: \"%(topics)s\" (βλ. σειρά %(row_num)s του υπολογιστικού φύλλου), αλλά δεν ήταν δυνατή η αυτόματη σύνδεσή της.\n\n"
+"Πιθανές αιτίες:\n"
+"– τυπογραφικό λάθος στο υπολογιστικό φύλλο\n"
+"– η ταξινόμηση δεν υπάρχει στο σύστημα."
+
+#: bulk_creator.py:1225
+#, python-format
+msgid "%s (about to be imported)"
+msgstr "%s (πρόκειται να εισαχθεί)"
+
+#: pipelines/text.py:30
+msgid "There is not enough text in the document to import. You may need to OCR the file first."
+msgstr "Δεν υπάρχει αρκετό κείμενο στο έγγραφο για εισαγωγή. Ίσως χρειαστεί πρώτα να κάνετε OCR στο αρχείο."
+

@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-06-17 11:26+0200\n"
-"PO-Revision-Date: 2026-06-17 10:20\n"
+"PO-Revision-Date: 2026-06-17 13:19\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -27,7 +27,7 @@ msgstr "Establecer el tiempo de ejecución a ahora"
 
 #: exporters.py:302 exporters.py:304 models/works.py:439
 msgid "Not commenced"
-msgstr "No ha comenzado"
+msgstr "Pendiente de entrada en vigor"
 
 #: exporters.py:315
 #, python-format
@@ -1006,7 +1006,7 @@ msgstr "Fecha de firma del presidente"
 
 #: models/works.py:527
 msgid "commenced"
-msgstr "comenzó"
+msgstr "en vigor"
 
 #: models/works.py:528
 msgid "Has this work commenced? (Date may be unknown)"
@@ -1344,11 +1344,11 @@ msgstr "Disposiciones desconocidas"
 #: templates/indigo_api/akn/_commencements_table.html:25
 #, python-format
 msgid "commenced on %(date)s"
-msgstr "comenzó el %(date)s"
+msgstr "entró en vigor el %(date)s"
 
 #: templates/indigo_api/akn/_commencements_table.html:27
 msgid "commenced on <i>(unknown date)</i>"
-msgstr "Comenzó el <i>(fecha desconocida)</i>"
+msgstr "entró en vigor el <i>(fecha desconocida)</i>"
 
 #: templates/indigo_api/akn/_commencements_table.html:34
 #, python-format
@@ -1430,12 +1430,12 @@ msgstr "Nota: %(note)s"
 #: timeline.py:85
 #, python-format
 msgid "Commenced on %(date)s by"
-msgstr "Iniciado el %(date)s por"
+msgstr "Entró en vigor el %(date)s por"
 
 #: timeline.py:89
 #, python-format
 msgid "Commenced on %(date)s"
-msgstr "Comenzó el %(date)s"
+msgstr "Entró en vigor el %(date)s"
 
 #: timeline.py:93
 msgid "Commenced by"
@@ -1443,7 +1443,7 @@ msgstr "Iniciado por"
 
 #: timeline.py:97
 msgid "Commenced"
-msgstr "Comenzó"
+msgstr "En vigor"
 
 #: timeline.py:113
 #, python-format

@@ -17,7 +17,7 @@
       </div>
     {% empty %}
       <div class="alert alert-info">
-        {% blocktrans with expression_date=document.expression_date|date:'Y-m-d' %}
+        {% blocktrans trimmed with expression_date=document.expression_date|date:'Y-m-d' %}
           No tasks at {{ expression_date }}.
         {% endblocktrans %}
       </div>

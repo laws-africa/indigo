@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-06-17 11:26+0200\n"
-"PO-Revision-Date: 2025-04-10 13:49\n"
+"PO-Revision-Date: 2026-06-17 10:19\n"
 "Last-Translator: \n"
 "Language-Team: Afrikaans\n"
 "Language: af_ZA\n"
@@ -139,10 +139,8 @@ msgid "state"
 msgstr ""
 
 #: models/amendments.py:113
-#, fuzzy
-#| msgid "Unknown provisions"
 msgid "amending provision"
-msgstr "Onbekende bepalings"
+msgstr ""
 
 #: models/amendments.py:114 models/documents.py:349 models/tasks.py:155
 #: models/tasks.py:645 models/works.py:506
@@ -154,16 +152,12 @@ msgid "page number"
 msgstr ""
 
 #: models/amendments.py:116
-#, fuzzy
-#| msgid "Provisions"
 msgid "provision name"
-msgstr "Bepalings"
+msgstr ""
 
 #: models/amendments.py:118
-#, fuzzy
-#| msgid "Provisions"
 msgid "provision id"
-msgstr "Bepalings"
+msgstr ""
 
 #: models/amendments.py:119
 msgid "amendment instruction"
@@ -1284,10 +1278,8 @@ msgid "Date until which this Chapter number applied to the work"
 msgstr ""
 
 #: models/works.py:1117
-#, fuzzy
-#| msgid "Provisions"
 msgid "revision name"
-msgstr "Bepalings"
+msgstr ""
 
 #: models/works.py:1117
 msgid "Name of the publication in which this Chapter number was assigned to the work"
@@ -1303,7 +1295,7 @@ msgstr ""
 
 #: models/works.py:1135
 msgid "Chapter"
-msgstr ""
+msgstr "Hoofstuk"
 
 #: templates/admin/tree_change_list.html:7
 msgid "Search"
@@ -1529,3 +1521,4 @@ msgstr ""
 #: views/documents.py:369
 msgid "Error during import"
 msgstr ""
+

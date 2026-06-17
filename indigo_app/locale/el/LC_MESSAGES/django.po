@@ -1,0 +1,3626 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-04-17 15:58+0200\n"
+"PO-Revision-Date: 2026-06-17 10:20\n"
+"Last-Translator: \n"
+"Language-Team: Greek\n"
+"Language: el_GR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
+"X-Crowdin-Project-ID: 2\n"
+"X-Crowdin-Language: el\n"
+"X-Crowdin-File: /master/indigo_app/locale/en/LC_MESSAGES/django.po\n"
+"X-Crowdin-File-ID: 206\n"
+
+#: forms/documents.py:28
+msgid "Invalid json data"
+msgstr "Μη έγκυρα δεδομένα json"
+
+#: forms/places.py:25 forms/works.py:1638
+msgid "Please enter a valid Google Sheets URL, such as https://docs.google.com/spreadsheets/d/ABCXXX/"
+msgstr "Εισαγάγετε μια έγκυρη διεύθυνση URL για τα Υπολογιστικά Φύλλα Google, όπως https://docs.google.com/spreadsheets/d/ABCXXX/"
+
+#: forms/places.py:36
+msgid "Users with edit permissions"
+msgstr "Χρήστες με δικαιώματα επεξεργασίας"
+
+#: forms/places.py:52
+msgid "XPath"
+msgstr "XPath"
+
+#: forms/places.py:53
+msgid "Parent context"
+msgstr "Γονικό πλαίσιο"
+
+#: forms/places.py:53 forms/tasks.py:23 forms/tasks.py:34
+#: templates/indigo_api/task/_labels.html:10
+#: templates/indigo_api/work/_publication_document.html:39 views/tasks.py:338
+msgid "None"
+msgstr "Κανένας"
+
+#: forms/places.py:53
+msgid "1 level"
+msgstr "1 επίπεδο"
+
+#: forms/places.py:53
+msgid "2 levels"
+msgstr "2 επίπεδα"
+
+#: forms/places.py:54
+msgid "Include localities"
+msgstr "Συμπερίληψη τοποθεσιών"
+
+#: forms/places.py:55
+msgid "Global search"
+msgstr "Καθολική αναζήτηση"
+
+#: forms/tasks.py:23 forms/works.py:887
+#: templates/indigo_api/work/batch_create.html:151
+#: templates/indigo_api/work/batch_create.html:285
+msgid "Type"
+msgstr "Τύπος"
+
+#: forms/tasks.py:98 templates/indigo_api/task/_detail.html:77
+msgid "Input file"
+msgstr "Αρχείο εισόδου"
+
+#: forms/tasks.py:98 templates/indigo_api/task/_detail.html:90
+msgid "Output file"
+msgstr "Αρχείο εξόδου"
+
+#: forms/tasks.py:100
+msgid "Input URL"
+msgstr "Εισαγωγή URL"
+
+#: forms/tasks.py:100
+msgid "Output URL"
+msgstr "URL εξόδου"
+
+#: forms/tasks.py:140 templates/indigo_api/task/_detail.html:176
+msgid "Labels"
+msgstr "Ετικέτες"
+
+#: forms/tasks.py:141
+msgid "State"
+msgstr "Κατάσταση"
+
+#: forms/tasks.py:142 templates/indigo_api/task/_card_single.html:59
+#: templates/indigo_api/task/_detail.html:139
+#: templates/indigo_api/task/_list_table.html:19
+#: templates/templated_email/_task_detail_block.html:12
+#: templates/templated_email/_task_detail_block.html:17
+msgid "Assigned to"
+msgstr "Ανατέθηκε σε"
+
+#: forms/tasks.py:143 templates/indigo_api/task/_card_single.html:119
+msgid "Submitted by"
+msgstr "Υποβλήθηκε από"
+
+#: forms/tasks.py:144
+msgid "Task type"
+msgstr "Τύπος εργασίας"
+
+#: forms/tasks.py:163 forms/tasks.py:164
+msgid "(Not assigned)"
+msgstr "(Δεν έχει ανατεθεί)"
+
+#: forms/tasks.py:182 forms/works.py:953
+msgid "Created at (newest first)"
+msgstr "Δημιουργήθηκε στις (πρώτα τα νεότερα)"
+
+#: forms/tasks.py:182 forms/works.py:953
+msgid "Created at (oldest first)"
+msgstr "Δημιουργήθηκε στις (πρώτα οι παλαιότερες)"
+
+#: forms/tasks.py:183 forms/works.py:954
+msgid "Updated at (newest first)"
+msgstr "Ενημερώθηκε στις (πρώτα τα νεότερα)"
+
+#: forms/tasks.py:183 forms/works.py:954
+msgid "Updated at (oldest first)"
+msgstr "Ενημερώθηκε στις (πρώτα οι παλαιότερες)"
+
+#: forms/tasks.py:326 templates/indigo_api/task/_detail.html:145
+msgid "Unassigned"
+msgstr "Μη ανατεθειμένο"
+
+#: forms/tasks.py:337
+#, python-format
+msgid "That user doesn't have appropriate permissions for %(country)s"
+msgstr "Αυτός ο χρήστης δεν έχει τα κατάλληλα δικαιώματα για %(country)s"
+
+#: forms/users.py:12 forms/users.py:28
+msgid "First name"
+msgstr "Ονομα"
+
+#: forms/users.py:13 forms/users.py:29
+msgid "Last name"
+msgstr "Επώνυμο"
+
+#: forms/users.py:14 templates/indigo_api/document/_properties.html:19
+msgid "Language"
+msgstr "Γλώσσα"
+
+#: forms/users.py:30
+msgid "Country"
+msgstr "Χώρα"
+
+#: forms/users.py:33
+msgid "Please accept the Terms of Use."
+msgstr "Παρακαλώ αποδεχτείτε τους Όρους Χρήσης."
+
+#: forms/users.py:39 templates/account/signup.html:139
+msgid "Creating new accounts is currently not allowed."
+msgstr "Η δημιουργία νέων λογαριασμών δεν επιτρέπεται προς το παρόν."
+
+#: forms/works.py:294
+msgid "Error building FRBR URI"
+msgstr "Σφάλμα κατά τη δημιουργία του FRBR URI"
+
+#: forms/works.py:383
+msgid "Alias"
+msgstr "Ψευδώνυμο"
+
+#: forms/works.py:471
+msgid "Amending work and date must be unique together."
+msgstr "Η τροποποιητική εργασία και η ημερομηνία πρέπει να είναι μοναδικά μαζί."
+
+#: forms/works.py:476 templates/indigo_api/work/batch_create.html:152
+#: templates/indigo_api/work/batch_create.html:286
+msgid "Number"
+msgstr "Αριθμός"
+
+#: forms/works.py:477
+msgid "Validity start date"
+msgstr "Ημερομηνία έναρξης ισχύος"
+
+#: forms/works.py:478
+msgid "Validity end date"
+msgstr "Ημερομηνία λήξης ισχύος"
+
+#: forms/works.py:479
+msgid "Revision name"
+msgstr "Όνομα αναθεώρησης"
+
+#: forms/works.py:487
+msgid "Name"
+msgstr "Ονομα"
+
+#: forms/works.py:587
+msgid "Consolidation dates must be unique."
+msgstr "Οι ημερομηνίες ενοποίησης πρέπει να είναι μοναδικές."
+
+#: forms/works.py:621
+msgid "A main commencement already exists."
+msgstr "Υπάρχει ήδη μια κύρια τελετή έναρξης."
+
+#: forms/works.py:631
+msgid "A commencement for all provisions must be the only commencement."
+msgstr "Η έναρξη ισχύος όλων των διατάξεων πρέπει να είναι η μόνη έναρξη ισχύος."
+
+#: forms/works.py:638
+msgid "Cannot specify all provisions, and a list of provisions."
+msgstr "Δεν είναι δυνατός ο καθορισμός όλων των διατάξεων και η καταγραφή μιας λίστας διατάξεων."
+
+#: forms/works.py:645
+msgid "A commencement at this date and with this commencing work already exists."
+msgstr "Υπάρχει ήδη μια ημερομηνία έναρξης και έναρξης των εργασιών σε αυτήν την ημερομηνία."
+
+#: forms/works.py:713 forms/works.py:765
+msgid "It seems that commencements have been edited elsewhere. Cancel your edits and make them again."
+msgstr "Φαίνεται ότι οι εγγραφές έχουν υποστεί επεξεργασία αλλού. Ακυρώστε τις επεξεργασίες σας και κάντε τες ξανά."
+
+#: forms/works.py:724
+msgid "Commencing work and date must be unique together."
+msgstr "Η ημερομηνία έναρξης εργασίας και η ημερομηνία πρέπει να είναι μοναδικά μαζί."
+
+#: forms/works.py:775
+msgid "Commenced work, commencing work, and date must be unique together."
+msgstr "Οι όροι \"έναρξη εργασίας\", \"έναρξη εργασίας\" και \"ημερομηνία\" πρέπει να είναι μοναδικοί μαζί."
+
+#: forms/works.py:872 templates/indigo_app/place/_work_detail.html:35
+msgid "Amendments"
+msgstr "Τροπολογίες"
+
+#: forms/works.py:876 templates/indigo_api/work/related.html:18
+msgid "Commencement"
+msgstr "Εναρξη"
+
+#: forms/works.py:877
+msgid "Not commenced"
+msgstr "Δεν έχει ξεκινήσει"
+
+#: forms/works.py:877
+msgid "Commencement date unknown"
+msgstr "Άγνωστη ημερομηνία έναρξης"
+
+#: forms/works.py:877 views/places.py:57
+msgid "Commenced"
+msgstr "Ξεκίνησε"
+
+#: forms/works.py:878
+msgid "Partially commenced"
+msgstr "Μερική έναρξη"
+
+#: forms/works.py:878
+msgid "Multiple commencements"
+msgstr "Πολλαπλές ενάρξεις"
+
+#: forms/works.py:883 templates/indigo_app/place/_work_detail.html:43
+msgid "Repeals"
+msgstr "Καταργήσεις"
+
+#: forms/works.py:883
+msgid "Not repealed"
+msgstr "Δεν έχει καταργηθεί"
+
+#: forms/works.py:883
+msgid "Repealed"
+msgstr "Καταργήθηκε"
+
+#: forms/works.py:888 templates/place/detail.html:63
+msgid "Stubs"
+msgstr "Στάμπες"
+
+#: forms/works.py:888 templates/indigo_api/work/_form_content.html:253
+msgid "Stub"
+msgstr "Στέλεχος"
+
+#: forms/works.py:888
+msgid "Not a stub"
+msgstr "Δεν είναι απόκομμα"
+
+#: forms/works.py:889 forms/works.py:890
+msgid "Work in progress"
+msgstr "Εργασία σε εξέλιξη"
+
+#: forms/works.py:890 templates/indigo_api/work/overview.html:101
+msgid "Approved"
+msgstr "Εγκρίθηκε"
+
+#: forms/works.py:892
+msgid "Point in time status"
+msgstr "Κατάσταση χρονικής στιγμής"
+
+#: forms/works.py:893
+msgid "Published"
+msgstr "Δημοσιεύτηκε"
+
+#: forms/works.py:893
+msgid "Draft"
+msgstr "Προσχέδιο"
+
+#: forms/works.py:897 forms/works.py:898 views/places.py:83
+msgid "Principal"
+msgstr "Κύριος"
+
+#: forms/works.py:898
+msgid "Not Principal"
+msgstr "Δεν είναι Διευθυντής"
+
+#: forms/works.py:900 templates/indigo_api/document/_secondary_pane.html:11
+#: templates/indigo_api/task/list.html:4
+#: templates/indigo_api/work/batch_create.html:160
+#: templates/indigo_api/work/batch_create.html:293
+#: templates/indigo_api/work/layout.html:46
+#: templates/indigo_api/work/tasks.html:4
+#: templates/indigo_app/place/_work_detail.html:60 templates/main.html:38
+#: templates/place/detail.html:102 templates/place/tabbed_layout.html:47
+msgid "Tasks"
+msgstr "Εργασίες"
+
+#: forms/works.py:901
+msgid "Has open tasks"
+msgstr "Έχει ανοιχτές εργασίες"
+
+#: forms/works.py:901
+msgid "Has unblocked tasks"
+msgstr "Έχει ξεμπλοκαρισμένες εργασίες"
+
+#: forms/works.py:902
+msgid "Has only blocked tasks"
+msgstr "Έχει μόνο αποκλεισμένες εργασίες"
+
+#: forms/works.py:902
+msgid "Has no open tasks"
+msgstr "Δεν έχει ανοιχτές εργασίες"
+
+#: forms/works.py:904
+msgid "Primary and subsidiary"
+msgstr "Κύρια και δευτερεύουσα"
+
+#: forms/works.py:905 templates/place/detail.html:69
+msgid "Primary"
+msgstr "Πρωταρχικός"
+
+#: forms/works.py:905 templates/indigo_api/work/related.html:11
+#: templates/indigo_app/place/_work_detail.html:51
+#: templates/place/detail.html:78
+msgid "Subsidiary"
+msgstr "Θυγατρική"
+
+#: forms/works.py:907 templates/indigo_api/work/_form_consolidations.html:4
+msgid "Consolidations"
+msgstr "Ενοποιήσεις"
+
+#: forms/works.py:908
+msgid "Has consolidation"
+msgstr "Έχει ενοποίηση"
+
+#: forms/works.py:908
+msgid "No consolidation"
+msgstr "Καμία ενοποίηση"
+
+#: forms/works.py:910 templates/indigo_api/work/_publication_document.html:4
+#: templates/indigo_app/place/_work_detail_overview.html:17
+msgid "Publication document"
+msgstr "Έγγραφο δημοσίευσης"
+
+#: forms/works.py:911
+msgid "Has publication document"
+msgstr "Έχει έγγραφο δημοσίευσης"
+
+#: forms/works.py:912
+msgid "No publication document"
+msgstr "Δεν υπάρχει έγγραφο δημοσίευσης"
+
+#: forms/works.py:914 templates/indigo_api/work/amendments.html:5
+#: templates/indigo_api/work/amendments.html:8
+#: templates/indigo_api/work/layout.html:40
+#: templates/indigo_app/place/_work_detail.html:17
+msgid "Points in time"
+msgstr "Σημεία στον χρόνο"
+
+#: forms/works.py:915
+msgid "Has one point in time"
+msgstr "Έχει ένα χρονικό σημείο"
+
+#: forms/works.py:915
+msgid "Has multiple points in time"
+msgstr "Έχει πολλά χρονικά σημεία"
+
+#: forms/works.py:916
+msgid "Has no points in time"
+msgstr "Δεν έχει χρονικά σημεία"
+
+#: forms/works.py:920 templates/indigo_api/work/_amendment_tables.html:10
+#: templates/indigo_api/work/_amendment_tables.html:38
+#: templates/indigo_api/work/_commencement_tables.html:10
+#: templates/indigo_api/work/_commencement_tables.html:46
+#: templates/indigo_api/work/_repeal_tables.html:9
+#: templates/indigo_api/work/_repeal_tables.html:34
+msgid "Date"
+msgstr "Ημερομηνία"
+
+#: forms/works.py:955
+msgid "Date (newest first)"
+msgstr "Ημερομηνία (πρώτα η νεότερη)"
+
+#: forms/works.py:955
+msgid "Date (oldest first)"
+msgstr "Ημερομηνία (αρχικά η παλαιότερη)"
+
+#: forms/works.py:956
+msgid "Title (A-Z)"
+msgstr "Τίτλος (Αριζόνα)"
+
+#: forms/works.py:956
+msgid "Title (Z-A)"
+msgstr "Τίτλος (ΖΑ)"
+
+#: forms/works.py:957
+msgid "Number (ascending)"
+msgstr "Αριθμός (αύξουσα)"
+
+#: forms/works.py:957
+msgid "Number (descending)"
+msgstr "Αριθμός (φθίνουσα)"
+
+#: forms/works.py:1589
+msgid "Create and block tasks"
+msgstr "Δημιουργία και αποκλεισμός εργασιών"
+
+#: forms/works.py:1589
+msgid "Create and cancel tasks"
+msgstr "Δημιουργία και ακύρωση εργασιών"
+
+#: forms/works.py:1651
+msgid "Import content"
+msgstr "Εισαγωγή περιεχομένου"
+
+#: forms/works.py:1651
+msgid "Link gazette"
+msgstr "Σύνδεσμος εφημερίδας"
+
+#: models.py:23
+msgid "user"
+msgstr "μεταχειριζόμενος"
+
+#: models.py:24 models.py:59
+msgid "country"
+msgstr "χώρα"
+
+#: models.py:25
+msgid "accepted terms"
+msgstr "αποδεκτοί όροι"
+
+#: models.py:26
+msgid "Countries the user can work with."
+msgstr "Χώρες με τις οποίες μπορεί να εργαστεί ο χρήστης."
+
+#: models.py:26
+msgid "permitted countries"
+msgstr "επιτρεπόμενες χώρες"
+
+#: models.py:27
+msgid "language"
+msgstr "γλώσσα"
+
+#: models.py:27
+msgid "Preferred language"
+msgstr "Προτιμώμενη γλώσσα"
+
+#: models.py:32
+msgid "editor"
+msgstr "συντάκτης"
+
+#: models.py:33
+msgid "editors"
+msgstr "συντάκτες"
+
+#: models.py:60
+msgid "name"
+msgstr "όνομα"
+
+#: models.py:60
+msgid "Name of this publication"
+msgstr "Όνομα αυτής της δημοσίευσης"
+
+#: models.py:65
+msgid "publication"
+msgstr "δημοσίευση"
+
+#: models.py:66
+msgid "publications"
+msgstr "δημοσιεύσεις"
+
+#: templates/400.html:6 templates/400.html:9
+msgid "400 Bad Request"
+msgstr "400 Λάθος Αίτημα"
+
+#: templates/400.html:11 templates/404.html:13 templates/500.html:13
+#: templates/main.html:37
+msgid "Home"
+msgstr "Σπίτι"
+
+#: templates/403.html:4 templates/403.html:14
+msgid "Permission Denied"
+msgstr "Η άδεια απορρίφθηκε"
+
+#: templates/403.html:16
+msgid "You don't have permission to do that."
+msgstr "Δεν έχετε άδεια να το κάνετε αυτό."
+
+#: templates/404.html:6 templates/404.html:9
+msgid "404 Not Found"
+msgstr "404 Δεν Βρέθηκε"
+
+#: templates/404.html:11
+msgid "We could not find that page."
+msgstr "Δεν μπορέσαμε να βρούμε αυτήν τη σελίδα."
+
+#: templates/500.html:6
+msgid "400 Server Error"
+msgstr "Σφάλμα διακομιστή 400"
+
+#: templates/500.html:9
+msgid "500 Server Error"
+msgstr "Σφάλμα διακομιστή 500"
+
+#: templates/500.html:11
+msgid "Whoops, something went wrong."
+msgstr "Ωχ, κάτι πήγε στραβά."
+
+#: templates/account/email.html:16
+msgid "You can use any of these email addresses to log in."
+msgstr "Μπορείτε να χρησιμοποιήσετε οποιαδήποτε από αυτές τις διευθύνσεις ηλεκτρονικού ταχυδρομείου για να συνδεθείτε."
+
+#: templates/account/email.html:18
+#: templates/indigo_api/commencement_detail.html:60
+#: templates/indigo_api/work/batch_create.html:55
+msgid "Note:"
+msgstr "Σημείωμα:"
+
+#: templates/account/email.html:19
+msgid "We only send email notifications to your <strong>primary</strong> email address."
+msgstr "Στέλνουμε ειδοποιήσεις μέσω email μόνο στην <strong>κύρια</strong> διεύθυνση email σας."
+
+#: templates/account/email.html:33 templates/account/login.html:28
+#: templates/account/password_reset.html:18
+msgid "Email address"
+msgstr "Διεύθυνση ηλεκτρονικού ταχυδρομείου"
+
+#: templates/account/email.html:34
+#: templates/indigo_api/work/batch_create.html:149
+#: templates/indigo_api/work/batch_create.html:283
+#: templates/indigo_api/work/batch_update.html:50
+#: templates/indigo_api/work/batch_update.html:128
+msgid "Status"
+msgstr "Κατάσταση"
+
+#: templates/account/email.html:45
+msgid "verified"
+msgstr "επαληθεύτηκε"
+
+#: templates/account/email.html:48
+msgid "unverified"
+msgstr "ανεπιβεβαίωτος"
+
+#: templates/account/email.html:50
+msgid "primary"
+msgstr "πρωταρχικός"
+
+#: templates/account/email.html:58
+msgid "Re-send verification"
+msgstr "Επανάληψη αποστολής επαλήθευσης"
+
+#: templates/account/email.html:62
+msgid "Make primary"
+msgstr "Ορισμός ως κύριου"
+
+#: templates/account/email.html:63 templates/indigo_api/_active_facets.html:9
+#: templates/indigo_api/work/_form_amendments_form.html:54
+#: templates/indigo_api/work/_form_commencements_form.html:87
+#: templates/indigo_api/work/_form_commencements_made_form.html:55
+#: templates/indigo_api/work/_form_consolidations_form.html:42
+#: templates/indigo_api/work/_form_repeals_made_form.html:35
+#: templates/indigo_api/work/_publication_document.html:18
+#: templates/indigo_api/work/_publication_document.html:35
+msgid "Remove"
+msgstr "Αφαιρώ"
+
+#: templates/account/email.html:72
+msgid "Warning:"
+msgstr "Προειδοποίηση:"
+
+#: templates/account/email.html:72
+msgid "You currently do not have any e-mail address set up. You should really add an e-mail address so you can receive notifications, reset your password, etc."
+msgstr "Αυτήν τη στιγμή δεν έχετε ορίσει κάποια διεύθυνση ηλεκτρονικού ταχυδρομείου. Θα πρέπει οπωσδήποτε να προσθέσετε μια διεύθυνση ηλεκτρονικού ταχυδρομείου, ώστε να μπορείτε να λαμβάνετε ειδοποιήσεις, να επαναφέρετε τον κωδικό πρόσβασής σας κ.λπ."
+
+#: templates/account/email.html:76
+msgid "Add an email address"
+msgstr "Προσθήκη διεύθυνσης ηλεκτρονικού ταχυδρομείου"
+
+#: templates/account/email.html:92
+msgid "Add email"
+msgstr "Προσθήκη email"
+
+#: templates/account/email_confirm.html:7
+msgid "Confirm E-mail Address"
+msgstr "Επιβεβαίωση διεύθυνσης ηλεκτρονικού ταχυδρομείου"
+
+#: templates/account/email_confirm.html:13
+#, python-format
+msgid "Please confirm that <a href=\"mailto:%(email)s\">%(email)s</a> is an e-mail address for user %(user_display)s."
+msgstr "Επιβεβαιώστε ότι η διεύθυνση ηλεκτρονικού ταχυδρομείου <a href=\"mailto:%(email)s\">%(email)s</a> είναι μια διεύθυνση ηλεκτρονικού ταχυδρομείου για τον χρήστη %(user_display)s."
+
+#: templates/account/email_confirm.html:17
+msgid "Confirm"
+msgstr "Επιβεβαιώνω"
+
+#: templates/account/email_confirm.html:24
+#, python-format
+msgid "This e-mail confirmation link expired or is invalid. Please <a href=\"%(email_url)s\">issue a new e-mail confirmation request</a>."
+msgstr "Αυτός ο σύνδεσμος επιβεβαίωσης ηλεκτρονικού ταχυδρομείου έχει λήξει ή δεν είναι έγκυρος. Παρακαλώ <a href=\"%(email_url)s\">υποβάλετε ένα νέο αίτημα επιβεβαίωσης ηλεκτρονικού ταχυδρομείου</a>."
+
+#: templates/account/login.html:11
+msgid "Log In"
+msgstr "Σύνδεση"
+
+#: templates/account/login.html:40
+#: templates/indigo_app/user_account/_sidebar.html:9
+msgid "Password"
+msgstr "Σύνθημα"
+
+#: templates/account/login.html:42
+msgid "Forgot your password?"
+msgstr "Ξεχάσατε τον κωδικό πρόσβασής σας;"
+
+#: templates/account/login.html:53
+#: templates/account/password_reset_from_key.html:55
+#: templates/account/password_reset_from_key_done.html:10
+#: templates/account/signup.html:135 templates/main.html:67
+#: templates/main.html:124
+msgid "Log in"
+msgstr "Σύνδεση"
+
+#: templates/account/login.html:54 templates/account/signup.html:132
+msgid "Sign up"
+msgstr "Εγγραφή"
+
+#: templates/account/login.html:69
+#, python-format
+msgid "Log in with %(provider)s"
+msgstr "Συνδεθείτε με %(provider)s"
+
+#: templates/account/login.html:76
+#, python-format
+msgid "By logging in you agree to our <a href=\"%(tos_url)s\">Terms of Use and Privacy Policy</a>."
+msgstr "Με τη σύνδεση, αποδέχεστε τους <a href=\"%(tos_url)s\">Όρους Χρήσης και την Πολιτική Απορρήτου</a> μας."
+
+#: templates/account/logout.html:4 templates/account/logout.html:7
+#: templates/account/logout.html:17
+msgid "Log Out"
+msgstr "Αποσύνδεση"
+
+#: templates/account/logout.html:9
+msgid "Are you sure you want to log out?"
+msgstr "Είστε σίγουροι ότι θέλετε να αποσυνδεθείτε;"
+
+#: templates/account/password_change.html:4
+#: templates/account/password_change.html:55
+msgid "Change Password"
+msgstr "Αλλαγή κωδικού πρόσβασης"
+
+#: templates/account/password_change.html:14
+msgid "Change Your Password"
+msgstr "Αλλαγή κωδικού πρόσβασης"
+
+#: templates/account/password_reset.html:7
+msgid "Reset Your Password"
+msgstr "Επαναφορά κωδικού πρόσβασης"
+
+#: templates/account/password_reset.html:12
+msgid "Forgotten your password? Enter your e-mail address below, and we'll send you an e-mail to reset it."
+msgstr "Ξεχάσατε τον κωδικό πρόσβασής σας; Εισαγάγετε τη διεύθυνση email σας παρακάτω και θα σας στείλουμε ένα email για να τον επαναφέρετε."
+
+#: templates/account/password_reset.html:29
+#: templates/account/password_reset_from_key.html:50
+msgid "Reset password"
+msgstr "Επαναφορά κωδικού πρόσβασης"
+
+#: templates/account/password_reset_from_key.html:7
+msgid "Bad Token"
+msgstr "Κακό διακριτικό"
+
+#: templates/account/password_reset_from_key.html:7
+#: templates/account/password_reset_from_key_done.html:7
+msgid "Reset Password"
+msgstr "Επαναφορά κωδικού πρόσβασης"
+
+#: templates/account/password_reset_from_key.html:11
+#, python-format
+msgid "The password reset link was invalid, possibly because it has already been used.  Please request a <a href=\"%(passwd_reset_url)s\">new password reset</a>."
+msgstr "Ο σύνδεσμος επαναφοράς κωδικού πρόσβασης δεν ήταν έγκυρος, πιθανώς επειδή έχει ήδη χρησιμοποιηθεί. Παρακαλούμε ζητήστε μια <a href=\"%(passwd_reset_url)s\">νέα επαναφορά κωδικού πρόσβασης</a>."
+
+#: templates/account/password_reset_from_key.html:27
+msgid "New Password"
+msgstr "Νέος κωδικός πρόσβασης"
+
+#: templates/account/password_reset_from_key.html:39
+msgid "New Password (again)"
+msgstr "Νέος κωδικός πρόσβασης (ξανά)"
+
+#: templates/account/password_reset_from_key.html:54
+#: templates/account/password_reset_from_key_done.html:8
+msgid "Your password has been reset."
+msgstr "Ο κωδικός πρόσβασής σας έχει επαναφερθεί."
+
+#: templates/account/password_set.html:4 templates/account/password_set.html:43
+msgid "Set Password"
+msgstr "Ορισμός κωδικού πρόσβασης"
+
+#: templates/account/password_set.html:14
+msgid "Set Your Password"
+msgstr "Ορίστε τον κωδικό πρόσβασής σας"
+
+#: templates/account/signup.html:7
+msgid "Sign Up"
+msgstr "Εγγραφή"
+
+#: templates/account/signup.html:9
+#, python-format
+msgid "Do you already have an account? Then please <a href=\"%(login_url)s\">log in</a>."
+msgstr "Έχετε ήδη λογαριασμό; Παρακαλώ <a href=\"%(login_url)s\">συνδεθείτε</a>."
+
+#: templates/account/signup.html:107
+#, python-format
+msgid "I have read and accept the <a href=\"%(tou_url)s\" target=\"_blank\">Terms of Use</a>."
+msgstr "Έχω διαβάσει και αποδέχομαι τους <a href=\"%(tou_url)s\" target=\"_blank\">Όρους Χρήσης</a>."
+
+#: templates/allauth/layouts/base.html:17 templates/indigo_app/terms.html:4
+#: templates/indigo_app/terms.html:9
+msgid "Terms of Use and Privacy Policy"
+msgstr "Όροι Χρήσης και Πολιτική Απορρήτου"
+
+#: templates/allauth/layouts/base.html:21
+#, python-format
+msgid "Need help? Please <a href=\"mailto:%(email)s\">email us</a>"
+msgstr "Χρειάζεστε βοήθεια; Παρακαλώ <a href=\"mailto:%(email)s\">στείλτε μας email</a>"
+
+#: templates/comments/preview.html:3
+msgid "You're not logged in, or something went wrong."
+msgstr "Δεν έχετε συνδεθεί ή κάτι πήγε στραβά."
+
+#: templates/indigo_api/_saved_searches.html:4
+msgid "Saved searches"
+msgstr "Αποθηκευμένες αναζητήσεις"
+
+#: templates/indigo_api/task/_assign_to_menu.html:4
+#: templates/indigo_api/task/_card_single.html:83
+#: templates/indigo_api/task/_detail.html:156
+msgid "Unassign"
+msgstr "Κατάργηση ανάθεσης"
+
+#: templates/indigo_api/task/_assign_to_menu.html:14
+msgid "too many tasks"
+msgstr "πάρα πολλές εργασίες"
+
+#: templates/indigo_api/task/_assign_to_menu.html:18
+msgid "No users available"
+msgstr "Δεν υπάρχουν διαθέσιμοι χρήστες"
+
+#: templates/indigo_api/task/_blocked_by_menu.html:29
+#: templates/indigo_api/task/_detail.html:213
+msgid "Choose tasks"
+msgstr "Επιλογή εργασιών"
+
+#: templates/indigo_api/task/_bulk_update_form.html:11
+#: templates/indigo_api/task/_card_single.html:101
+#: templates/indigo_api/task/_detail.html:166
+msgid "Assign to"
+msgstr "Ανάθεση σε"
+
+#: templates/indigo_api/task/_bulk_update_form.html:19
+#: templates/indigo_api/task/_bulk_update_form.html:25
+msgid "Updating"
+msgstr "Ενημέρωση"
+
+#: templates/indigo_api/task/_bulk_update_form.html:20
+msgid "Unblock"
+msgstr "Ξεβουλώνω"
+
+#: templates/indigo_api/task/_bulk_update_form.html:26
+msgid "Block"
+msgstr "Φραγμός"
+
+#: templates/indigo_api/task/_buttons.html:10
+msgid "Are you sure you want to request changes to this task?"
+msgstr "Είστε βέβαιοι ότι θέλετε να ζητήσετε αλλαγές σε αυτήν την εργασία;"
+
+#: templates/indigo_api/task/_buttons.html:11
+msgid "Request changes"
+msgstr "Αίτημα αλλαγών"
+
+#: templates/indigo_api/task/_buttons.html:14
+msgid "Review changes"
+msgstr "Έλεγχος αλλαγών"
+
+#: templates/indigo_api/task/_buttons.html:20
+msgid "Are you sure you want to approve this task?"
+msgstr "Είστε βέβαιοι ότι θέλετε να εγκρίνετε αυτήν την εργασία;"
+
+#: templates/indigo_api/task/_buttons.html:21
+#: templates/indigo_api/work/overview.html:22
+#: templates/indigo_app/place/_bulk_approve_form.html:214
+#: templates/indigo_app/place/_work_detail.html:131
+msgid "Approve"
+msgstr "Εγκρίνω"
+
+#: templates/indigo_api/task/_buttons.html:29
+msgid "Are you sure you want to reopen this task?"
+msgstr "Είστε βέβαιοι ότι θέλετε να ανοίξετε ξανά αυτήν την εργασία;"
+
+#: templates/indigo_api/task/_buttons.html:30
+msgid "Reopen"
+msgstr "Ξανανοίγω"
+
+#: templates/indigo_api/task/_buttons.html:38
+msgid "Are you sure you want to finish this task?"
+msgstr "Είστε σίγουροι ότι θέλετε να ολοκληρώσετε αυτήν την εργασία;"
+
+#: templates/indigo_api/task/_buttons.html:40
+msgid "Finish"
+msgstr "Φινίρισμα"
+
+#: templates/indigo_api/task/_buttons.html:46
+msgid "Are you sure you want to submit this task for review?"
+msgstr "Είστε βέβαιοι ότι θέλετε να υποβάλετε αυτήν την εργασία για αξιολόγηση;"
+
+#: templates/indigo_api/task/_buttons.html:47
+msgid "Submit for review"
+msgstr "Υποβολή για αξιολόγηση"
+
+#: templates/indigo_api/task/_card_single.html:17
+#: templates/indigo_api/task/_detail.html:35
+#: templates/indigo_api/task/_list_table.html:60
+#: templates/indigo_api/document/_task_overview.html:19
+#: templates/templated_email/_task_detail_block.html:6
+msgid "Changes requested"
+msgstr "Αλλαγές που ζητήθηκαν"
+
+#: templates/indigo_api/task/_card_single.html:79
+msgid "Reassign"
+msgstr "Επαναανάθεση"
+
+#: templates/indigo_api/task/_card_single.html:82
+#: templates/indigo_api/task/_detail.html:154
+msgid "Are you sure you want to unassign this task?"
+msgstr "Είστε βέβαιοι ότι θέλετε να αναιρέσετε την ανάθεση αυτής της εργασίας;"
+
+#: templates/indigo_api/task/_card_single.html:112
+msgid "Approved by"
+msgstr "Εγκρίθηκε από"
+
+#: templates/indigo_api/task/_detail.html:8
+msgid "This task is blocked."
+msgstr "Αυτή η εργασία είναι αποκλεισμένη."
+
+#: templates/indigo_api/task/_detail.html:10
+msgid "These tasks must be completed first:"
+msgstr "Αυτές οι εργασίες πρέπει πρώτα να ολοκληρωθούν:"
+
+#: templates/indigo_api/task/_detail.html:25
+#: templates/indigo_api/document/_task_overview.html:13
+msgid "assigned"
+msgstr "ανατεθειμένος"
+
+#: templates/indigo_api/task/_detail.html:60
+msgid "Edit task"
+msgstr "Επεξεργασία εργασίας"
+
+#: templates/indigo_api/task/_detail.html:114
+#, python-format
+msgid "Here is <a href=\"%(item_url)s\">%(title)s</a> as it appears currently"
+msgstr "Εδώ είναι το <a href=\"%(item_url)s\">%(title)s</a> όπως εμφανίζεται αυτήν τη στιγμή"
+
+#: templates/indigo_api/task/_detail.html:119
+#, python-format
+msgid "(<b>%(a)s</b> may have been moved or removed)"
+msgstr "(<b>%(a)s</b> ενδέχεται να έχει μετακινηθεί ή αφαιρεθεί)"
+
+#: templates/indigo_api/task/_detail.html:128
+#, python-format
+msgid "The content at <b>%(a)s</b> is not available and may have been moved or removed."
+msgstr "Το περιεχόμενο στη διεύθυνση <b>%(a)s</b> δεν είναι διαθέσιμο και ενδέχεται να έχει μετακινηθεί ή αφαιρεθεί."
+
+#: templates/indigo_api/task/_detail.html:186
+msgid "Choose labels"
+msgstr "Επιλογή ετικετών"
+
+#: templates/indigo_api/task/_detail.html:203
+msgid "Blocked by"
+msgstr "Αποκλεισμένο από"
+
+#: templates/indigo_api/task/_detail.html:239
+msgid "Blocking"
+msgstr "Αποκλεισμός"
+
+#: templates/indigo_api/task/_detail.html:243
+msgid "This task is blocking these tasks:"
+msgstr "Αυτή η εργασία μπλοκάρει τις ακόλουθες εργασίες:"
+
+#: templates/indigo_api/task/_form_input_file.html:21
+#: templates/indigo_api/task/_form_output_file.html:21
+#: templates/indigo_api/task/_form_work.html:30
+#: templates/indigo_api/work/_form_commencements_form.html:35
+#: templates/indigo_api/work/_parent_form.html:32
+#: templates/indigo_api/work/_repeal_form.html:32
+#: templates/indigo_api/commencements/_commencement_form_commencing_work.html:41
+msgid "Clear"
+msgstr "Σαφής"
+
+#: templates/indigo_api/task/_form_input_file.html:49
+msgid "Paste in a URL (preferred), or upload a file."
+msgstr "Επικολλήστε μια διεύθυνση URL (προτιμάται) ή ανεβάστε ένα αρχείο."
+
+#: templates/indigo_api/task/_form_output_file.html:49
+msgid "Upload the converted file."
+msgstr "Ανεβάστε το αρχείο που έχει μετατραπεί."
+
+#: templates/indigo_api/task/_form_title.html:7
+msgid "A short description of this task"
+msgstr "Μια σύντομη περιγραφή αυτής της εργασίας"
+
+#: templates/indigo_api/task/_form_work.html:24
+msgid "Change work"
+msgstr "Αλλαγή εργασίας"
+
+#: templates/indigo_api/task/_form_work.html:24
+msgid "Choose work"
+msgstr "Επιλέξτε εργασία"
+
+#: templates/indigo_api/task/_form_work.html:53
+msgid "Choose a document, or enter a date (optional)."
+msgstr "Επιλέξτε ένα έγγραφο ή εισαγάγετε μια ημερομηνία (προαιρετικά)."
+
+#: templates/indigo_api/task/_list_table.html:6
+#, python-format
+msgid "%(count)s task (of %(total_tasks)s total)"
+msgid_plural "%(count)s tasks (of %(total_tasks)s total)"
+msgstr[0] "%(count)s εργασία (από %(total_tasks)s σύνολο)"
+msgstr[1] "%(count)s εργασίες (από %(total_tasks)s συνολικά)"
+
+#: templates/indigo_api/task/_list_table.html:17
+#: templates/indigo_api/document/_annotations.html:38
+msgid "Task"
+msgstr "Εργο"
+
+#: templates/indigo_api/task/_list_table.html:22
+msgid "Place"
+msgstr "Θέση"
+
+#: templates/indigo_api/task/_list_table.html:25
+msgid "Document"
+msgstr "Εγγραφο"
+
+#: templates/indigo_api/task/_list_table.html:27
+msgid "Work or Document"
+msgstr "Εργασία ή Έγγραφο"
+
+#: templates/indigo_api/task/_list_table.html:29
+#: templates/indigo_api/work/batch_update.html:142
+#: templates/indigo_app/place/_work.html:42 templates/place/detail.html:164
+msgid "Updated"
+msgstr "Ενημερώθηκε"
+
+#: templates/indigo_api/task/_list_table.html:120
+msgid "No tasks found"
+msgstr "Δεν βρέθηκαν εργασίες"
+
+#: templates/indigo_api/task/_timeline.html:8
+#: templates/indigo_api/work/_comments.html:8
+msgid "commented"
+msgstr "σχολίασε"
+
+#: templates/indigo_api/task/_timeline.html:34
+#: templates/indigo_api/work/_comments.html:33
+msgid "Add a comment"
+msgstr "Προσθήκη σχολίου"
+
+#: templates/indigo_api/task/_timeline.html:43
+#: templates/indigo_api/document/_annotations.html:45
+#: templates/indigo_api/document/_annotations.html:46
+msgid "Comment"
+msgstr "Σχόλιο"
+
+#: templates/indigo_api/task/_timeline.html:47
+#, python-format
+msgid "Please <a href=\"%(login_url)s\">log in</a> to leave a comment."
+msgstr "Παρακαλώ <a href=\"%(login_url)s\">συνδεθείτε</a> για να αφήσετε ένα σχόλιο."
+
+#: templates/indigo_api/work/_amendment_tables.html:3
+#: templates/indigo_api/work/_form_amended_by.html:4
+msgid "Amended by"
+msgstr "Τροποποιήθηκε από"
+
+#: templates/indigo_api/work/_amendment_tables.html:11
+#: templates/indigo_api/work/_amendment_tables.html:39
+#: templates/indigo_api/work/_commencement_tables.html:11
+#: templates/indigo_api/work/_commencement_tables.html:47
+#: templates/indigo_api/work/_repeal_tables.html:10
+#: templates/indigo_api/work/_repeal_tables.html:35
+#: templates/place/detail.html:163 templates/place/detail.html:199
+msgid "Work"
+msgstr "Εργασία"
+
+#: templates/indigo_api/work/_amendment_tables.html:31
+#: templates/indigo_api/work/_form_amendments_made.html:4
+msgid "Amendments made"
+msgstr "Τροποποιήσεις που έγιναν"
+
+#: templates/indigo_api/work/_chooser_modal.html:7
+#: templates/indigo_app/place/_work_chooser.html:6
+msgid "Choose a work"
+msgstr "Επιλέξτε ένα έργο"
+
+#: templates/indigo_api/work/_chooser_modal.html:28
+#: templates/indigo_api/document/_cheatsheet.html:8
+#: templates/indigo_app/place/_work_chooser.html:51
+msgid "Search..."
+msgstr "Ερευνα..."
+
+#: templates/indigo_api/work/_chooser_modal.html:37
+#: templates/indigo_app/place/_work_chooser.html:82
+msgid "Create a new work"
+msgstr "Δημιουργήστε ένα νέο έργο"
+
+#: templates/indigo_api/work/_chooser_modal.html:38
+#: templates/indigo_api/commencement_form.html:137
+#: templates/indigo_api/document/_annotations.html:47
+#: templates/indigo_api/document/_attachments.html:67
+#: templates/indigo_api/document/_insert_image_modal.html:16
+#: templates/indigo_api/document/_text_editor.html:63
+#: templates/indigo_api/document/_toolbar.html:100
+#: templates/indigo_api/task/form.html:131
+#: templates/indigo_api/task/form.html:133
+#: templates/indigo_api/timeline/_edit_amendment.html:26
+#: templates/indigo_api/timeline/_edit_consolidation.html:26
+#: templates/indigo_api/work/form.html:12
+#: templates/indigo_app/place/_bulk_approve_form.html:206
+#: templates/indigo_app/place/_bulk_link_refs_form.html:40
+#: templates/indigo_app/place/_bulk_unapprove_form.html:34
+#: templates/indigo_app/place/_bulk_update_form.html:50
+#: templates/indigo_app/place/_work_chooser.html:83
+msgid "Cancel"
+msgstr "Ματαίωση"
+
+#: templates/indigo_api/work/_chooser_modal.html:39
+#: templates/indigo_api/document/_attachments.html:66
+#: templates/indigo_app/place/_work_chooser.html:84
+msgid "OK"
+msgstr "ΕΝΤΑΞΕΙ"
+
+#: templates/indigo_api/work/_chooser_modal.html:52
+#: templates/indigo_api/work/batch_create.html:153
+#: templates/indigo_api/work/batch_create.html:287
+#: templates/indigo_app/place/_work_chooser.html:68
+msgid "Year"
+msgstr "Ετος"
+
+#: templates/indigo_api/work/_chooser_modal.html:53
+#: templates/indigo_api/work/_form_content.html:125
+#: templates/indigo_api/document/_properties.html:15
+#: templates/indigo_app/place/_work_chooser.html:69
+msgid "Title"
+msgstr "Τίτλος"
+
+#: templates/indigo_api/work/_chooser_modal.html:54
+#: templates/indigo_api/work/batch_create.html:157
+#: templates/indigo_api/work/batch_create.html:291
+#: templates/indigo_api/work/batch_update.html:52
+#: templates/indigo_api/work/batch_update.html:130
+#: templates/indigo_app/place/_work_chooser.html:70
+msgid "FRBR URI"
+msgstr "URI FRBR"
+
+#: templates/indigo_api/work/_chooser_modal.html:65
+#: templates/indigo_api/work/_info_badges.html:11
+msgid "stub"
+msgstr "στέλεχος"
+
+#: templates/indigo_api/work/_chooser_modal.html:68
+#: templates/indigo_api/work/_info_badges.html:17
+msgid "not commenced"
+msgstr "δεν ξεκίνησε"
+
+#: templates/indigo_api/work/_chooser_modal.html:72
+#: templates/indigo_api/work/_info_badges.html:19
+msgid "commencement date unknown"
+msgstr "άγνωστη ημερομηνία έναρξης"
+
+#: templates/indigo_api/work/_chooser_modal.html:83
+msgid "Load more..."
+msgstr "Φόρτωση περισσότερων..."
+
+#: templates/indigo_api/work/_commencement_tables.html:3
+#: templates/indigo_api/work/_form_commencements.html:4
+#: templates/indigo_api/work/commencements.html:5
+#: templates/indigo_api/work/layout.html:43
+#: templates/indigo_app/place/_work_detail.html:26
+msgid "Commencements"
+msgstr "Τελετές αποφοίτησης"
+
+#: templates/indigo_api/work/_commencement_tables.html:12
+#: templates/indigo_api/work/_commencement_tables.html:48
+msgid "Note"
+msgstr "Σημείωμα"
+
+#: templates/indigo_api/work/_commencement_tables.html:13
+#: templates/indigo_api/work/_commencement_tables.html:49
+msgid "In full"
+msgstr "Πλήρως"
+
+#: templates/indigo_api/work/_commencement_tables.html:39
+#: templates/indigo_api/work/_form_commencements_made.html:4
+msgid "Commencements made"
+msgstr "Απονομές"
+
+#: templates/indigo_api/work/_comments.html:36
+msgid "Add comment"
+msgstr "Προσθήκη σχολίου"
+
+#: templates/indigo_api/work/_diff_card.html:5
+#, python-format
+msgid "made %(n_changes)s change"
+msgid_plural "made %(n_changes)s changes"
+msgstr[0] "έκανε %(n_changes)s αλλαγή"
+msgstr[1] "έκανε %(n_changes)s αλλαγές"
+
+#: templates/indigo_api/work/_diff_card.html:14
+msgid "Show changes"
+msgstr "Εμφάνιση αλλαγών"
+
+#: templates/indigo_api/work/_diff_card.html:22
+#: templates/indigo_api/work/_diff_card.html:24
+msgid "Version"
+msgstr "Εκδοχή"
+
+#: templates/indigo_api/work/_diff_card.html:24
+msgid "Current version"
+msgstr "Τρέχουσα έκδοση"
+
+#: templates/indigo_api/work/_diff_card.html:43
+msgid "Are you sure?"
+msgstr "Είσαι σίγουρος/η;"
+
+#: templates/indigo_api/work/_diff_card.html:43
+msgid "Restore this version"
+msgstr "Επαναφορά αυτής της έκδοσης"
+
+#: templates/indigo_api/work/_filter_form.html:14
+msgid "Filter..."
+msgstr "Φίλτρο..."
+
+#: templates/indigo_api/work/_filter_form.html:27
+msgid "Advanced..."
+msgstr "Προχωρημένος..."
+
+#: templates/indigo_api/work/_filter_form.html:30
+msgid "Clear all filters"
+msgstr "Διαγραφή όλων των φίλτρων"
+
+#: templates/indigo_api/work/_filter_form.html:33
+msgid "Apply"
+msgstr "Εφαρμόζω"
+
+#: templates/indigo_api/work/_filter_form.html:50
+msgid "Publication date range"
+msgstr "Εύρος ημερομηνιών δημοσίευσης"
+
+#: templates/indigo_api/work/_filter_form.html:66
+msgid "Commencement date range"
+msgstr "Εύρος ημερομηνιών έναρξης"
+
+#: templates/indigo_api/work/_filter_form.html:82
+msgid "Amendment date range"
+msgstr "Εύρος ημερομηνιών τροποποίησης"
+
+#: templates/indigo_api/work/_filter_form.html:98
+msgid "Repeal date range"
+msgstr "Εύρος ημερομηνιών κατάργησης"
+
+#: templates/indigo_api/work/_filter_form.html:114
+msgid "Assent date range"
+msgstr "Εύρος ημερομηνιών συναίνεσης"
+
+#: templates/indigo_api/work/_filter_form.html:129
+msgid "FRBR URIs"
+msgstr "URI FRBR"
+
+#: templates/indigo_api/work/_filter_form.html:139
+msgid "Clear filters"
+msgstr "Καθαρισμός φίλτρων"
+
+#: templates/indigo_api/work/_filter_form.html:140
+msgid "Apply filters"
+msgstr "Εφαρμογή φίλτρων"
+
+#: templates/indigo_api/work/_form_amended_by.html:22
+#: templates/indigo_api/work/_form_amendments_made.html:22
+#: templates/indigo_api/timeline/_work_points_in_time.html:9
+msgid "Add amendment"
+msgstr "Προσθήκη τροποποίησης"
+
+#: templates/indigo_api/work/_form_chapter_numbers_form.html:51
+msgid "e.g. Revised Laws 2004"
+msgstr "π.χ. Αναθεωρημένοι Νόμοι του 2004"
+
+#: templates/indigo_api/work/_form_chapter_numbers_form.html:78
+#: templates/indigo_api/work/_form_content.html:616
+#: templates/indigo_api/commencement_detail.html:16
+#: templates/indigo_api/document/_annotations.html:24
+#: templates/indigo_api/document/_toolbar.html:75
+#: templates/indigo_api/document/_toolbar.html:119
+#: templates/indigo_api/timeline/_edit_amendment.html:15
+#: templates/indigo_api/timeline/_edit_consolidation.html:15
+msgid "Delete"
+msgstr "Διαγράφω"
+
+#: templates/indigo_api/work/_form_commencements.html:20
+#: templates/indigo_api/work/_form_commencements_made.html:22
+msgid "Add commencement"
+msgstr "Προσθήκη έναρξης"
+
+#: templates/indigo_api/work/_form_commencements_form.html:50
+#: templates/indigo_api/commencements/_commencement_form_commencing_work.html:26
+msgid "Change commencing work"
+msgstr "Αλλαγή κατά την έναρξη των εργασιών"
+
+#: templates/indigo_api/work/_form_commencements_form.html:52
+#: templates/indigo_api/commencements/_commencement_form_commencing_work.html:28
+msgid "Choose commencing work"
+msgstr "Επιλέξτε την έναρξη της εργασίας"
+
+#: templates/indigo_api/work/_form_consolidations.html:21
+msgid "Add consolidation"
+msgstr "Προσθήκη ενοποίησης"
+
+#: templates/indigo_api/work/_form_content.html:6
+msgid "You don't have permission to create or change a work."
+msgstr "Δεν έχετε άδεια να δημιουργήσετε ή να αλλάξετε ένα έργο."
+
+#: templates/indigo_api/work/_form_content.html:11
+msgid "There were some errors in the information you entered. Please correct the following:"
+msgstr "Υπήρχαν ορισμένα σφάλματα στις πληροφορίες που καταχωρίσατε. Διορθώστε τα εξής:"
+
+#: templates/indigo_api/work/_form_content.html:116
+#: templates/indigo_api/document/_properties.html:14
+msgid "Short title"
+msgstr "Σύντομος τίτλος"
+
+#: templates/indigo_api/work/_form_content.html:130
+msgid "Work type"
+msgstr "Τύπος εργασίας"
+
+#: templates/indigo_api/work/_form_content.html:145
+msgid "Work subtype"
+msgstr "Υποτύπος εργασίας"
+
+#: templates/indigo_api/work/_form_content.html:152
+msgid "(none)"
+msgstr "(κανένας)"
+
+#: templates/indigo_api/work/_form_content.html:161
+msgid "Year (or date) of introduction"
+msgstr "Έτος (ή ημερομηνία) εισαγωγής"
+
+#: templates/indigo_api/work/_form_content.html:175
+msgid "Number within year"
+msgstr "Αριθμός εντός του έτους"
+
+#: templates/indigo_api/work/_form_content.html:187
+msgid "Number or short name that uniquely identifies this legislation within the year of introduction. Numbers, letters and '-' only."
+msgstr "Αριθμός ή σύντομη ονομασία που προσδιορίζει μοναδικά την παρούσα νομοθεσία εντός του έτους εισαγωγής. Μόνο αριθμοί, γράμματα και «-»."
+
+#: templates/indigo_api/work/_form_content.html:216
+msgid "Chapter numbers"
+msgstr "Αριθμοί κεφαλαίων"
+
+#: templates/indigo_api/work/_form_content.html:226
+msgid "Responsible organisation (actor)"
+msgstr "Υπεύθυνος οργανισμός (φορέας)"
+
+#: templates/indigo_api/work/_form_content.html:238
+msgid "Organisation that created this work. Not normally used for national legislation. Numbers, letters and '-' only."
+msgstr "Οργανισμός που δημιούργησε αυτό το έργο. Δεν χρησιμοποιείται συνήθως για την εθνική νομοθεσία. Μόνο αριθμοί, γράμματα και '-'."
+
+#: templates/indigo_api/work/_form_content.html:245
+msgid "Principal work"
+msgstr "Κύριο έργο"
+
+#: templates/indigo_api/work/_form_content.html:249 views/places.py:84
+msgid "Principal works are not simply repeals, amendments or commencements, and should have full text content."
+msgstr "Τα κύρια έργα δεν είναι απλώς καταργήσεις, τροποποιήσεις ή ενάρξεις ισχύος και θα πρέπει να έχουν πλήρες κείμενο."
+
+#: templates/indigo_api/work/_form_content.html:258
+msgid "Check this option for commencing or amending works, or other works for which content won't be marked up."
+msgstr "Επιλέξτε αυτήν την επιλογή για την έναρξη ή την τροποποίηση έργων ή άλλων έργων για τα οποία το περιεχόμενο δεν θα επισημανθεί."
+
+#: templates/indigo_api/work/_form_content.html:271
+#: templates/indigo_api/work/batch_create.html:159
+msgid "Taxonomy topics"
+msgstr "Θέματα ταξινόμησης"
+
+#: templates/indigo_api/work/_form_content.html:282 views/places.py:54
+msgid "Assent date"
+msgstr "Ημερομηνία συναίνεσης"
+
+#: templates/indigo_api/work/_form_content.html:302
+msgid "Publication date"
+msgstr "Ημερομηνία δημοσίευσης"
+
+#: templates/indigo_api/work/_form_content.html:318
+msgid "Publication name"
+msgstr "Όνομα έκδοσης"
+
+#: templates/indigo_api/work/_form_content.html:334
+msgid "Usually the Government Gazette."
+msgstr "Συνήθως η Εφημερίδα της Κυβερνήσεως."
+
+#: templates/indigo_api/work/_form_content.html:338
+msgid "Publication number"
+msgstr "Αριθμός δημοσίευσης"
+
+#: templates/indigo_api/work/_form_content.html:348
+msgid "Usually the gazette number."
+msgstr "Συνήθως ο αριθμός του ΦΕΚ."
+
+#: templates/indigo_api/work/_form_content.html:372
+msgid "Check if this work has come into force, or has a future commencement date."
+msgstr "Ελέγξτε εάν η παρούσα εργασία έχει τεθεί σε ισχύ ή έχει μελλοντική ημερομηνία έναρξης."
+
+#: templates/indigo_api/work/_form_content.html:375
+#, python-format
+msgid "Add basic commencement details below, or go to the <a href=\"%(comm_url)s\" target=\"_blank\">Commencements</a> page for more options."
+msgstr "Προσθέστε βασικές λεπτομέρειες για την αποφοίτηση παρακάτω ή μεταβείτε στη σελίδα <a href=\"%(comm_url)s\" target=\"_blank\">Αποφοίτηση</a> για περισσότερες επιλογές."
+
+#: templates/indigo_api/work/_form_content.html:381
+#, python-format
+msgid "Changes to commencement dates will not automatically update the <a href=\"%(related_url)s\" target=\"_blank\">commencements, amendments, and repeals made</a> by this work."
+msgstr "Οι αλλαγές στις ημερομηνίες έναρξης δεν θα ενημερώσουν αυτόματα τις <a href=\"%(related_url)s\" target=\"_blank\">ημερομηνίες έναρξης, τις τροποποιήσεις και τις καταργήσεις που έγιναν</a> από αυτό το έργο."
+
+#: templates/indigo_api/work/_form_content.html:478
+#: templates/indigo_app/place/_work_detail_overview.html:40
+msgid "Aliases"
+msgstr "Ψευδώνυμα"
+
+#: templates/indigo_api/work/_form_content.html:499
+msgid "Common aliases for this work, such as 'Penal Code' or 'POPIA'."
+msgstr "Συνήθη ψευδώνυμα για αυτό το έργο, όπως «Ποινικός Κώδικας» ή «POPIA»."
+
+#: templates/indigo_api/work/_form_content.html:513
+#, python-format
+msgid "Date up to which this work was last checked for updates. Only set this if it should be different from %(name)s's as-at date"
+msgstr "Ημερομηνία μέχρι την οποία ελέγχθηκε τελευταία φορά αυτό το έργο για ενημερώσεις. Ορίστε το μόνο εάν πρέπει να διαφέρει από την ημερομηνία κατά την οποία έχει οριστεί το %(name)s"
+
+#: templates/indigo_api/work/_form_content.html:533
+#, python-format
+msgid "Consolidation note that applies to just this work. Overrides a consolidation note in %(name)s if set."
+msgstr "Σημείωση ενοποίησης που ισχύει μόνο για αυτήν την εργασία. Παρακάμπτει μια σημείωση ενοποίησης στο %(name)s εάν έχει οριστεί."
+
+#: templates/indigo_api/work/_form_content.html:554
+msgid "Disclaimer for this work; it will be shown on all expressions."
+msgstr "Αποποίηση ευθύνης για αυτό το έργο· θα εμφανίζεται σε όλες τις εκφράσεις."
+
+#: templates/indigo_api/work/_form_content.html:571
+msgid "Change country or locality"
+msgstr "Αλλαγή χώρας ή τοποθεσίας"
+
+#: templates/indigo_api/work/_form_content.html:575
+msgid "Country and locality (advanced)"
+msgstr "Χώρα και τοποθεσία (για προχωρημένους)"
+
+#: templates/indigo_api/work/_form_content.html:608
+#, python-format
+msgid "This work cannot be deleted while <a href=\"%(amendments_url)s\">linked documents</a> and <a href=\"%(related_url)s\">related works</a> exist."
+msgstr "Αυτό το έργο δεν μπορεί να διαγραφεί όσο υπάρχουν <a href=\"%(amendments_url)s\">συνδεδεμένα έγγραφα</a> και <a href=\"%(related_url)s\">σχετικά έργα</a>."
+
+#: templates/indigo_api/work/_form_content.html:615
+msgid "Are you sure you want to delete this work?"
+msgstr "Είστε σίγουροι ότι θέλετε να διαγράψετε αυτό το έργο;"
+
+#: templates/indigo_api/work/_form_offcanvas_body.html:9
+msgid "Saving"
+msgstr "Οικονομία"
+
+#: templates/indigo_api/work/_form_offcanvas_body.html:11
+#: templates/indigo_api/commencement_form.html:138
+#: templates/indigo_api/task/form.html:135
+#: templates/indigo_api/timeline/_edit_amendment.html:25
+#: templates/indigo_api/timeline/_edit_consolidation.html:25
+#: templates/indigo_api/work/form.html:21
+#: templates/indigo_app/user_account/edit.html:20
+#: templates/place/settings.html:125 templates/place/users.html:15
+msgid "Save"
+msgstr "Εκτός"
+
+#: templates/indigo_api/work/_form_offcanvas_body.html:11
+#: templates/indigo_api/timeline/_work_points_in_time.html:102
+#: templates/indigo_api/work/form.html:21
+msgid "Create"
+msgstr "Δημιουργώ"
+
+#: templates/indigo_api/work/_form_offcanvas_body.html:14
+#: templates/indigo_api/document/_attachments.html:16
+#: templates/indigo_api/document/_cheatsheet.html:765
+#: templates/indigo_api/document/_defined_terms.html:36
+#: templates/indigo_api/document/_italics_terms.html:51
+#: templates/indigo_api/document/_properties.html:61
+#: templates/indigo_api/document/_references.html:16
+#: templates/indigo_api/document/_revisions.html:18
+msgid "Close"
+msgstr "Κοντά"
+
+#: templates/indigo_api/work/_form_repeals_made.html:4
+#: templates/indigo_api/work/_repeal_tables.html:27
+msgid "Repeals made"
+msgstr "Ακυρώσεις που έγιναν"
+
+#: templates/indigo_api/work/_form_repeals_made.html:22
+msgid "Add repealed work"
+msgstr "Προσθήκη ακυρωμένου έργου"
+
+#: templates/indigo_api/work/_info_badges.html:5
+msgid "principal"
+msgstr "κύριος"
+
+#: templates/indigo_api/work/_info_badges.html:14
+msgid "subsidiary"
+msgstr "θυγατρική"
+
+#: templates/indigo_api/work/_info_badges.html:22
+msgid "work in progress"
+msgstr "εργασία σε εξέλιξη"
+
+#: templates/indigo_api/work/_parent_form.html:4
+#: templates/indigo_api/work/_subsidiary_tables.html:3
+#: templates/indigo_app/place/_work_detail_overview.html:28
+msgid "Primary work"
+msgstr "Κύρια εργασία"
+
+#: templates/indigo_api/work/_parent_form.html:25
+msgid "Choose primary work"
+msgstr "Επιλέξτε κύρια εργασία"
+
+#: templates/indigo_api/work/_parent_form.html:37
+msgid "The primary work for regulations is the Act in terms of which they were promulgated."
+msgstr "Το κύριο έργο για τους κανονισμούς είναι ο νόμος βάσει του οποίου εκδόθηκαν."
+
+#: templates/indigo_api/work/_possible_duplicates.html:6
+msgid "A work with this FRBR URI already exists. Edit it instead, or change the core fields on this work to avoid a clash."
+msgstr "Υπάρχει ήδη ένα έργο με αυτό το URI FRBR. Επεξεργαστείτε το ή αλλάξτε τα βασικά πεδία σε αυτό το έργο για να αποφύγετε τυχόν σύγκρουση."
+
+#: templates/indigo_api/work/_possible_duplicates.html:20
+msgid "This work may be a duplicate. Edit one of the below instead?"
+msgstr "Αυτή η εργασία ενδέχεται να είναι διπλότυπη. Να επεξεργαστώ ένα από τα παρακάτω;"
+
+#: templates/indigo_api/work/_possible_publication_documents.html:5
+msgid "Possible documents"
+msgstr "Πιθανά έγγραφα"
+
+#: templates/indigo_api/work/_possible_publication_documents.html:18
+msgid "Attach document"
+msgstr "Επισύναψη εγγράφου"
+
+#: templates/indigo_api/work/_publication_document.html:45
+msgid "Upload publication document"
+msgstr "Μεταφόρτωση εγγράφου δημοσίευσης"
+
+#: templates/indigo_api/work/_repeal_form.html:4
+#: templates/indigo_api/work/_repeal_tables.html:3
+msgid "Repealed by"
+msgstr "Καταργήθηκε από"
+
+#: templates/indigo_api/work/_repeal_form.html:25
+msgid "Choose repealing work"
+msgstr "Επιλέξτε εργασία κατάργησης"
+
+#: templates/indigo_api/work/_repeal_form.html:39
+msgid "Repeal date"
+msgstr "Ημερομηνία κατάργησης"
+
+#: templates/indigo_api/work/_repeal_form.html:48
+msgid "The default date of repeal is the date of commencement of the selected repealing work."
+msgstr "Η προεπιλεγμένη ημερομηνία κατάργησης είναι η ημερομηνία έναρξης των επιλεγμένων εργασιών κατάργησης."
+
+#: templates/indigo_api/work/_repeal_form.html:56
+msgid "Repeal verb"
+msgstr "Κατάργηση ρήματος"
+
+#: templates/indigo_api/work/_repeal_form.html:68
+msgid "Repeal note"
+msgstr "Ανάκληση σημείωσης"
+
+#: templates/indigo_api/work/_subsidiary_tables.html:20
+#: templates/indigo_api/work/overview.html:84
+msgid "Subsidiary works"
+msgstr "Θυγατρικά έργα"
+
+#: templates/indigo_api/commencement_detail.html:15
+msgid "Really delete this commencement? There is no undo."
+msgstr "Θέλετε πραγματικά να διαγράψετε αυτήν την έναρξη; Δεν υπάρχει δυνατότητα αναίρεσης."
+
+#: templates/indigo_api/commencement_detail.html:24
+#: templates/indigo_api/document/_annotations.html:23
+#: templates/indigo_api/document/_text_editor.html:5
+#: templates/indigo_api/document/_toolbar.html:59
+#: templates/indigo_api/work/form.html:5
+#: templates/indigo_app/place/_work_detail.html:114
+msgid "Edit"
+msgstr "Εκδίδω"
+
+#: templates/indigo_api/commencement_detail.html:31
+msgid "This commencement doesn't have a date."
+msgstr "Αυτή η τελετή αποφοίτησης δεν έχει ημερομηνία."
+
+#: templates/indigo_api/commencement_detail.html:37
+msgid "Commenced by"
+msgstr "Ξεκίνησε από"
+
+#: templates/indigo_api/commencement_detail.html:43
+msgid "Main commencement"
+msgstr "Κύρια έναρξη"
+
+#: templates/indigo_api/commencement_detail.html:44
+msgid "Commences all provisions"
+msgstr "Έναρξη όλων των διατάξεων"
+
+#: templates/indigo_api/commencement_detail.html:47
+#, python-format
+msgid "%(count)s provision commenced:"
+msgid_plural "%(count)s provisions commenced:"
+msgstr[0] "%(count)s παροχή που ξεκίνησε:"
+msgstr[1] "%(count)s διατάξεις που τέθηκαν σε εφαρμογή:"
+
+#: templates/indigo_api/commencement_detail.html:58
+#: templates/indigo_api/commencement_form.html:126
+msgid "Loading provisions…"
+msgstr "Φόρτωση διατάξεων…"
+
+#: templates/indigo_api/commencement_form.html:48
+msgid "Example: See section 1 ..."
+msgstr "Παράδειγμα: Βλέπε ενότητα 1 ..."
+
+#: templates/indigo_api/commencement_form.html:79
+msgid "Another commencement has already been marked as 'main'."
+msgstr "Μια άλλη τελετή αποφοίτησης έχει ήδη χαρακτηριστεί ως «κύρια»."
+
+#: templates/indigo_api/commencement_form.html:109
+msgid "A commencement can only commence all provisions if it's the only one."
+msgstr "Μια έναρξη ισχύος μπορεί να θέσει σε ισχύ όλες τις διατάξεις μόνο εάν είναι η μόνη."
+
+#: templates/indigo_api/commencement_form.html:136
+msgid "Discard all changes to this commencement?"
+msgstr "Απόρριψη όλων των αλλαγών σε αυτήν την αποφοίτηση;"
+
+#: templates/indigo_api/commencement_form.html:138
+#: templates/indigo_api/work/form.html:19
+msgid "Saving…"
+msgstr "Αποθήκευση…"
+
+#: templates/indigo_api/commencements/_commencement_provisions_edit.html:18
+msgid "Select all provisions"
+msgstr "Επιλογή όλων των διατάξεων"
+
+#: templates/indigo_api/commencements/_commencement_provisions_edit.html:27
+msgid "Available provisions will appear here once the content has been marked up."
+msgstr "Οι διαθέσιμες διατάξεις θα εμφανίζονται εδώ μόλις επισημανθεί το περιεχόμενο."
+
+#: templates/indigo_api/commencements/_commencement_provisions_edit.html:28
+msgid "Wait until the content has been finalised before selecting provisions."
+msgstr "Περιμένετε μέχρι να οριστικοποιηθεί το περιεχόμενο πριν επιλέξετε διατάξεις."
+
+#: templates/indigo_api/commencements/_provisions_tree.html:15
+msgid "(and all subprovisions)"
+msgstr "(και όλες οι υποδιατάξεις)"
+
+#: templates/indigo_api/commencements/_work_uncommenced_provisions_detail.html:6
+msgid "Uncommenced provisions"
+msgstr "Μη αρχικές διατάξεις"
+
+#: templates/indigo_api/document/_annotations.html:11
+msgid "Resolve"
+msgstr "Αποφασίζω"
+
+#: templates/indigo_api/document/_annotations.html:16
+#: templates/indigo_api/task/form.html:135
+#: templates/indigo_api/work/overview.html:43
+#: templates/indigo_api/work/tasks.html:9
+msgid "Create task"
+msgstr "Δημιουργία εργασίας"
+
+#: templates/indigo_api/document/_attachments.html:7
+#: templates/indigo_api/document/_toolbar.html:5
+msgid "Attachments"
+msgstr "Συνημμένα"
+
+#: templates/indigo_api/document/_attachments.html:54
+#: templates/indigo_api/work/import_document.html:56
+msgid "Choose a file"
+msgstr "Επιλέξτε ένα αρχείο"
+
+#: templates/indigo_api/document/_cheatsheet.html:7
+msgid "Editor help"
+msgstr "Βοήθεια με τον επεξεργαστή"
+
+#: templates/indigo_api/document/_cheatsheet.html:18
+msgid "Starting the Preface"
+msgstr "Έναρξη του Προλόγου"
+
+#: templates/indigo_api/document/_cheatsheet.html:21
+msgid "Mark the start of the Preface, before the Preamble and body."
+msgstr "Σημειώστε την αρχή του Προλόγου, πριν από το Προοίμιο και το κυρίως μέρος."
+
+#: templates/indigo_api/document/_cheatsheet.html:33
+msgid "Starting the Preamble"
+msgstr "Έναρξη του Προλόγου"
+
+#: templates/indigo_api/document/_cheatsheet.html:36
+msgid "Mark the start of the Preamble, after the Preface and before the body."
+msgstr "Σημειώστε την αρχή του Προλόγου, μετά τον Πρόλογο και πριν από το κυρίως μέρος."
+
+#: templates/indigo_api/document/_cheatsheet.html:48
+msgid "Markup the long title"
+msgstr "Σημειώστε τον μεγάλο τίτλο"
+
+#: templates/indigo_api/document/_cheatsheet.html:52
+msgid "Indicate the long title of the work using <code>LONGTITLE</code>."
+msgstr "Υποδείξτε τον εκτενή τίτλο του έργου χρησιμοποιώντας <code>LONGTITLE</code>."
+
+#: templates/indigo_api/document/_cheatsheet.html:75
+msgid "Starting the body of the document"
+msgstr "Έναρξη του σώματος του εγγράφου"
+
+#: templates/indigo_api/document/_cheatsheet.html:79
+msgid "Start the body of the document with <code>BODY</code>. This comes after the Preface and Preamble."
+msgstr "Ξεκινήστε το κύριο μέρος του εγγράφου με <code>BODY</code>. Αυτό έρχεται μετά τον Πρόλογο και το Προοίμιο."
+
+#: templates/indigo_api/document/_cheatsheet.html:94
+msgid "Starting a new Chapter"
+msgstr "Έναρξη νέου κεφαλαίου"
+
+#: templates/indigo_api/document/_cheatsheet.html:98
+msgid "Start a Chapter with <code>CHAPTER</code> and a number, followed by <code> - </code> and the title. The number and title are both optional."
+msgstr "Ξεκινήστε ένα Κεφάλαιο με <code>ΚΕΦΑΛΑΙΟ</code> και έναν αριθμό, ακολουθούμενο από <code> - </code> και τον τίτλο. Ο αριθμός και ο τίτλος είναι προαιρετικοί."
+
+#: templates/indigo_api/document/_cheatsheet.html:123
+msgid "Starting a new Part"
+msgstr "Έναρξη νέου μέρους"
+
+#: templates/indigo_api/document/_cheatsheet.html:127
+msgid "Start a Part with <code>PART</code> and a number, followed by <code> - </code> and the title. The number and title are both optional."
+msgstr "Ξεκινήστε ένα Μέρος με <code>ΜΕΡΟΣ</code> και έναν αριθμό, ακολουθούμενο από <code> - </code> και τον τίτλο. Ο αριθμός και ο τίτλος είναι προαιρετικοί."
+
+#: templates/indigo_api/document/_cheatsheet.html:152
+msgid "Starting a new Subpart"
+msgstr "Έναρξη νέου υποτμήματος"
+
+#: templates/indigo_api/document/_cheatsheet.html:156
+msgid "A subpart is a grouping container, like a Part, but without \"Part\" in the generated heading."
+msgstr "Ένα υπομέρος είναι ένα κοντέινερ ομαδοποίησης, όπως ένα Μέρος, αλλά χωρίς το \"Μέρος\" στην παραγόμενη επικεφαλίδα."
+
+#: templates/indigo_api/document/_cheatsheet.html:161
+msgid "Start a subpart with <code>SUBPART</code> and a number, followed by <code> - </code> and the title. The number and title are both optional."
+msgstr "Ξεκινήστε ένα υπομέρος με <code>SUBPART</code> και έναν αριθμό, ακολουθούμενο από <code> - </code> και τον τίτλο. Ο αριθμός και ο τίτλος είναι προαιρετικοί."
+
+#: templates/indigo_api/document/_cheatsheet.html:186
+msgid "Include a Crossheading"
+msgstr "Συμπεριλάβετε μια επικεφαλίδα"
+
+#: templates/indigo_api/document/_cheatsheet.html:190
+msgid "Use <code>CROSSHEADING</code> to include a heading that isn't a chapter, part, or subpart."
+msgstr "Χρησιμοποιήστε την επιλογή <code>CROSSHEADING</code> για να συμπεριλάβετε μια επικεφαλίδα που δεν είναι κεφάλαιο, μέρος ή υπομέρος."
+
+#: templates/indigo_api/document/_cheatsheet.html:212
+msgid "Starting a Section"
+msgstr "Έναρξη ενότητας"
+
+#: templates/indigo_api/document/_cheatsheet.html:216
+msgid "Start a numbered section with <code>SEC</code> and a number, followed by <code> - </code> and the title. The number and title are both optional."
+msgstr "Ξεκινήστε μια αριθμημένη ενότητα με <code>SEC</code> και έναν αριθμό, ακολουθούμενο από <code> - </code> και τον τίτλο. Ο αριθμός και ο τίτλος είναι προαιρετικοί."
+
+#: templates/indigo_api/document/_cheatsheet.html:241
+msgid "Starting a Subsection"
+msgstr "Έναρξη υποενότητας"
+
+#: templates/indigo_api/document/_cheatsheet.html:245
+msgid "Start a numbered subsection with <code>SUBSEC</code> and a number, followed by <code> - </code> and the title. The number and title are both optional."
+msgstr "Ξεκινήστε μια αριθμημένη υποενότητα με <code>SUBSEC</code> και έναν αριθμό, ακολουθούμενο από <code> - </code> και τον τίτλο. Ο αριθμός και ο τίτλος είναι προαιρετικοί."
+
+#: templates/indigo_api/document/_cheatsheet.html:269
+msgid "Add a numbered paragraph"
+msgstr "Προσθήκη αριθμημένης παραγράφου"
+
+#: templates/indigo_api/document/_cheatsheet.html:273
+msgid "Start a paragraph with <code>PARA</code> and a number, followed by <code> - </code> and the title. The number and title are both optional."
+msgstr "Ξεκινήστε μια παράγραφο με <code>PARA</code> και έναν αριθμό, ακολουθούμενο από <code> - </code> και τον τίτλο. Ο αριθμός και ο τίτλος είναι προαιρετικοί."
+
+#: templates/indigo_api/document/_cheatsheet.html:302
+msgid "Create a numbered list (a blocklist)"
+msgstr "Δημιουργήστε μια αριθμημένη λίστα (μια λίστα αποκλεισμού)"
+
+#: templates/indigo_api/document/_cheatsheet.html:306
+msgid "Start a numbered list with <code>ITEMS</code>. Use <code>ITEM</code> and a number for each item in the list, and indent them under <code>ITEMS</code>. Indent nested lists under the relevant item, starting with <code>ITEMS</code> again."
+msgstr "Ξεκινήστε μια αριθμημένη λίστα με <code>ITEMS</code>. Χρησιμοποιήστε <code>ITEM</code> και έναν αριθμό για κάθε στοιχείο της λίστας και προσθέστε εσοχή σε αυτά κάτω από το <code>ITEMS</code>. Προσθέστε ξανά εσοχή στις ένθετες λίστες κάτω από το σχετικό στοιχείο, ξεκινώντας με <code>ITEMS</code>."
+
+#: templates/indigo_api/document/_cheatsheet.html:371
+msgid "Starting a new Article"
+msgstr "Έναρξη νέου άρθρου"
+
+#: templates/indigo_api/document/_cheatsheet.html:375
+msgid "Start an Article with <code>ART</code> and a number, followed by <code> - </code> and the title. The number and title are both optional."
+msgstr "Ξεκινήστε ένα Άρθρο με <code>ART</code> και έναν αριθμό, ακολουθούμενο από <code> - </code> και τον τίτλο. Ο αριθμός και ο τίτλος είναι προαιρετικοί."
+
+#: templates/indigo_api/document/_cheatsheet.html:400
+msgid "Insert a special character"
+msgstr "Εισαγωγή ειδικού χαρακτήρα"
+
+#: templates/indigo_api/document/_cheatsheet.html:404
+msgid "See guidance on using special characters in the <a href=\"https://docs.laws.africa/editing-a-document/special-characters\" target=\"_blank\">Editor Guide</a>."
+msgstr "Δείτε τις οδηγίες σχετικά με τη χρήση ειδικών χαρακτήρων στον Οδηγό Επεξεργαστή <a href=\"https://docs.laws.africa/editing-a-document/special-characters\" target=\"_blank\"></a>."
+
+#: templates/indigo_api/document/_cheatsheet.html:415
+msgid "Make text italics"
+msgstr "Μετατροπή κειμένου σε πλάγια γραφή"
+
+#: templates/indigo_api/document/_cheatsheet.html:419
+msgid "Display a word or a sentence as italics using <code>//word//</code>. Do this for non-English and other special terms."
+msgstr "Εμφανίστε μια λέξη ή μια πρόταση με πλάγια γραφή χρησιμοποιώντας το <code>//λέξη//</code>. Κάντε το αυτό για μη αγγλικούς και άλλους ειδικούς όρους."
+
+#: templates/indigo_api/document/_cheatsheet.html:424
+msgid "For editorial remarks, use"
+msgstr "Για σχόλια σύνταξης, χρησιμοποιήστε"
+
+#: templates/indigo_api/document/_cheatsheet.html:444
+msgid "Make text bold"
+msgstr "Κάντε το κείμενο έντονο"
+
+#: templates/indigo_api/document/_cheatsheet.html:448
+msgid "Display a word or a sentence as bold using <code>**word**</code>. Do not use for headings or defined terms."
+msgstr "Εμφανίστε μια λέξη ή μια πρόταση με έντονη γραφή χρησιμοποιώντας το <code>**λέξη**</code>. Μην το χρησιμοποιείτε για επικεφαλίδες ή ορισμένους όρους."
+
+#: templates/indigo_api/document/_cheatsheet.html:470
+msgid "Underline text"
+msgstr "Υπογράμμιση κειμένου"
+
+#: templates/indigo_api/document/_cheatsheet.html:474
+msgid "Underline a word or a sentence using two underscores on either side: <code>__word__</code>. Do not use for headings."
+msgstr "Υπογραμμίστε μια λέξη ή μια πρόταση χρησιμοποιώντας δύο υπογράμμιση εκατέρωθεν: <code>__word__</code>. Μην το χρησιμοποιείτε για επικεφαλίδες."
+
+#: templates/indigo_api/document/_cheatsheet.html:496
+msgid "Add a link to a webpage"
+msgstr "Προσθήκη συνδέσμου προς μια ιστοσελίδα"
+
+#: templates/indigo_api/document/_cheatsheet.html:500
+msgid "Link to a webpage using"
+msgstr "Σύνδεση με μια ιστοσελίδα χρησιμοποιώντας"
+
+#: templates/indigo_api/document/_cheatsheet.html:520
+msgid "Add a link to another Act or work"
+msgstr "Προσθήκη συνδέσμου προς άλλον νόμο ή έργο"
+
+#: templates/indigo_api/document/_cheatsheet.html:524
+msgid "Link to another Act or work using"
+msgstr "Σύνδεσμος προς άλλον νόμο ή έργο χρησιμοποιώντας"
+
+#: templates/indigo_api/document/_cheatsheet.html:525
+msgid "where <code>frbr-uri</code> is the FRBR URI of the work you want to link to, such as <code>/akn/za/act/1998/2</code>."
+msgstr "όπου <code>frbr-uri</code> είναι το FRBR URI του έργου στο οποίο θέλετε να δημιουργήσετε σύνδεσμο, όπως <code>/akn/za/act/1998/2</code>."
+
+#: templates/indigo_api/document/_cheatsheet.html:545
+msgid "Insert an image"
+msgstr "Εισαγωγή εικόνας"
+
+#: templates/indigo_api/document/_cheatsheet.html:550
+#, python-format
+msgid "Insert an image by clicking <i>Insert, Insert image...</i> in the menu, or use <code>%(markup)s</code>. Click <i>Attachments <span class=\"fa fa-paperclip\"></span></i> to see images you can insert, or upload new ones."
+msgstr "Εισαγάγετε μια εικόνα κάνοντας κλικ στο <i>Εισαγωγή, Εισαγωγή εικόνας...</i> στο μενού ή χρησιμοποιήστε το <code>%(markup)s</code>. Κάντε κλικ στο <i>Συνημμένα <span class=\"fa fa-paperclip\"></span></i> για να δείτε εικόνες που μπορείτε να εισαγάγετε ή να ανεβάσετε νέες."
+
+#: templates/indigo_api/document/_cheatsheet.html:574
+msgid "Add an editorial remark"
+msgstr "Προσθήκη σχολίου σύνταξης"
+
+#: templates/indigo_api/document/_cheatsheet.html:578
+#, python-format
+msgid "Add an editorial remark, text that isn't part of the original document, using <code>%(markup)s</code>."
+msgstr "Προσθέστε μια συντακτική παρατήρηση, κείμενο που δεν αποτελεί μέρος του αρχικού εγγράφου, χρησιμοποιώντας <code>%(markup)s</code>."
+
+#: templates/indigo_api/document/_cheatsheet.html:602
+msgid "Ignore text that looks like a chapter, part or section but isn't"
+msgstr "Αγνόηση κειμένου που μοιάζει με κεφάλαιο, μέρος ή ενότητα αλλά δεν είναι"
+
+#: templates/indigo_api/document/_cheatsheet.html:606
+msgid "You can tell the system to ignore text that looks like a chapter, part, section or any other special words, by putting a backslash <code>\\</code> just before it."
+msgstr "Μπορείτε να πείτε στο σύστημα να αγνοήσει κείμενο που μοιάζει με κεφάλαιο, μέρος, ενότητα ή οποιεσδήποτε άλλες ειδικές λέξεις, τοποθετώντας μια ανάστροφη κάθετο <code>\\</code> ακριβώς πριν από αυτό."
+
+#: templates/indigo_api/document/_cheatsheet.html:633
+msgid "Starting a Schedule"
+msgstr "Έναρξη Προγράμματος"
+
+#: templates/indigo_api/document/_cheatsheet.html:637
+msgid "Start a schedule using <code>SCHEDULE</code> and an optional number and title."
+msgstr "Ξεκινήστε ένα χρονοδιάγραμμα χρησιμοποιώντας <code>SCHEDULE</code> και έναν προαιρετικό αριθμό και τίτλο."
+
+#: templates/indigo_api/document/_cheatsheet.html:689
+msgid "Insert a table"
+msgstr "Εισαγωγή πίνακα"
+
+#: templates/indigo_api/document/_cheatsheet.html:693
+msgid "Insert a table by clicking <i>Insert, Insert table</i> in the menu."
+msgstr "Εισαγάγετε έναν πίνακα κάνοντας κλικ στις επιλογές <i>Εισαγωγή, Εισαγωγή πίνακα</i> στο μενού."
+
+#: templates/indigo_api/document/_cheatsheet.html:698
+msgid "See guidance on working with tables in the <a href=\"https://docs.laws.africa/how-tos/tables\" target=\"_blank\">Editor Guide</a>."
+msgstr "Δείτε τις οδηγίες σχετικά με την εργασία με πίνακες στον <a href=\"https://docs.laws.africa/how-tos/tables\" target=\"_blank\">Οδηγό επεξεργασίας</a>."
+
+#: templates/indigo_api/document/_cheatsheet.html:740
+msgid "Paste a table"
+msgstr "Επικόλληση πίνακα"
+
+#: templates/indigo_api/document/_cheatsheet.html:743
+msgid "Paste a table from a PDF or MS Word by copying it from the source, then pasting it into the editor when in Edit mode."
+msgstr "Επικολλήστε έναν πίνακα από ένα PDF ή MS Word αντιγράφοντάς τον από την πηγή και, στη συνέχεια, επικολλώντας τον στον επεξεργαστή όταν βρίσκεστε σε λειτουργία επεξεργασίας."
+
+#: templates/indigo_api/document/_cheatsheet.html:761
+#: templates/indigo_api/document/_toolbar.html:53
+#, python-format
+msgid "%(country)s Style Guide"
+msgstr "%(country)s Οδηγός στυλ"
+
+#: templates/indigo_api/document/_cheatsheet.html:764
+msgid "Full editor documentation"
+msgstr "Πλήρης τεκμηρίωση του προγράμματος επεξεργασίας"
+
+#: templates/indigo_api/document/_defined_terms.html:7
+msgid "Defined Terms"
+msgstr "Ορισμένοι όροι"
+
+#: templates/indigo_api/document/_defined_terms.html:12
+msgid "These are terms that are explicitly defined in this document. Always refresh defined terms before publishing a document to ensure that all references to terms are captured."
+msgstr "Αυτοί είναι όροι που ορίζονται ρητά σε αυτό το έγγραφο. Να ανανεώνετε πάντα τους ορισμένους όρους πριν από τη δημοσίευση ενός εγγράφου, για να βεβαιωθείτε ότι έχουν καταγραφεί όλες οι αναφορές σε όρους."
+
+#: templates/indigo_api/document/_defined_terms.html:21
+msgid "Only uses of defined terms can be linked while editing a provision."
+msgstr "Μόνο οι χρήσεις καθορισμένων όρων μπορούν να συνδεθούν κατά την επεξεργασία μιας διάταξης."
+
+#: templates/indigo_api/document/_defined_terms.html:22
+msgid "To mark up definitions, edit the full document."
+msgstr "Για να προσθέσετε σήμανση σε ορισμούς, επεξεργαστείτε ολόκληρο το έγγραφο."
+
+#: templates/indigo_api/document/_defined_terms.html:27
+msgid "Remove defined terms"
+msgstr "Αφαίρεση ορισμένων όρων"
+
+#: templates/indigo_api/document/_defined_terms.html:31
+msgid "Find and link defined terms"
+msgstr "Εύρεση και σύνδεση ορισμένων όρων"
+
+#: templates/indigo_api/document/_defined_terms.html:33
+msgid "Link defined terms"
+msgstr "Σύνδεσμος ορισμένων όρων"
+
+#: templates/indigo_api/document/_defined_terms.html:54
+msgid "No defined terms."
+msgstr "Χωρίς καθορισμένους όρους."
+
+#: templates/indigo_api/document/_insert_image_modal.html:7
+msgid "Choose an image"
+msgstr "Επιλέξτε μια εικόνα"
+
+#: templates/indigo_api/document/_insert_image_modal.html:17
+msgid "Insert image"
+msgstr "Εισαγωγή εικόνας"
+
+#: templates/indigo_api/document/_italics_terms.html:8
+msgid "Italicised terms"
+msgstr "Όροι με πλάγια γραφή"
+
+#: templates/indigo_api/document/_italics_terms.html:15
+msgid "In this document"
+msgstr "Σε αυτό το έγγραφο"
+
+#: templates/indigo_api/document/_italics_terms.html:18
+#, python-format
+msgid "In %(country)s"
+msgstr "Σε %(country)s"
+
+#: templates/indigo_api/document/_italics_terms.html:31
+#, python-format
+msgid "Terms that will be italicised in %(country)s:"
+msgstr "Όροι που θα εμφανίζονται με πλάγια γραφή στο %(country)s:"
+
+#: templates/indigo_api/document/_italics_terms.html:42
+#, python-format
+msgid "No terms have been selected to be italicised in %(country)s."
+msgstr "Δεν έχουν επιλεγεί όροι για πλάγια γραφή στο %(country)s."
+
+#: templates/indigo_api/document/_italics_terms.html:49
+msgid "Remove italics"
+msgstr "Αφαίρεση πλάγιων γραμμάτων"
+
+#: templates/indigo_api/document/_italics_terms.html:50
+msgid "Mark up italics"
+msgstr "Σημειώστε πλάγια γράμματα"
+
+#: templates/indigo_api/document/_italics_terms.html:73
+msgid "No italicised terms."
+msgstr "Δεν υπάρχουν όροι με πλάγια γραφή."
+
+#: templates/indigo_api/document/_properties.html:7
+msgid "Details of this expression"
+msgstr "Λεπτομέρειες αυτής της έκφρασης"
+
+#: templates/indigo_api/document/_properties.html:29
+msgid "Expression date"
+msgstr "Ημερομηνία έκφρασης"
+
+#: templates/indigo_api/document/_properties.html:38
+msgid "initial publication"
+msgstr "αρχική δημοσίευση"
+
+#: templates/indigo_api/document/_properties.html:40
+msgid "amendment"
+msgstr "τροπολογία"
+
+#: templates/indigo_api/document/_properties.html:42
+msgid "consolidation"
+msgstr "ενοποίηση"
+
+#: templates/indigo_api/document/_properties.html:46
+msgid "Date of this version of the document, either the publication date or an amendment date"
+msgstr "Ημερομηνία αυτής της έκδοσης του εγγράφου, είτε η ημερομηνία δημοσίευσης είτε η ημερομηνία τροποποίησης"
+
+#: templates/indigo_api/document/_properties.html:49
+#: templates/indigo_api/document/show.html:174
+msgid "Manage amendments"
+msgstr "Διαχείριση τροποποιήσεων"
+
+#: templates/indigo_api/document/_properties.html:55
+msgid "Published URL:"
+msgstr "Δημοσιευμένη διεύθυνση URL:"
+
+#: templates/indigo_api/document/_provisions.html:4
+msgid "Choose provision"
+msgstr "Επιλέξτε παροχή"
+
+#: templates/indigo_api/document/_provisions.html:17
+msgid "Choose a provision to edit"
+msgstr "Επιλέξτε μια διάταξη για επεξεργασία"
+
+#: templates/indigo_api/document/_references.html:7
+msgid "References"
+msgstr "Αναφορές"
+
+#: templates/indigo_api/document/_references.html:14
+msgid "Remove references"
+msgstr "Αφαίρεση αναφορών"
+
+#: templates/indigo_api/document/_references.html:15
+msgid "Find references"
+msgstr "Βρείτε αναφορές"
+
+#: templates/indigo_api/document/_revisions.html:9
+#: templates/indigo_api/work/versions.html:26
+#: templates/indigo_app/_paginator.html:5
+#: templates/indigo_app/_paginator.html:7
+msgid "Previous"
+msgstr "Προηγούμενος"
+
+#: templates/indigo_api/document/_revisions.html:10
+#: templates/indigo_api/work/versions.html:34
+#: templates/indigo_app/_paginator.html:27
+#: templates/indigo_app/_paginator.html:29
+msgid "Next"
+msgstr "Επόμενος"
+
+#: templates/indigo_api/document/_revisions.html:14
+msgid "Recent Changes"
+msgstr "Πρόσφατες αλλαγές"
+
+#: templates/indigo_api/document/_revisions.html:47
+msgid "Restore this revision"
+msgstr "Επαναφορά αυτής της αναθεώρησης"
+
+#: templates/indigo_api/document/_secondary_pane.html:4
+msgid "Source"
+msgstr "Πηγή"
+
+#: templates/indigo_api/document/_source_att.html:9 views/places.py:230
+msgid "Open"
+msgstr "Ανοιχτό"
+
+#: templates/indigo_api/document/_task_list.html:5
+#: templates/indigo_app/tasks/all_tasks.html:4
+#: templates/indigo_app/tasks/tabbed_layout.html:16
+msgid "All tasks"
+msgstr "Όλες οι εργασίες"
+
+#: templates/indigo_api/document/_task_list.html:20
+#, python-format
+msgid "\n"
+"          No tasks at %(expression_date)s.\n"
+"        "
+msgstr "\n"
+"          Δεν υπάρχουν εργασίες στο %(expression_date)s.\n"
+"        "
+
+#: templates/indigo_api/document/_text_editor.html:7
+msgid "Find..."
+msgstr "Εύρημα..."
+
+#: templates/indigo_api/document/_text_editor.html:8
+msgid "Find next"
+msgstr "Εύρεση επόμενου"
+
+#: templates/indigo_api/document/_text_editor.html:9
+msgid "Find previous"
+msgstr "Εύρεση προηγούμενου"
+
+#: templates/indigo_api/document/_text_editor.html:10
+msgid "Find and replace..."
+msgstr "Εύρεση και αντικατάσταση..."
+
+#: templates/indigo_api/document/_text_editor.html:12
+msgid "Move lines up"
+msgstr "Μετακίνηση γραμμών προς τα πάνω"
+
+#: templates/indigo_api/document/_text_editor.html:13
+msgid "Move lines down"
+msgstr "Μετακίνηση γραμμών προς τα κάτω"
+
+#: templates/indigo_api/document/_text_editor.html:14
+msgid "Join lines"
+msgstr "Σύνδεση γραμμών"
+
+#: templates/indigo_api/document/_text_editor.html:16
+msgid "All commands..."
+msgstr "Όλες οι εντολές..."
+
+#: templates/indigo_api/document/_text_editor.html:20
+#: templates/indigo_api/document/_toolbar.html:106
+msgid "Insert"
+msgstr "Εισάγω"
+
+#: templates/indigo_api/document/_text_editor.html:22
+msgid "Insert image..."
+msgstr "Εισαγωγή εικόνας..."
+
+#: templates/indigo_api/document/_text_editor.html:23
+msgid "Insert table"
+msgstr "Εισαγωγή πίνακα"
+
+#: templates/indigo_api/document/_text_editor.html:24
+msgid "Insert footnote"
+msgstr "Εισαγωγή υποσημείωσης"
+
+#: templates/indigo_api/document/_text_editor.html:25
+msgid "Insert Schedule"
+msgstr "Εισαγωγή χρονοδιαγράμματος"
+
+#: templates/indigo_api/document/_text_editor.html:27
+msgid "Insert annotation"
+msgstr "Εισαγωγή σχολίου"
+
+#: templates/indigo_api/document/_text_editor.html:29
+msgid "Substitution"
+msgstr "Υποκατάσταση"
+
+#: templates/indigo_api/document/_text_editor.html:30
+#: templates/indigo_api/work/related.html:25
+msgid "Amendment"
+msgstr "Τροπολογία"
+
+#: templates/indigo_api/document/_text_editor.html:31
+msgid "Insertion"
+msgstr "Εισαγωγή"
+
+#: templates/indigo_api/document/_text_editor.html:32
+msgid "Addition"
+msgstr "Πρόσθεση"
+
+#: templates/indigo_api/document/_text_editor.html:33
+msgid "Deletion"
+msgstr "Διαγραφή"
+
+#: templates/indigo_api/document/_text_editor.html:34
+#: templates/indigo_api/work/related.html:32
+msgid "Repeal"
+msgstr "Ανάκληση"
+
+#: templates/indigo_api/document/_text_editor.html:35
+msgid "Other"
+msgstr "Αλλος"
+
+#: templates/indigo_api/document/_text_editor.html:50
+msgid "Remark"
+msgstr "Παρατήρηση"
+
+#: templates/indigo_api/document/_text_editor.html:53
+msgid "Wrap lines"
+msgstr "Γραμμές περιτύλιξης"
+
+#: templates/indigo_api/document/_text_editor.html:58
+msgid "Preview changes"
+msgstr "Προεπισκόπηση αλλαγών"
+
+#: templates/indigo_api/document/_text_editor.html:62
+#: templates/indigo_api/document/_toolbar.html:99
+msgid "Update"
+msgstr "Εκσυγχρονίζω"
+
+#: templates/indigo_api/document/_toolbar.html:6
+#: templates/indigo_api/work/batch_update.html:54
+#: templates/indigo_api/work/layout.html:53
+#: templates/indigo_api/work/versions.html:4
+#: templates/indigo_api/work/versions.html:7
+msgid "Changes"
+msgstr "Αλλαγές"
+
+#: templates/indigo_api/document/_toolbar.html:10
+msgid "Compare to"
+msgstr "Σύγκριση με"
+
+#: templates/indigo_api/document/_toolbar.html:15
+msgid "current point in time"
+msgstr "τρέχουσα χρονική στιγμή"
+
+#: templates/indigo_api/document/_toolbar.html:21
+msgid "Show source"
+msgstr "Εμφάνιση πηγής"
+
+#: templates/indigo_api/document/_toolbar.html:25
+msgid "Outline Akoma Ntoso Structure"
+msgstr "Περίγραμμα Δομής Akoma Ntoso"
+
+#: templates/indigo_api/document/_toolbar.html:25
+msgid "Structure"
+msgstr "Δομή"
+
+#: templates/indigo_api/document/_toolbar.html:29
+msgid "Analysis"
+msgstr "Ανάλυση"
+
+#: templates/indigo_api/document/_toolbar.html:34
+msgid "Defined terms..."
+msgstr "Ορισμένοι όροι..."
+
+#: templates/indigo_api/document/_toolbar.html:37
+msgid "References..."
+msgstr "Αναφορές..."
+
+#: templates/indigo_api/document/_toolbar.html:40
+msgid "Italicised terms..."
+msgstr "Όροι με πλάγια γραφή..."
+
+#: templates/indigo_api/document/_toolbar.html:44
+msgid "Make headings Sentence case"
+msgstr "Δημιουργία επικεφαλίδων"
+
+#: templates/indigo_api/document/_toolbar.html:63
+#: templates/place/settings.html:4 templates/place/settings.html:11
+#: templates/place/settings_layout.html:4
+#: templates/place/settings_layout.html:12
+#: templates/place/tabbed_layout.html:59
+msgid "Settings"
+msgstr "Ρυθμίσεις"
+
+#: templates/indigo_api/document/_toolbar.html:65
+msgid "Properties..."
+msgstr "Σκηνικά θέατρου..."
+
+#: templates/indigo_api/document/_toolbar.html:67
+msgid "Download as"
+msgstr "Λήψη ως"
+
+#: templates/indigo_api/document/_toolbar.html:80 templates/main.html:72
+msgid "Help"
+msgstr "Βοήθεια"
+
+#: templates/indigo_api/document/_toolbar.html:83
+msgid "Sidebar"
+msgstr "Πλαϊνή μπάρα"
+
+#: templates/indigo_api/document/_toolbar.html:93
+msgid "Edit table"
+msgstr "Επεξεργασία πίνακα"
+
+#: templates/indigo_api/document/_toolbar.html:109
+msgid "Insert row above"
+msgstr "Εισαγωγή γραμμής από πάνω"
+
+#: templates/indigo_api/document/_toolbar.html:110
+msgid "Insert row below"
+msgstr "Εισαγωγή γραμμής παρακάτω"
+
+#: templates/indigo_api/document/_toolbar.html:112
+msgid "Insert column left"
+msgstr "Εισαγωγή στήλης αριστερά"
+
+#: templates/indigo_api/document/_toolbar.html:113
+msgid "Insert column right"
+msgstr "Εισαγωγή στήλης δεξιά"
+
+#: templates/indigo_api/document/_toolbar.html:122
+msgid "Delete row"
+msgstr "Διαγραφή σειράς"
+
+#: templates/indigo_api/document/_toolbar.html:123
+msgid "Delete column"
+msgstr "Διαγραφή στήλης"
+
+#: templates/indigo_api/document/_toolbar.html:133
+msgid "Merge cells"
+msgstr "Συγχώνευση κελιών"
+
+#: templates/indigo_api/document/_toolbar.html:134
+msgid "Heading"
+msgstr "Επικεφαλίδα"
+
+#: templates/indigo_api/document/show.html:26
+#: templates/indigo_api/document_popup.html:9
+#: templates/indigo_app/place/_work_detail_documents.html:13
+msgid "published"
+msgstr "δημοσιεύτηκε"
+
+#: templates/indigo_api/document/show.html:27
+#: templates/indigo_api/document_popup.html:7
+#: templates/indigo_app/place/_work_detail_documents.html:11
+msgid "draft"
+msgstr "προσχέδιο"
+
+#: templates/indigo_api/document/show.html:41
+#: templates/indigo_api/document/show.html:46
+msgid "Save &amp; publish"
+msgstr "Αποθήκευση &amp; δημοσίευση"
+
+#: templates/indigo_api/document/show.html:42
+msgid "Save draft"
+msgstr "Αποθήκευση προσχεδίου"
+
+#: templates/indigo_api/document/show.html:47
+msgid "Unpublish &amp; save"
+msgstr "Κατάργηση δημοσίευσης &amp; αποθήκευση"
+
+#: templates/indigo_api/document/show.html:51
+msgid "You don't have permission to make changes."
+msgstr "Δεν έχετε δικαίωμα να κάνετε αλλαγές."
+
+#: templates/indigo_api/document/show.html:57
+#, python-format
+msgid "<a href=\"%(url)s\">Log in </a> to make changes."
+msgstr "<a href=\"%(url)s\">Συνδεθείτε </a> για να κάνετε αλλαγές."
+
+#: templates/indigo_api/document/show.html:158
+#: templates/indigo_api/work/layout.html:15
+#: templates/indigo_app/place/works.html:4 templates/main.html:39
+#: templates/place/detail.html:12 templates/place/detail.html:29
+#: templates/place/detail.html:30 templates/place/detail.html:156
+#: templates/place/detail.html:192 templates/place/tabbed_layout.html:43
+msgid "Works"
+msgstr "Εργοστάσιο"
+
+#: templates/indigo_api/document/show.html:169
+msgid "this document"
+msgstr "αυτό το έγγραφο"
+
+#: templates/indigo_api/document/show.html:179
+#: templates/indigo_api/timeline/_work_points_in_time.html:76
+msgid "Provision editor"
+msgstr "Επεξεργαστής παροχής"
+
+#: templates/indigo_api/task/form.html:4 templates/indigo_api/task/list.html:25
+msgid "New task"
+msgstr "Νέα εργασία"
+
+#: templates/indigo_api/task/form.html:9
+msgid "You don't have permission to create a task."
+msgstr "Δεν έχετε άδεια να δημιουργήσετε μια εργασία."
+
+#: templates/indigo_api/task/form.html:19
+msgid "Loading..."
+msgstr "Φόρτωση..."
+
+#: templates/indigo_api/task/form.html:54
+msgid "Choose a type, or enter a title."
+msgstr "Επιλέξτε έναν τύπο ή εισαγάγετε έναν τίτλο."
+
+#: templates/indigo_api/task/form.html:115
+msgid "Are you sure you want to cancel this task?"
+msgstr "Είστε σίγουροι ότι θέλετε να ακυρώσετε αυτήν την εργασία;"
+
+#: templates/indigo_api/task/form.html:116
+msgid "Cancel task"
+msgstr "Ακύρωση εργασίας"
+
+#: templates/indigo_api/task/form.html:121
+msgid "Are you sure you want to block this task?"
+msgstr "Είστε σίγουροι ότι θέλετε να αποκλείσετε αυτήν την εργασία;"
+
+#: templates/indigo_api/task/form.html:122
+msgid "Block task"
+msgstr "Εργασία μπλοκαρίσματος"
+
+#: templates/indigo_api/task/form.html:125
+msgid "Are you sure you want to unblock this task?"
+msgstr "Είστε βέβαιοι ότι θέλετε να καταργήσετε τον αποκλεισμό αυτής της εργασίας;"
+
+#: templates/indigo_api/task/form.html:126
+msgid "Unblock task"
+msgstr "Ξεμπλοκάρισμα εργασίας"
+
+#: templates/indigo_api/timeline/_edit_amendment.html:10
+#: templates/indigo_api/timeline/_edit_consolidation.html:10
+msgid "Options"
+msgstr "Επιλογές"
+
+#: templates/indigo_api/timeline/_edit_amendment.html:13
+#: templates/indigo_api/timeline/_edit_consolidation.html:13
+msgid "Change date"
+msgstr "Αλλαγή ημερομηνίας"
+
+#: templates/indigo_api/timeline/_edit_amendment.html:15
+msgid "Really delete this amendment?"
+msgstr "Θέλετε να διαγράψετε αυτήν την τροπολογία;"
+
+#: templates/indigo_api/timeline/_edit_consolidation.html:15
+msgid "Really delete this consolidation?"
+msgstr "Θέλετε να διαγράψετε αυτήν την ενοποίηση;"
+
+#: templates/indigo_api/timeline/_work_points_in_time.html:21
+msgid "Consolidation already exists at"
+msgstr "Η ενοποίηση υπάρχει ήδη στο"
+
+#: templates/indigo_api/timeline/_work_points_in_time.html:27
+msgid "Add consolidation date"
+msgstr "Προσθήκη ημερομηνίας ενοποίησης"
+
+#: templates/indigo_api/timeline/_work_points_in_time.html:46
+msgid "No event recorded for this date"
+msgstr "Δεν έχει καταγραφεί κανένα συμβάν για αυτήν την ημερομηνία"
+
+#: templates/indigo_api/timeline/_work_points_in_time.html:49
+msgid "Stranded documents:"
+msgstr "Λανθασμένα έγγραφα:"
+
+#: templates/indigo_api/timeline/_work_points_in_time.html:104
+msgid "Create amended version"
+msgstr "Δημιουργία τροποποιημένης έκδοσης"
+
+#: templates/indigo_api/timeline/_work_points_in_time.html:114
+msgid "Import document"
+msgstr "Εισαγωγή εγγράφου"
+
+#: templates/indigo_api/work/amendments.html:13
+msgid "Stub works should not have points in time."
+msgstr "Τα stub works δεν θα πρέπει να έχουν χρονικά σημεία."
+
+#: templates/indigo_api/work/amendments.html:15
+msgid "Either remove these points in time or don't mark this work as a stub."
+msgstr "Είτε αφαιρέστε αυτά τα σημεία εγκαίρως είτε μην επισημάνετε αυτό το έργο ως απόκομμα."
+
+#: templates/indigo_api/work/batch_create.html:5
+msgid "Create a new batch"
+msgstr "Δημιουργήστε μια νέα παρτίδα"
+
+#: templates/indigo_api/work/batch_create.html:10
+msgid "Import a batch of works from Google Sheets"
+msgstr "Εισαγωγή μιας δέσμης έργων από τα Υπολογιστικά Φύλλα Google"
+
+#: templates/indigo_api/work/batch_create.html:34
+msgid "Google Sheets URL"
+msgstr "URL Υπολογιστικών Φύλλων Google"
+
+#: templates/indigo_api/work/batch_create.html:35
+msgid "The URL of the spreadsheet"
+msgstr "Η διεύθυνση URL του υπολογιστικού φύλλου"
+
+#: templates/indigo_api/work/batch_create.html:45
+msgid "Spreadsheet tab"
+msgstr "Καρτέλα υπολογιστικού φύλλου"
+
+#: templates/indigo_api/work/batch_create.html:55
+msgid "The first (leftmost) sheet will be imported."
+msgstr "Θα εισαχθεί το πρώτο (αριστερότερο) φύλλο."
+
+#: templates/indigo_api/work/batch_create.html:60
+msgid "Choose a topic for newly created works"
+msgstr "Επιλογή θέματος για νεοδημιουργημένα έργα"
+
+#: templates/indigo_api/work/batch_create.html:66
+msgid "Choose a project topic"
+msgstr "Επιλέξτε ένα θέμα έργου"
+
+#: templates/indigo_api/work/batch_create.html:78
+msgid "There are no project topics"
+msgstr "Δεν υπάρχουν θέματα έργων"
+
+#: templates/indigo_api/work/batch_create.html:85
+msgid "Block ALL 'Convert document' tasks on creation"
+msgstr "Αποκλεισμός ΟΛΩΝ των εργασιών «Μετατροπή εγγράφου» κατά τη δημιουργία"
+
+#: templates/indigo_api/work/batch_create.html:90
+msgid "Cancel ALL 'Convert document' tasks on creation (this will override blocking them)"
+msgstr "Ακύρωση ΟΛΩΝ των εργασιών «Μετατροπή εγγράφου» κατά τη δημιουργία (αυτό θα παρακάμψει τον αποκλεισμό τους)"
+
+#: templates/indigo_api/work/batch_create.html:95
+msgid "Block ALL 'Import content' tasks on creation"
+msgstr "Αποκλεισμός ΟΛΩΝ των εργασιών «Εισαγωγή περιεχομένου» κατά τη δημιουργία"
+
+#: templates/indigo_api/work/batch_create.html:100
+msgid "Cancel ALL 'Import content' tasks on creation (this will override blocking them)"
+msgstr "Ακύρωση ΟΛΩΝ των εργασιών «Εισαγωγή περιεχομένου» κατά τη δημιουργία (αυτό θα παρακάμψει τον αποκλεισμό τους)"
+
+#: templates/indigo_api/work/batch_create.html:105
+msgid "Block ALL 'Link gazette' tasks on creation"
+msgstr "Αποκλεισμός ΟΛΩΝ των εργασιών 'Σύνδεσμος εφημερίδας' κατά τη δημιουργία"
+
+#: templates/indigo_api/work/batch_create.html:110
+msgid "Cancel ALL 'Link gazette' tasks on creation (this will override blocking them)"
+msgstr "Ακύρωση ΟΛΩΝ των εργασιών «Σύνδεση εφημερίδας» κατά τη δημιουργία (αυτό θα παρακάμψει τον αποκλεισμό τους)"
+
+#: templates/indigo_api/work/batch_create.html:115
+msgid "Block ALL 'Apply amendment' tasks on creation"
+msgstr "Αποκλεισμός ΟΛΩΝ των εργασιών «Εφαρμογή τροποποίησης» κατά τη δημιουργία"
+
+#: templates/indigo_api/work/batch_create.html:120
+msgid "Cancel ALL 'Apply amendment' tasks on creation (this will override blocking them)"
+msgstr "Ακύρωση ΟΛΩΝ των εργασιών «Εφαρμογή τροποποίησης» κατά τη δημιουργία (αυτό θα παρακάμψει τον αποκλεισμό τους)"
+
+#: templates/indigo_api/work/batch_create.html:129
+msgid "Preview"
+msgstr "Πρεμιέρα"
+
+#: templates/indigo_api/work/batch_create.html:131
+#: templates/indigo_api/work/batch_create.html:269
+#: templates/indigo_api/work/batch_create.html:382
+msgid "You don't have permission to create works."
+msgstr "Δεν έχετε άδεια δημιουργίας έργων."
+
+#: templates/indigo_api/work/batch_create.html:142
+msgid "Preview of your import"
+msgstr "Προεπισκόπηση της εισαγωγής σας"
+
+#: templates/indigo_api/work/batch_create.html:148
+#: templates/indigo_api/work/batch_create.html:282
+#: templates/indigo_api/work/batch_update.html:49
+#: templates/indigo_api/work/batch_update.html:127
+msgid "Row"
+msgstr "Σειρά"
+
+#: templates/indigo_api/work/batch_create.html:150
+#: templates/indigo_api/work/batch_create.html:284
+#: templates/indigo_api/work/batch_update.html:51
+#: templates/indigo_api/work/batch_update.html:129
+msgid "Title / Error message"
+msgstr "Τίτλος / Μήνυμα σφάλματος"
+
+#: templates/indigo_api/work/batch_create.html:158
+#: templates/indigo_api/work/batch_create.html:292
+msgid "Taxonomy"
+msgstr "Ταξινόμηση"
+
+#: templates/indigo_api/work/batch_create.html:161
+#: templates/indigo_api/work/batch_create.html:294
+msgid "Relationships"
+msgstr "Σχέσεις"
+
+#: templates/indigo_api/work/batch_create.html:162
+msgid "Notes"
+msgstr "Σημειώσεις"
+
+#: templates/indigo_api/work/batch_create.html:173
+msgid "Ready to import"
+msgstr "Έτοιμο για εισαγωγή"
+
+#: templates/indigo_api/work/batch_create.html:175
+#: templates/indigo_api/work/batch_create.html:307
+msgid "Duplicate"
+msgstr "Αντίγραφο"
+
+#: templates/indigo_api/work/batch_create.html:177
+#: templates/indigo_api/work/batch_create.html:309
+#: templates/indigo_api/work/batch_update.html:69
+#: templates/indigo_api/work/batch_update.html:146
+msgid "Error"
+msgstr "Σφάλμα"
+
+#: templates/indigo_api/work/batch_create.html:184
+#: templates/indigo_api/work/batch_create.html:316
+msgid "A work with this type, year and number already exists in this place."
+msgstr "Ένα έργο με αυτόν τον τύπο, έτος και αριθμό υπάρχει ήδη σε αυτό το μέρος."
+
+#: templates/indigo_api/work/batch_create.html:266
+#: templates/indigo_api/work/batch_create.html:379
+#: templates/indigo_api/work/batch_update.html:111
+#: templates/indigo_api/work/batch_update.html:179
+msgid "Refresh preview"
+msgstr "Ανανέωση προεπισκόπησης"
+
+#: templates/indigo_api/work/batch_create.html:267
+#: templates/indigo_api/work/batch_create.html:380
+#: templates/indigo_api/work/batch_create.html:420
+msgid "Import works"
+msgstr "Εισαγωγικές εργασίες"
+
+#: templates/indigo_api/work/batch_create.html:276
+msgid "Import complete"
+msgstr "Η εισαγωγή ολοκληρώθηκε"
+
+#: templates/indigo_api/work/batch_create.html:305
+msgid "Imported"
+msgstr "Εισαγόμενος"
+
+#: templates/indigo_api/work/batch_create.html:399
+msgid "Instructions"
+msgstr "Οδηγίες"
+
+#: templates/indigo_api/work/batch_create.html:403
+#, python-format
+msgid "Make a copy of the <a href=\"%(template_href)s\" target=\"_blank\">Legislation index template</a>: 'File | Make a copy'."
+msgstr "Δημιουργήστε ένα αντίγραφο του προτύπου ευρετηρίου νομοθεσίας <a href=\"%(template_href)s\" target=\"_blank\"></a>: 'Αρχείο | Δημιουργήστε ένα αντίγραφο'."
+
+#: templates/indigo_api/work/batch_create.html:408
+#, python-format
+msgid "Record the Spreadsheet URL under <a href=\"%(place_url)s\" target=\"_blank\">Settings</a>."
+msgstr "Καταγράψτε τη διεύθυνση URL του υπολογιστικού φύλλου στις <a href=\"%(place_url)s\" target=\"_blank\">Ρυθμίσεις</a>."
+
+#: templates/indigo_api/work/batch_create.html:413
+#, python-format
+msgid "Share the spreadsheet with %(share)s."
+msgstr "Μοιραστείτε το υπολογιστικό φύλλο με %(share)s."
+
+#: templates/indigo_api/work/batch_create.html:414
+msgid "Choose a spreadsheet tab and a project."
+msgstr "Επιλέξτε μια καρτέλα υπολογιστικού φύλλου και ένα έργο."
+
+#: templates/indigo_api/work/batch_create.html:416
+msgid "Make it accessible by turning link sharing on: 'Share | General access | Anyone with the link' (top-right corner)."
+msgstr "Κάντε το προσβάσιμο ενεργοποιώντας την κοινή χρήση συνδέσμων: «Κοινή χρήση | Γενική πρόσβαση | Οποιοσδήποτε έχει τον σύνδεσμο» (επάνω δεξιά γωνία)."
+
+#: templates/indigo_api/work/batch_create.html:417
+msgid "Choose a project."
+msgstr "Επιλέξτε ένα έργο."
+
+#: templates/indigo_api/work/batch_create.html:419
+msgid "<strong>Preview</strong> the new works to be created, resolve any errors / duplicates and <strong>Refresh preview</strong>."
+msgstr "<strong>Προεπισκόπηση</strong> των νέων έργων που θα δημιουργηθούν, διόρθωση τυχόν σφαλμάτων / διπλότυπων και <strong>Ανανέωση προεπισκόπησης</strong>."
+
+#: templates/indigo_api/work/batch_update.html:5
+msgid "Update an existing batch"
+msgstr "Ενημέρωση υπάρχουσας παρτίδας"
+
+#: templates/indigo_api/work/batch_update.html:8
+msgid "Update a batch of works from Google Sheets"
+msgstr "Ενημέρωση μιας παρτίδας έργων από τα Υπολογιστικά Φύλλα Google"
+
+#: templates/indigo_api/work/batch_update.html:12
+msgid "Please note we are phasing out projects, and no project needs to be chosen for new tasks on existing works. Instead, tasks are now grouped according to their work's topic. You're welcome to choose a project during the transition."
+msgstr "Λάβετε υπόψη ότι καταργούμε σταδιακά έργα και δεν χρειάζεται να επιλεγεί κανένα έργο για νέες εργασίες σε υπάρχοντα έργα. Αντίθετα, οι εργασίες ομαδοποιούνται πλέον ανάλογα με το θέμα της εργασίας τους. Μπορείτε να επιλέξετε ένα έργο κατά τη διάρκεια της μετάβασης."
+
+#: templates/indigo_api/work/batch_update.html:18
+msgid "Choose columns to update"
+msgstr "Επιλέξτε στήλες για ενημέρωση"
+
+#: templates/indigo_api/work/batch_update.html:23
+msgid "(Choose at least one column to update)"
+msgstr "(Επιλέξτε τουλάχιστον μία στήλη για ενημέρωση)"
+
+#: templates/indigo_api/work/batch_update.html:43
+msgid "Preview of your update"
+msgstr "Προεπισκόπηση της ενημέρωσής σας"
+
+#: templates/indigo_api/work/batch_update.html:53
+msgid "Tasks (new)"
+msgstr "Εργασίες (νέες)"
+
+#: templates/indigo_api/work/batch_update.html:65
+msgid "Ready to update"
+msgstr "Έτοιμο για ενημέρωση"
+
+#: templates/indigo_api/work/batch_update.html:67
+#: templates/indigo_api/work/batch_update.html:144
+msgid "No change"
+msgstr "Καμία αλλαγή"
+
+#: templates/indigo_api/work/batch_update.html:112
+#: templates/indigo_api/work/batch_update.html:180
+msgid "Update works"
+msgstr "Η ενημέρωση λειτουργεί"
+
+#: templates/indigo_api/work/batch_update.html:114
+#: templates/indigo_api/work/batch_update.html:182
+msgid "You don't have permission to update works."
+msgstr "Δεν έχετε άδεια ενημέρωσης έργων."
+
+#: templates/indigo_api/work/batch_update.html:121
+msgid "Update complete"
+msgstr "Η ενημέρωση ολοκληρώθηκε"
+
+#: templates/indigo_api/work/batch_update.html:131
+#: templates/indigo_api/work/overview.html:145
+msgid "Open tasks"
+msgstr "Ανοιχτές εργασίες"
+
+#: templates/indigo_api/work/commencements.html:9
+msgid "This work has commenced, but the commencement date is unknown."
+msgstr "Οι εργασίες αυτές έχουν ξεκινήσει, αλλά η ημερομηνία έναρξης είναι άγνωστη."
+
+#: templates/indigo_api/work/commencements.html:13
+msgid "This work has not commenced."
+msgstr "Αυτό το έργο δεν έχει ξεκινήσει."
+
+#: templates/indigo_api/work/commencements.html:18
+msgid "This work has <a href=\"#uncommenced-provisions\">uncommenced provisions</a>."
+msgstr "Αυτό το έργο έχει <a href=\"#uncommenced-provisions\">μη ξεκινημένες διατάξεις</a>."
+
+#: templates/indigo_api/work/commencements.html:30
+msgid "A commencement without a date or a commencing work already exists. Edit it before adding another one."
+msgstr "Υπάρχει ήδη μια έναρξη χωρίς ημερομηνία ή μια έναρξη εργασίας. Επεξεργαστείτε την πριν προσθέσετε μια άλλη."
+
+#: templates/indigo_api/work/commencements.html:37
+msgid "Add a commencement"
+msgstr "Προσθήκη έναρξης"
+
+#: templates/indigo_api/work/commencements.html:48
+msgid "Unknown"
+msgstr "Αγνωστος"
+
+#: templates/indigo_api/work/commencements.html:62
+msgid "Loading uncommenced provisions…"
+msgstr "Φόρτωση μη ξεκινημένων διατάξεων…"
+
+#: templates/indigo_api/work/commencements.html:68
+msgid "Not yet commenced?"
+msgstr "Δεν έχει ξεκινήσει ακόμα;"
+
+#: templates/indigo_api/work/commencements.html:69
+msgid "Remove all commencement detail and mark as not commenced."
+msgstr "Αφαιρέστε όλες τις λεπτομέρειες έναρξης και σημειώστε ως μη έναρξης."
+
+#: templates/indigo_api/work/commencements.html:70
+msgid "Are you sure? ALL commencement information will be permanently deleted."
+msgstr "Είστε σίγουροι; ΟΛΕΣ οι πληροφορίες αποφοίτησης θα διαγραφούν οριστικά."
+
+#: templates/indigo_api/work/commencements.html:70
+msgid "This work has not commenced"
+msgstr "Αυτή η εργασία δεν έχει ξεκινήσει"
+
+#: templates/indigo_api/work/commencements.html:81
+msgid "Loading…"
+msgstr "Φόρτωση…"
+
+#: templates/indigo_api/work/form.html:5
+msgid "New work"
+msgstr "Νέα εργασία"
+
+#: templates/indigo_api/work/import_document.html:4
+msgid "Import"
+msgstr "Εισαγωγή"
+
+#: templates/indigo_api/work/import_document.html:19
+msgid "Import a document"
+msgstr "Εισαγωγή εγγράφου"
+
+#: templates/indigo_api/work/import_document.html:36
+msgid "What language is the document in?"
+msgstr "Σε ποια γλώσσα είναι το έγγραφο;"
+
+#: templates/indigo_api/work/import_document.html:53
+msgid "Drag and drop your file here"
+msgstr "Σύρετε και αποθέστε το αρχείο σας εδώ"
+
+#: templates/indigo_api/work/import_document.html:54
+msgid "or"
+msgstr "ή"
+
+#: templates/indigo_api/work/import_document.html:59
+msgid "You can import legislation from most document formats including PDF, Word, RTF and plain text."
+msgstr "Μπορείτε να εισαγάγετε νομοθεσία από τις περισσότερες μορφές εγγράφων, όπως PDF, Word, RTF και απλό κείμενο."
+
+#: templates/indigo_api/work/import_document.html:76
+msgid "Pages to import"
+msgstr "Σελίδες προς εισαγωγή"
+
+#: templates/indigo_api/work/import_document.html:78
+msgid "eg."
+msgstr "π.χ."
+
+#: templates/indigo_api/work/import_document.html:84
+msgid "What do section titles look like?"
+msgstr "Πώς μοιάζουν οι τίτλοι των ενοτήτων;"
+
+#: templates/indigo_api/work/import_document.html:115
+msgid "Guess automatically"
+msgstr "Μαντέψτε αυτόματα"
+
+#: templates/indigo_api/work/import_document.html:124
+msgid "Go for it!"
+msgstr "Πάμε για αυτό!"
+
+#: templates/indigo_api/work/import_document.html:135
+msgid "Importing, this may take a few minutes..."
+msgstr "Εισαγωγή, αυτό μπορεί να διαρκέσει μερικά λεπτά..."
+
+#: templates/indigo_api/work/layout.html:37
+#: templates/indigo_app/place/_work.html:53
+#: templates/indigo_app/place/_work_detail.html:8
+#: templates/place/tabbed_layout.html:39
+msgid "Overview"
+msgstr "Επισκόπηση"
+
+#: templates/indigo_api/work/layout.html:50
+#: templates/indigo_api/work/related.html:5
+#: templates/indigo_api/work/related.html:8
+msgid "Related works"
+msgstr "Σχετικά έργα"
+
+#: templates/indigo_api/work/overview.html:37
+#: templates/indigo_app/place/_bulk_unapprove_form.html:42
+#: templates/indigo_app/place/_work_detail.html:139
+msgid "Unapprove"
+msgstr "Απόρριψη"
+
+#: templates/indigo_api/work/overview.html:44
+msgid "Edit work"
+msgstr "Επεξεργασία εργασίας"
+
+#: templates/indigo_api/work/overview.html:62
+msgid "updated"
+msgstr "ενημερωμένο"
+
+#: templates/indigo_api/work/overview.html:65
+msgid "recent changes"
+msgstr "πρόσφατες αλλαγές"
+
+#: templates/indigo_api/work/overview.html:88
+#, python-format
+msgid "%(n_kids)s subsidiary works"
+msgstr "%(n_kids)s βοηθητικά έργα"
+
+#: templates/indigo_api/work/overview.html:123
+msgid "Manage points in time"
+msgstr "Διαχείριση χρονικών σημείων"
+
+#: templates/indigo_api/work/overview.html:130
+msgid "Stub works should not have points in time. Either remove these points in time or don't mark this work as a stub."
+msgstr "Τα έργα-στόχοι δεν πρέπει να έχουν χρονικά σημεία. Είτε αφαιρέστε αυτά τα χρονικά σημεία είτε μην επισημάνετε αυτό το έργο ως στόκο."
+
+#: templates/indigo_api/work/overview.html:138
+#: templates/indigo_app/place/_work_detail.html:69
+msgid "Comments"
+msgstr "Σχόλια"
+
+#: templates/indigo_api/work/overview.html:155
+msgid "Contributors"
+msgstr "Συντελεστές"
+
+#: templates/indigo_api/work/overview.html:162
+#, python-format
+msgid "%(count)s task"
+msgid_plural "%(count)s tasks"
+msgstr[0] "%(count)s εργασία"
+msgstr[1] "%(count)s εργασίες"
+
+#: templates/indigo_api/work/tasks.html:18
+msgid "No tasks."
+msgstr "Δεν υπάρχουν εργασίες."
+
+#: templates/indigo_api/work/versions.html:41
+msgid "There are no saved previous versions of this work."
+msgstr "Δεν υπάρχουν αποθηκευμένες προηγούμενες εκδόσεις αυτού του έργου."
+
+#: templates/indigo_app/_offline.html:5
+msgid "It looks like you're offline or the server is unavailable."
+msgstr "Φαίνεται ότι είστε εκτός σύνδεσης ή ότι ο διακομιστής δεν είναι διαθέσιμος."
+
+#: templates/indigo_app/actions/_action_amendment.html:4
+#, python-format
+msgid "\n"
+"    an amendment at %(date)s on\n"
+"  "
+msgstr "\n"
+"    τροπολογία στο %(date)s στις\n"
+"  "
+
+#: templates/indigo_app/actions/_action_amendment.html:8
+#: templates/indigo_app/actions/_action_commencement.html:9
+#: templates/place/detail.html:180 templates/place/detail.html:216
+msgid "by"
+msgstr "με"
+
+#: templates/indigo_app/actions/_action_arbitraryexpressiondate.html:4
+#, python-format
+msgid "\n"
+"    a consolidation at %(date)s on\n"
+"  "
+msgstr "\n"
+"    μια ενοποίηση στο %(date)s στις\n"
+"  "
+
+#: templates/indigo_app/actions/_action_commencement.html:4
+#, python-format
+msgid "\n"
+"    a commencement at %(date)s on\n"
+"  "
+msgstr "\n"
+"    τελετή αποφοίτησης στις %(date)s στις\n"
+"  "
+
+#: templates/indigo_app/actions/_action_document.html:5
+msgid "a document on"
+msgstr "ένα έγγραφο σχετικά με"
+
+#: templates/indigo_app/actions/_action_placesettings.html:4
+msgid "the settings for"
+msgstr "οι ρυθμίσεις για"
+
+#: templates/indigo_app/actions/_action_task.html:10
+msgid "this task"
+msgstr "αυτή η εργασία"
+
+#: templates/indigo_app/actions/_action_task.html:17
+msgid "on this work"
+msgstr "σε αυτό το έργο"
+
+#: templates/indigo_app/actions/_action_task.html:19
+msgid "on"
+msgstr "επί"
+
+#: templates/indigo_app/actions/_action_task.html:30
+msgid "from"
+msgstr "από"
+
+#: templates/indigo_app/actions/_action_task.html:32
+msgid "to"
+msgstr "να"
+
+#: templates/indigo_app/actions/_action_task.html:44
+msgid "for review"
+msgstr "για αξιολόγηση"
+
+#: templates/indigo_app/actions/_activity_list.html:20
+msgid "No recent activity"
+msgstr "Δεν υπάρχει πρόσφατη δραστηριότητα"
+
+#: templates/indigo_app/actions/_in_place.html:4
+msgid "in"
+msgstr "σε"
+
+#: templates/indigo_app/maintenance.html:8
+#, python-format
+msgid "%(org)s is undergoing maintenance. We'll be back soon."
+msgstr "Το %(org)s βρίσκεται υπό συντήρηση. Θα επιστρέψουμε σύντομα."
+
+#: templates/indigo_app/place/_bulk_approve_form.html:7
+#, python-format
+msgid "\n"
+"          Approve %(works_length)s work in progress\n"
+"        "
+msgid_plural "\n"
+"          Approve %(works_length)s works in progress\n"
+"        "
+msgstr[0] "\n"
+"          Έγκριση %(works_length)s εργασίας σε εξέλιξη\n"
+"        "
+msgstr[1] "\n"
+"          Έγκριση %(works_length)s εργασιών σε εξέλιξη\n"
+"        "
+
+#: templates/indigo_app/place/_bulk_approve_form.html:42
+msgid "These works cannot be approved in bulk:"
+msgstr "Αυτά τα έργα δεν μπορούν να εγκριθούν μαζικά:"
+
+#: templates/indigo_app/place/_bulk_approve_form.html:59
+msgid "Conversion and Import tasks will be created – Import tasks will be blocked"
+msgstr "Θα δημιουργηθούν εργασίες μετατροπής και εισαγωγής – Οι εργασίες εισαγωγής θα αποκλειστούν"
+
+#: templates/indigo_app/place/_bulk_approve_form.html:72
+msgid "Import date missing – add a publication date, a commencement date, or a consolidation date"
+msgstr "Λείπει η ημερομηνία εισαγωγής – προσθέστε ημερομηνία δημοσίευσης, ημερομηνία έναρξης ή ημερομηνία ενοποίησης"
+
+#: templates/indigo_app/place/_bulk_approve_form.html:78
+msgid "Task description: Conversion tasks"
+msgstr "Περιγραφή εργασίας: Εργασίες μετατροπής"
+
+#: templates/indigo_app/place/_bulk_approve_form.html:79
+msgid "Convert the input file into a .docx file and remove automatic numbering."
+msgstr "Μετατρέψτε το αρχείο εισόδου σε αρχείο .docx και καταργήστε την αυτόματη αρίθμηση."
+
+#: templates/indigo_app/place/_bulk_approve_form.html:95
+msgid "Task description: Import tasks"
+msgstr "Περιγραφή εργασίας: Εισαγωγή εργασιών"
+
+#: templates/indigo_app/place/_bulk_approve_form.html:96
+msgid "Import the content for this work at the appropriate date — usually the publication or consolidation date."
+msgstr "Εισαγάγετε το περιεχόμενο για αυτό το έργο την κατάλληλη ημερομηνία — συνήθως την ημερομηνία δημοσίευσης ή ενοποίησης."
+
+#: templates/indigo_app/place/_bulk_approve_form.html:113
+msgid "Gazette tasks will be created"
+msgstr "Θα δημιουργηθούν εργασίες Gazette"
+
+#: templates/indigo_app/place/_bulk_approve_form.html:125
+msgid "Task description"
+msgstr "Περιγραφή εργασίας"
+
+#: templates/indigo_app/place/_bulk_approve_form.html:126
+msgid "Find and link the Gazette (original publication document) for this work."
+msgstr "Βρείτε και συνδέστε την Εφημερίδα (πρωτότυπο έγγραφο δημοσίευσης) για αυτό το έργο."
+
+#: templates/indigo_app/place/_bulk_approve_form.html:143
+msgid "Amendment tasks will be created"
+msgstr "Θα δημιουργηθούν εργασίες τροποποίησης"
+
+#: templates/indigo_app/place/_bulk_approve_form.html:158
+#, python-format
+msgid "\n"
+"                                Create task: %(amended_title)s (%(amended_numbered_title)s) amended by %(amending_title)s (%(amending_numbered_title)s) – %(date)s\n"
+"                              "
+msgstr "\n"
+"                                Δημιουργία εργασίας: %(amended_title)s (%(amended_numbered_title)s) τροποποιήθηκε από %(amending_title)s (%(amending_numbered_title)s) – %(date)s\n"
+"                              "
+
+#: templates/indigo_app/place/_bulk_approve_form.html:163
+#, python-format
+msgid "\n"
+"Apply the amendments made by %(title)s (%(numbered_title)s) on the given date.\n\n"
+"The amendment has already been linked, so start at Step 3 of https://docs.laws.africa/managing-works/amending-works."
+msgstr "\n"
+"Εφαρμόστε τις τροποποιήσεις που έγιναν από τον χρήστη %(title)s (%(numbered_title)s) κατά την δεδομένη ημερομηνία.\n\n"
+"Η τροποποίηση έχει ήδη συνδεθεί, επομένως ξεκινήστε από το Βήμα 3 του https://docs.laws.africa/managing-works/amending-works."
+
+#: templates/indigo_app/place/_bulk_approve_form.html:174
+msgid "Potential duplicates"
+msgstr "Πιθανά διπλότυπα"
+
+#: templates/indigo_app/place/_bulk_approve_form.html:213
+msgid "Approving..."
+msgstr "Έγκριση..."
+
+#: templates/indigo_app/place/_bulk_link_refs_form.html:7
+#, python-format
+msgid "Link references for %(works_length)s works"
+msgstr "Αναφορές συνδέσμων για έργα %(works_length)s"
+
+#: templates/indigo_app/place/_bulk_link_refs_form.html:23
+msgid "References will be linked for all documents."
+msgstr "Θα υπάρχουν σύνδεσμοι για παραπομπές σε όλα τα έγγραφα."
+
+#: templates/indigo_app/place/_bulk_link_refs_form.html:27
+msgid "Remove existing references first"
+msgstr "Αφαιρέστε πρώτα τις υπάρχουσες αναφορές"
+
+#: templates/indigo_app/place/_bulk_link_refs_form.html:47
+msgid "Linking references..."
+msgstr "Σύνδεση αναφορών..."
+
+#: templates/indigo_app/place/_bulk_link_refs_form.html:48
+msgid "Link references"
+msgstr "Αναφορές συνδέσμων"
+
+#: templates/indigo_app/place/_bulk_unapprove_form.html:7
+#, python-format
+msgid "Unapprove %(works_length)s works"
+msgstr "Απόρριψη %(works_length)s έργων"
+
+#: templates/indigo_app/place/_bulk_unapprove_form.html:23
+msgid "Any documents will be unpublished."
+msgstr "Οποιαδήποτε έγγραφα δεν θα δημοσιευτούν."
+
+#: templates/indigo_app/place/_bulk_unapprove_form.html:41
+msgid "Unapproving..."
+msgstr "Αποδοκιμαστικό..."
+
+#: templates/indigo_app/place/_bulk_update_form.html:7
+#, python-format
+msgid "Update %(works_length)s works"
+msgstr "Η ενημέρωση %(works_length)s λειτουργεί"
+
+#: templates/indigo_app/place/_bulk_update_form.html:24
+msgid "Add taxonomy topics"
+msgstr "Προσθήκη θεμάτων ταξινόμησης"
+
+#: templates/indigo_app/place/_bulk_update_form.html:33
+msgid "Remove taxonomy topics"
+msgstr "Αφαίρεση θεμάτων ταξινόμησης"
+
+#: templates/indigo_app/place/_bulk_update_form.html:57
+msgid "Updating..."
+msgstr "Ενημέρωση..."
+
+#: templates/indigo_app/place/_bulk_update_form.html:58
+msgid "Save changes"
+msgstr "Αποθήκευση αλλαγών"
+
+#: templates/indigo_app/place/_overridden.html:3
+msgid "Overridden"
+msgstr "Παρακάμφθηκε"
+
+#: templates/indigo_app/place/_work.html:38
+msgid "Created"
+msgstr "Δημιουργήθηκε"
+
+#: templates/indigo_app/place/_work_chooser_list.html:5
+#, python-format
+msgid "%(count)s total"
+msgstr "%(count)s σύνολο"
+
+#: templates/indigo_app/place/_work_detail_overview.html:55
+msgid "Topics"
+msgstr "Θέματα"
+
+#: templates/indigo_app/place/_works_actions.html:22
+#, python-format
+msgid "Update %(works_length)s selected..."
+msgstr "Ενημέρωση επιλεγμένων %(works_length)s..."
+
+#: templates/indigo_app/place/_works_actions.html:47
+#, python-format
+msgid "Approve %(works_length)s selected..."
+msgstr "Έγκριση %(works_length)s επιλεγμένων..."
+
+#: templates/indigo_app/place/_works_actions.html:73
+#, python-format
+msgid "Unapprove %(works_length)s selected..."
+msgstr "Απόρριψη επιλεγμένων %(works_length)s..."
+
+#: templates/indigo_app/place/_works_actions.html:98
+#, python-format
+msgid "Link references for %(works_length)s selected..."
+msgstr "Αναφορές συνδέσμων για επιλεγμένα %(works_length)s..."
+
+#: templates/indigo_app/place/_works_actions.html:114
+#, python-format
+msgid "You do not have country permissions to update %(n_disallowed)s of the selected works."
+msgstr "Δεν έχετε δικαιώματα χώρας για να ενημερώσετε %(n_disallowed)s των επιλεγμένων έργων."
+
+#: templates/indigo_app/place/_works_list.html:15
+#, python-format
+msgid "%(count)s work (of %(total_works)s total)"
+msgid_plural "%(count)s works (of %(total_works)s total)"
+msgstr[0] "%(count)s έργο (από %(total_works)s σύνολο)"
+msgstr[1] "%(count)s έργα (από %(total_works)s σύνολο)"
+
+#: templates/indigo_app/place/_works_list.html:27
+msgid "Download to Excel"
+msgstr "Λήψη σε Excel"
+
+#: templates/indigo_app/place/_works_list.html:45
+#, python-format
+msgid "Select all %(works_length)s matching works"
+msgstr "Επιλογή όλων των %(works_length)s αντίστοιχων έργων"
+
+#: templates/indigo_app/place/works.html:20
+msgid "Add new work"
+msgstr "Προσθήκη νέας εργασίας"
+
+#: templates/indigo_app/place/works.html:24
+msgid "Batch add new works"
+msgstr "Μαζική προσθήκη νέων έργων"
+
+#: templates/indigo_app/place/works.html:25
+msgid "Batch update works"
+msgstr "Η μαζική ενημέρωση λειτουργεί"
+
+#: templates/indigo_app/tasks/_user_tasks.html:9
+msgid "Your current tasks"
+msgstr "Οι τρέχουσες εργασίες σας"
+
+#: templates/indigo_app/tasks/_user_tasks.html:11
+#: templates/place/detail.html:103
+msgid "Current tasks"
+msgstr "Τρέχουσες εργασίες"
+
+#: templates/indigo_app/tasks/_user_tasks.html:21
+msgid "You don't have any assigned tasks right now."
+msgstr "Δεν σας έχουν ανατεθεί εργασίες αυτήν τη στιγμή."
+
+#: templates/indigo_app/tasks/_user_tasks.html:23
+#, python-format
+msgid "%(username)s doesn't have any assigned tasks right now."
+msgstr "Ο χρήστης %(username)s δεν έχει καμία ανατεθειμένη εργασία αυτήν τη στιγμή."
+
+#: templates/indigo_app/tasks/_user_tasks.html:37
+msgid "Tasks waiting for approval"
+msgstr "Εργασίες που αναμένουν έγκριση"
+
+#: templates/indigo_app/tasks/_user_tasks.html:45
+msgid "You have no tasks waiting for approval."
+msgstr "Δεν έχετε εργασίες που περιμένουν έγκριση."
+
+#: templates/indigo_app/tasks/_user_tasks.html:48
+#, python-format
+msgid "%(username)s has no tasks waiting for approval."
+msgstr "Η %(username)s δεν έχει εργασίες που να περιμένουν έγκριση."
+
+#: templates/indigo_app/tasks/_user_tasks.html:63
+msgid "Your recently approved tasks"
+msgstr "Οι πρόσφατα εγκεκριμένες εργασίες σας"
+
+#: templates/indigo_app/tasks/_user_tasks.html:65
+msgid "Recently approved tasks"
+msgstr "Πρόσφατα εγκεκριμένες εργασίες"
+
+#: templates/indigo_app/tasks/_user_tasks.html:74
+msgid "You have no tasks that have been approved."
+msgstr "Δεν έχετε εγκεκριμένες εργασίες."
+
+#: templates/indigo_app/tasks/_user_tasks.html:77
+#, python-format
+msgid "%(username)s has no tasks that have been approved."
+msgstr "Η %(username)s δεν έχει εγκεκριμένες εργασίες."
+
+#: templates/indigo_app/tasks/my_tasks.html:4
+#: templates/indigo_app/tasks/tabbed_layout.html:10
+msgid "My tasks"
+msgstr "Οι εργασίες μου"
+
+#: templates/indigo_app/user_account/_sidebar.html:6
+msgid "Profile"
+msgstr "Προφίλ"
+
+#: templates/indigo_app/user_account/_sidebar.html:12
+msgid "Email addresses"
+msgstr "Διευθύνσεις ηλεκτρονικού ταχυδρομείου"
+
+#: templates/indigo_app/user_account/_sidebar.html:17
+#: templates/socialaccount/connections.html:4
+#: templates/socialaccount/connections.html:11
+msgid "Social accounts"
+msgstr "Λογαριασμοί κοινωνικής δικτύωσης"
+
+#: templates/indigo_app/user_account/_sidebar.html:21
+#: templates/indigo_app/user_account/api.html:4
+#: templates/indigo_app/user_account/api.html:14
+msgid "API access"
+msgstr "Πρόσβαση API"
+
+#: templates/indigo_app/user_account/accept_terms.html:4
+msgid "Accept terms"
+msgstr "Αποδοχή όρων"
+
+#: templates/indigo_app/user_account/accept_terms.html:7
+msgid "To continue, please accept the Terms of Use"
+msgstr "Για να συνεχίσετε, αποδεχτείτε τους Όρους Χρήσης"
+
+#: templates/indigo_app/user_account/accept_terms.html:16
+#, python-format
+msgid "I have read and accept the <a href=\"%(url)s\" target=\"_blank\">Terms of Use</a>."
+msgstr "Έχω διαβάσει και αποδέχομαι τους <a href=\"%(url)s\" target=\"_blank\">Όρους Χρήσης</a>."
+
+#: templates/indigo_app/user_account/accept_terms.html:30
+msgid "Continue"
+msgstr "Συνεχίζω"
+
+#: templates/indigo_app/user_account/api.html:17
+msgid "Use the API token below to authenticate your calls to the Indigo API. <strong>Keep it secret!</strong>"
+msgstr "Χρησιμοποιήστε το παρακάτω διακριτικό API για να επαληθεύσετε τις κλήσεις σας στο Indigo API. <strong>Κρατήστε το μυστικό!</strong>"
+
+#: templates/indigo_app/user_account/api.html:26
+msgid "Generate a new API token if your current token has been leaked. <strong>Your old token will stop working.</strong>"
+msgstr "Δημιουργήστε ένα νέο διακριτικό API εάν το τρέχον διακριτικό σας έχει διαρρεύσει. <strong>Το παλιό σας διακριτικό θα σταματήσει να λειτουργεί.</strong>"
+
+#: templates/indigo_app/user_account/api.html:32
+msgid "Generate new API token"
+msgstr "Δημιουργία νέου διακριτικού API"
+
+#: templates/indigo_app/user_account/edit.html:4
+msgid "Edit Profile"
+msgstr "Επεξεργασία προφίλ"
+
+#: templates/main.html:14
+msgid "Mainentance mode. Only staff can use the site."
+msgstr "Λειτουργία συντήρησης. Μόνο το προσωπικό μπορεί να χρησιμοποιήσει τον ιστότοπο."
+
+#: templates/main.html:55
+msgid "Account"
+msgstr "Λογαριασμός"
+
+#: templates/main.html:59
+msgid "Site settings"
+msgstr "Ρυθμίσεις ιστότοπου"
+
+#: templates/main.html:63 templates/main.html:122
+msgid "Log out"
+msgstr "Αποσύνδεση"
+
+#: templates/main.html:74 templates/main.html:133
+msgid "Documentation"
+msgstr "Απόδειξη με έγγραφα"
+
+#: templates/main.html:75 templates/main.html:134
+msgid "Feedback"
+msgstr "Ανατροφοδότηση"
+
+#: templates/main.html:78 templates/main.html:135
+msgid "Indigo on GitHub"
+msgstr "Indigo στο GitHub"
+
+#: templates/main.html:81 templates/main.html:142
+msgid "Terms of Use &amp; Privacy Policy"
+msgstr "Όροι Χρήσης &amp; Πολιτική Απορρήτου"
+
+#: templates/main.html:121
+msgid "Your account"
+msgstr "Ο λογαριασμός σας"
+
+#: templates/place/_place_cards.html:15
+msgid "\n"
+"                    Work\n"
+"                  "
+msgid_plural "\n"
+"                    Works\n"
+"                  "
+msgstr[0] "\n"
+"                    Εργασία\n"
+"                  "
+msgstr[1] "\n"
+"                    Έργα\n"
+"                  "
+
+#: templates/place/_place_cards.html:23
+msgid "\n"
+"                    Task\n"
+"                  "
+msgid_plural "\n"
+"                    Tasks\n"
+"                  "
+msgstr[0] "\n"
+"                    Εργασία\n"
+"                  "
+msgstr[1] "\n"
+"                    Εργασίες\n"
+"                  "
+
+#: templates/place/_place_cards.html:36
+msgid "As at date"
+msgstr "Ως έχει"
+
+#: templates/place/_place_top_contributors.html:8
+#, python-format
+msgid "%(counter)s task"
+msgid_plural "%(counter)s tasks"
+msgstr[0] "%(counter)s εργασία"
+msgstr[1] "%(counter)s εργασίες"
+
+#: templates/place/activity.html:4 templates/place/activity.html:9
+#: templates/place/tabbed_layout.html:50
+msgid "Activity"
+msgstr "Δραστηριότητα"
+
+#: templates/place/detail.html:17
+msgid "Works up to date as at"
+msgstr "Λειτουργεί ενημερωμένο όπως στο"
+
+#: templates/place/detail.html:54
+msgid "Principal works"
+msgstr "Κύρια έργα"
+
+#: templates/place/detail.html:89
+msgid "Contributor leaderboard"
+msgstr "Πίνακας κατάταξης συνεισφερόντων"
+
+#: templates/place/detail.html:157
+msgid "Recently updated works"
+msgstr "Πρόσφατα ενημερωμένα έργα"
+
+#: templates/place/detail.html:178 templates/place/detail.html:214
+msgid "by you"
+msgstr "από εσάς"
+
+#: templates/place/detail.html:193
+msgid "Recently added works"
+msgstr "Πρόσφατα προστιθέμενα έργα"
+
+#: templates/place/detail.html:200
+msgid "Added"
+msgstr "Προστέθηκε"
+
+#: templates/place/detail.html:207
+msgid "repealed"
+msgstr "καταργήθηκε"
+
+#: templates/place/explorer.html:8 templates/place/insights_layout.html:8
+msgid "Explorer"
+msgstr "Εξερευνητής"
+
+#: templates/place/explorer.html:16
+msgid "Go"
+msgstr "Πάω"
+
+#: templates/place/explorer.html:20
+msgid "Use <code>a:</code> as the Akoma Ntoso namespace prefix, and <code>re:</code> for <a href=\"https://lxml.de/xpathxslt.html#regular-expressions-in-xpath\" target=\"_blank\" rel=\"noreferrer noopener\">regular expressions</a>. Also see the <a href=\"https://devhints.io/xpath\" target=\"_blank\" rel=\"noreferrer noopener\">XPath cheatsheet</a>."
+msgstr "Χρησιμοποιήστε το <code>a:</code> ως πρόθεμα χώρου ονομάτων Akoma Ntoso και το <code>re:</code> για τις <a href=\"https://lxml.de/xpathxslt.html#regular-expressions-in-xpath\" target=\"_blank\" rel=\"noreferrer noopener\">κανονικές εκφράσεις</a>. Δείτε επίσης το φύλλο ελέγχου <a href=\"https://devhints.io/xpath\" target=\"_blank\" rel=\"noreferrer noopener\">XPath</a>."
+
+#: templates/place/explorer.html:55
+msgid "Examples"
+msgstr "Παραδείγματα"
+
+#: templates/place/explorer.html:67
+#, python-format
+msgid "%(n_matches)s matches in %(n_documents)s documents"
+msgstr "%(n_matches)s αντιστοιχίες σε %(n_documents)s έγγραφα"
+
+#: templates/place/list.html:4
+msgid "Places"
+msgstr "Μέρη"
+
+#: templates/place/localities.html:4 templates/place/tabbed_layout.html:54
+msgid "Localities"
+msgstr "Τοποθεσίες"
+
+#: templates/place/settings.html:17
+msgid "URL of the Google Sheets spreadsheet with work metadata."
+msgstr "URL του υπολογιστικού φύλλου των Υπολογιστικών Φύλλων Google με μεταδεδομένα εργασίας."
+
+#: templates/place/settings.html:31
+msgid "Date up to which all works have been consolidated."
+msgstr "Ημερομηνία μέχρι την οποία έχουν ενοποιηθεί όλες οι εργασίες."
+
+#: templates/place/settings.html:45
+#, python-format
+msgid "URL of the Style Guide documentation for %(place_name)s."
+msgstr "URL της τεκμηρίωσης του Οδηγού Στυλ για το %(place_name)s."
+
+#: templates/place/settings.html:58
+msgid "The text to display on a document's coverpage when no Gazette (or publication document) is associated with the work."
+msgstr "Το κείμενο που θα εμφανίζεται στην εξώφυλλη ενός εγγράφου όταν δεν υπάρχει σχετική Εφημερίδα (ή έγγραφο δημοσίευσης) με το έργο."
+
+#: templates/place/settings.html:71
+msgid "The text to display on a document's coverpage when it's part of a consolidation."
+msgstr "Το κείμενο που θα εμφανίζεται στην εξώφυλλη ενός εγγράφου όταν αποτελεί μέρος μιας ενοποίησης."
+
+#: templates/place/settings.html:87
+msgid "Is a consolidation being worked on in this place?<br> If checked, a Consolidation point in time will be created on bulk import for all principal works that are older than the given consolidation date — which is either the consolidation_date given per work in the spreadsheet or the as-at date recorded here.<br> For example, if the consolidation date is in 2000 and an Act is from 2001, a consolidation point in time will NOT be created for that Act on bulk import."
+msgstr "Γίνεται κάποια ενοποίηση σε αυτό το σημείο;<br> Εάν επιλεγεί, θα δημιουργηθεί ένα χρονικό σημείο ενοποίησης κατά την μαζική εισαγωγή για όλα τα κύρια έργα που είναι παλαιότερα από την δεδομένη ημερομηνία ενοποίησης — η οποία είναι είτε η ημερομηνία_ενοποίησης που δίνεται ανά έργο στο υπολογιστικό φύλλο είτε η ημερομηνία που καταγράφεται εδώ.<br> Για παράδειγμα, εάν η ημερομηνία ενοποίησης είναι το 2000 και ένας νόμος είναι από το 2001, ΔΕΝ θα δημιουργηθεί χρονικό σημείο ενοποίησης για αυτόν τον νόμο κατά την μαζική εισαγωγή."
+
+#: templates/place/settings.html:103
+msgid "Are Chapters used for Acts in this place?<br> If checked, the 'cap' column will be recorded on bulk import."
+msgstr "Χρησιμοποιούνται κεφάλαια για τις Πράξεις σε αυτό το σημείο;<br> Εάν επιλεγεί, η στήλη «όριο» θα καταγράφεται κατά την μαζική εισαγωγή."
+
+#: templates/place/settings.html:117
+msgid "Is the publication date optional in this place?"
+msgstr "Είναι η ημερομηνία δημοσίευσης προαιρετική σε αυτό το σημείο;"
+
+#: templates/place/settings.html:131
+#, python-format
+msgid "Download full legislation index for %(place)s"
+msgstr "Λήψη πλήρους ευρετηρίου νομοθεσίας για %(place)s"
+
+#: templates/place/settings_layout.html:15
+msgid "Permissions"
+msgstr "Δικαιώματα"
+
+#: templates/place/tabbed_layout.html:19
+msgid "Change locality"
+msgstr "Αλλαγή τοποθεσίας"
+
+#: templates/place/tabbed_layout.html:19
+msgid "Choose locality"
+msgstr "Επιλέξτε τοποθεσία"
+
+#: templates/place/users.html:4
+msgid "Users"
+msgstr "Χρήστες"
+
+#: templates/place/users.html:10
+msgid "Allowed Users"
+msgstr "Επιτρεπόμενοι χρήστες"
+
+#: templates/socialaccount/authentication_error.html:5
+#: templates/socialaccount/authentication_error.html:8
+msgid "Social Network Login Failure"
+msgstr "Αποτυχία σύνδεσης σε κοινωνικό δίκτυο"
+
+#: templates/socialaccount/authentication_error.html:10
+msgid "An error occurred while attempting to login via your social network account."
+msgstr "Παρουσιάστηκε σφάλμα κατά την προσπάθεια σύνδεσης μέσω του λογαριασμού σας στο κοινωνικό δίκτυο."
+
+#: templates/socialaccount/authentication_error.html:12
+msgid "Details"
+msgstr "Καθέκαστα"
+
+#: templates/socialaccount/connections.html:14
+msgid "You can sign in to your account using any of these third party accounts:"
+msgstr "Μπορείτε να συνδεθείτε στον λογαριασμό σας χρησιμοποιώντας οποιονδήποτε από αυτούς τους λογαριασμούς τρίτων:"
+
+#: templates/socialaccount/connections.html:36
+msgid "Really remove this social account?"
+msgstr "Θέλετε να καταργήσετε αυτόν τον λογαριασμό κοινωνικής δικτύωσης;"
+
+#: templates/socialaccount/connections.html:36
+msgid "Disconnect"
+msgstr "Αποσυνδέω"
+
+#: templates/socialaccount/connections.html:46
+msgid "You currently have no social network accounts connected to this account."
+msgstr "Δεν έχετε αυτήν τη στιγμή λογαριασμούς κοινωνικής δικτύωσης συνδεδεμένους με αυτόν τον λογαριασμό."
+
+#: templates/socialaccount/connections.html:51
+msgid "Connect a social account"
+msgstr "Σύνδεση λογαριασμού κοινωνικής δικτύωσης"
+
+#: templates/socialaccount/connections.html:53
+msgid "Connecting to a social account allows you to use it to login to Indigo."
+msgstr "Η σύνδεση σε έναν λογαριασμό κοινωνικής δικτύωσης σάς επιτρέπει να τον χρησιμοποιήσετε για να συνδεθείτε στο Indigo."
+
+#: templates/socialaccount/connections.html:62
+msgid "Connect to"
+msgstr "Σύνδεση με"
+
+#: templates/templated_email/_footer.html:6
+#, python-format
+msgid "The %(INDIGO_ORGANISATION)s Team"
+msgstr "Η ομάδα %(INDIGO_ORGANISATION)s"
+
+#: views/documents.py:142
+#, python-format
+msgid "No provision with this id found: '%(eid)s'"
+msgstr "Δεν βρέθηκε διάταξη με αυτό το αναγνωριστικό: '%(eid)s'"
+
+#: views/places.py:51
+msgid "Publication"
+msgstr "Δημοσίευση"
+
+#: views/places.py:68
+msgid "As-at date"
+msgstr "Ημερομηνία κατά την ημερομηνία"
+
+#: views/places.py:72
+msgid "Consolidation date"
+msgstr "Ημερομηνία ενοποίησης"
+
+#: views/places.py:76
+msgid "Consolidation note"
+msgstr "Σημείωμα ενοποίησης"
+
+#: views/places.py:80
+msgid "Disclaimer"
+msgstr "Αρνηση"
+
+#: views/places.py:236
+msgid "Assigned"
+msgstr "Ανατέθηκε"
+
+#: views/places.py:242
+msgid "Pending review"
+msgstr "Εκκρεμεί αξιολόγηση"
+
+#: views/places.py:311
+msgid "List introductions containing remarks"
+msgstr "Λίστα εισαγωγών που περιέχουν σχόλια"
+
+#: views/places.py:312
+msgid "Adjacent block lists"
+msgstr "Παρακείμενες λίστες μπλοκαρίσματος"
+
+#: views/places.py:376
+#, python-format
+msgid "Expression must produce elements, but found %(classname)s instead."
+msgstr "Η έκφραση πρέπει να παράγει στοιχεία, αλλά αντί αυτού βρέθηκε %(classname)s."
+
+#: views/places.py:425
+msgid "Settings updated."
+msgstr "Οι ρυθμίσεις ενημερώθηκαν."
+
+#: views/places.py:451
+msgid "Users updated."
+msgstr "Οι χρήστες ενημερώθηκαν."
+
+#: views/places.py:464
+#, python-format
+msgid "Full index for %(place)s.xlsx"
+msgstr "Πλήρες ευρετήριο για %(place)s.xlsx"
+
+#: views/places.py:510
+#, python-format
+msgid "legislation %(place)s.xlsx"
+msgstr "νομοθεσία %(place)s.xlsx"
+
+#: views/places.py:653
+#, python-format
+msgid "Updated %(works_count)s works."
+msgstr "Ενημερωμένα %(works_count)s έργα."
+
+#: views/places.py:679
+#, python-format
+msgid "Approved %(works_count)s works."
+msgstr "Εγκεκριμένα %(works_count)s έργα."
+
+#: views/places.py:681
+#, python-format
+msgid "Created %(import_tasks_count)s Import tasks."
+msgstr "Δημιουργήθηκαν εργασίες εισαγωγής %(import_tasks_count)s."
+
+#: views/places.py:683
+#, python-format
+msgid "Created %(gazette_tasks_count)s Gazette tasks."
+msgstr "Δημιουργήθηκαν εργασίες %(gazette_tasks_count)s Gazette."
+
+#: views/places.py:685
+#, python-format
+msgid "Created %(amendment_tasks_count)s Amendment tasks."
+msgstr "Δημιουργήθηκαν %(amendment_tasks_count)s εργασίες τροποποίησης."
+
+#: views/places.py:702
+#, python-format
+msgid "Unapproved %(works_count)s works."
+msgstr "Μη εγκεκριμένα %(works_count)s έργα."
+
+#: views/places.py:742
+#, python-format
+msgid "Linked references for %(n_docs)s documents, with %(n_changed)s documents changed."
+msgstr "Συνδεδεμένες αναφορές για έγγραφα %(n_docs)s , με τροποποιημένα έγγραφα %(n_changed)s."
+
+#: views/tasks.py:431
+msgid "submitted for review"
+msgstr "υποβλήθηκε για αξιολόγηση"
+
+#: views/tasks.py:433
+msgid "returned with changes requested"
+msgstr "επέστρεψε με τις αλλαγές που ζητήθηκαν"
+
+#: views/tasks.py:434
+#, python-format
+msgid "Task '%(title)s' has been %(verb)s"
+msgstr "Η εργασία '%(title)s' έχει γίνει %(verb)s"
+
+#: views/tasks.py:471
+#, python-format
+msgid "Task '%(title)s' has been unassigned"
+msgstr "Η εργασία '%(title)s' δεν έχει ανατεθεί"
+
+#: views/tasks.py:478
+#, python-format
+msgid "You have picked up the task '%(title)s'"
+msgstr "Έχετε αναλάβει την εργασία '%(title)s'"
+
+#: views/tasks.py:480
+#, python-format
+msgid "Task '%(title)s' has been assigned"
+msgstr "Η εργασία '%(title)s' έχει ανατεθεί"
+
+#: views/tasks.py:515
+#, python-format
+msgid "Task '%(title)s' has been updated"
+msgstr "Η εργασία '%(title)s' έχει ενημερωθεί"
+
+#: views/tasks.py:520
+#, python-format
+msgid "Task '%(title)s' has been blocked"
+msgstr "Η εργασία '%(title)s' έχει αποκλειστεί"
+
+#: views/tasks.py:526
+#, python-format
+msgid "Task '%(title)s' has been unblocked"
+msgstr "Η εργασία '%(title)s' έχει ξεμπλοκαριστεί"
+
+#: views/tasks.py:565
+#, python-format
+msgid "Unassigned %(count)d task%(plural)s"
+msgstr "Μη ανατεθειμένη εργασία %(count)d%(plural)s"
+
+#: views/tasks.py:567
+#, python-format
+msgid "Assigned %(count)d task%(plural)s to %(user)s"
+msgstr "Ανάθεση %(count)d εργασίας%(plural)s σε %(user)s"
+
+#: views/tasks.py:572
+msgid "Computer says no."
+msgstr "Ο υπολογιστής λέει όχι."
+
+#: views/tasks.py:594
+#, python-format
+msgid "%(verb)s %(count)d task%(plural)s"
+msgstr "%(verb)s %(count)d εργασία%(plural)s"
+
+#: views/tasks.py:598
+#, python-format
+msgid "Couldn't %(verb)s %(count)d task%(plural)s"
+msgstr "Δεν ήταν δυνατή η %(verb)s %(count)d εργασία%(plural)s"
+
+#: views/works.py:211
+msgid "Work updated."
+msgstr "Η εργασία ενημερώθηκε."
+
+#: views/works.py:314
+#, python-format
+msgid "Deleted %(title)s · %(frbr_uri)s"
+msgstr "Διαγράφηκε %(title)s · %(frbr_uri)s"
+
+#: views/works.py:317
+msgid "This work cannot be deleted while linked documents and related works exist."
+msgstr "Αυτό το έργο δεν μπορεί να διαγραφεί όσο υπάρχουν συνδεδεμένα έγγραφα και σχετικά έργα."
+
+#: views/works.py:921 views/works.py:923
+#, python-format
+msgid "Restored version %(version_id)s"
+msgstr "Επαναφερμένη έκδοση %(version_id)s"
+
+#: views/works.py:982
+msgid "Unable to get spreadsheet ID from URL"
+msgstr "Δεν είναι δυνατή η λήψη του αναγνωριστικού υπολογιστικού φύλλου από τη διεύθυνση URL"
+
+#: views/works.py:989
+#, python-format
+msgid "Unable to fetch spreadsheet information. Is your spreadsheet shared with %(email)s?"
+msgstr "Δεν είναι δυνατή η ανάκτηση πληροφοριών υπολογιστικού φύλλου. Είναι κοινόχρηστο το υπολογιστικό σας φύλλο με τον χρήστη %(email)s;"
+
+#: views/works.py:1086
+#, python-format
+msgid "Error during import: %(error)s"
+msgstr "Σφάλμα κατά την εισαγωγή: %(error)s"
+
+#: views/works.py:1199
+msgid "Match on title"
+msgstr "Αγώνας για τον τίτλο"
+
+#: views/works.py:1200
+msgid "Match on year and number"
+msgstr "Ταίριασμα με έτος και αριθμό"
+

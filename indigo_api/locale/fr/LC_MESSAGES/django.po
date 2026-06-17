@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-06-17 11:26+0200\n"
-"PO-Revision-Date: 2026-06-17 09:33\n"
+"PO-Revision-Date: 2026-06-17 10:19\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -696,7 +696,7 @@ msgstr "Recherchez et associez la Gazette (document de publication original) pou
 
 #: models/tasks.py:130
 msgid "Extract the instructions for applying this amendment."
-msgstr ""
+msgstr "Extraire les instructions pour l'application de cet amendement."
 
 #: models/tasks.py:141
 msgid "Can submit an open task for review"
@@ -914,11 +914,11 @@ msgstr "expiré"
 
 #: models/works.py:489
 msgid "replaced"
-msgstr ""
+msgstr "remplacé"
 
 #: models/works.py:490
 msgid "disapplied"
-msgstr ""
+msgstr "désappliqué"
 
 #: models/works.py:495
 msgid "Can review work details"
@@ -1119,7 +1119,7 @@ msgstr "Aucune localité de ce type pour ce pays : %(code)s"
 
 #: models/works.py:611
 msgid "This field is required."
-msgstr ""
+msgstr "Ce champ est obligatoire."
 
 #: models/works.py:751
 msgid "This document was unpublished because its work was unapproved."
@@ -1255,43 +1255,43 @@ msgstr "pseudonymes de travail"
 
 #: models/works.py:1112
 msgid "The Chapter number"
-msgstr ""
+msgstr "Le numéro du chapitre"
 
 #: models/works.py:1113
 msgid "Specify if it should be anything other than 'chapter' (the default)"
-msgstr ""
+msgstr "Précisez si la valeur doit être différente de « chapitre » (valeur par défaut)."
 
 #: models/works.py:1115
 msgid "validity start date"
-msgstr ""
+msgstr "date de début de validité"
 
 #: models/works.py:1115
 msgid "Date from which this Chapter number applied to the work"
-msgstr ""
+msgstr "Date à partir de laquelle ce numéro de chapitre s'applique à l'ouvrage"
 
 #: models/works.py:1116
 msgid "validity end date"
-msgstr ""
+msgstr "date de fin de validité"
 
 #: models/works.py:1116
 msgid "Date until which this Chapter number applied to the work"
-msgstr ""
+msgstr "Date jusqu'à laquelle ce numéro de chapitre s'appliquait à l'ouvrage"
 
 #: models/works.py:1117
 msgid "revision name"
-msgstr ""
+msgstr "nom de révision"
 
 #: models/works.py:1117
 msgid "Name of the publication in which this Chapter number was assigned to the work"
-msgstr ""
+msgstr "Nom de la publication dans laquelle ce numéro de chapitre a été attribué à l'ouvrage"
 
 #: models/works.py:1121
 msgid "chapter number"
-msgstr ""
+msgstr "numéro de chapitre"
 
 #: models/works.py:1122
 msgid "chapter numbers"
-msgstr ""
+msgstr "numéros de chapitre"
 
 #: models/works.py:1135
 msgid "Chapter"

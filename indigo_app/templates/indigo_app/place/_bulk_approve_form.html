@@ -4,7 +4,7 @@
   <div class="modal-content">
     <div class="modal-header">
       <h5 class="modal-title">
-        {% blocktrans count works_length=form.broker.works|length %}
+        {% blocktrans trimmed count works_length=form.broker.works|length %}
           Approve {{ works_length }} work in progress
         {% plural %}
           Approve {{ works_length }} works in progress
@@ -155,12 +155,12 @@
                                    id="amendment_task_create_{{ amendment.pk }}"
                                    name="amendment_task_create_{{ amendment.pk }}">
                             <label class="form-check-label" for="amendment_task_create_{{ amendment.pk }}">
-                              {% blocktrans with amended_title=amendment.amended_work.title amended_numbered_title=amendment.amended_work.numbered_title amending_title=amendment.amending_work.title amending_numbered_title=amendment.amending_work.numbered_title date=amendment.date|date:"Y-m-d" %}
+                              {% blocktrans trimmed with amended_title=amendment.amended_work.title amended_numbered_title=amendment.amended_work.numbered_title amending_title=amendment.amending_work.title amending_numbered_title=amendment.amending_work.numbered_title date=amendment.date|date:"Y-m-d" %}
                                 Create task: {{ amended_title }} ({{ amended_numbered_title }}) amended by {{ amending_title }} ({{ amending_numbered_title }}) – {{ date }}
                               {% endblocktrans %}
                             </label>
                           </div>
-                          {% blocktrans asvar description_default with title=amendment.amending_work.title numbered_title=amendment.amending_work.numbered_title %}
+                          {% blocktrans asvar description_default trimmed with title=amendment.amending_work.title numbered_title=amendment.amending_work.numbered_title %}
 Apply the amendments made by {{ title }} ({{ numbered_title }}) on the given date.
 
 The amendment has already been linked, so start at Step 3 of https://docs.laws.africa/managing-works/amending-works.{% endblocktrans %}

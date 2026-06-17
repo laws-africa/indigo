@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-04-17 15:58+0200\n"
-"PO-Revision-Date: 2026-06-17 10:20\n"
+"PO-Revision-Date: 2026-06-17 13:19\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -233,7 +233,7 @@ msgstr "Comienzo"
 
 #: forms/works.py:877
 msgid "Not commenced"
-msgstr "No ha comenzado"
+msgstr "Pendiente de entrada en vigor"
 
 #: forms/works.py:877
 msgid "Commencement date unknown"
@@ -241,7 +241,7 @@ msgstr "Fecha de inicio desconocida"
 
 #: forms/works.py:877 views/places.py:57
 msgid "Commenced"
-msgstr "Comenzó"
+msgstr "En vigor"
 
 #: forms/works.py:878
 msgid "Partially commenced"
@@ -1087,7 +1087,7 @@ msgstr "talón"
 #: templates/indigo_api/work/_chooser_modal.html:68
 #: templates/indigo_api/work/_info_badges.html:17
 msgid "not commenced"
-msgstr "no ha comenzado"
+msgstr "pendiente de entrada en vigor"
 
 #: templates/indigo_api/work/_chooser_modal.html:72
 #: templates/indigo_api/work/_info_badges.html:19

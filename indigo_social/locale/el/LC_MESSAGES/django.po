@@ -1,0 +1,291 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-08-28 13:29+0200\n"
+"PO-Revision-Date: 2026-06-17 10:20\n"
+"Last-Translator: \n"
+"Language-Team: Greek\n"
+"Language: el_GR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
+"X-Crowdin-Project-ID: 2\n"
+"X-Crowdin-Language: el\n"
+"X-Crowdin-File: /master/indigo_social/locale/en/LC_MESSAGES/django.po\n"
+"X-Crowdin-File-ID: 208\n"
+
+#: forms.py:19
+msgid "Your username cannot include spaces, punctuation or capital letters."
+msgstr "Το όνομα χρήστη σας δεν μπορεί να περιλαμβάνει κενά, σημεία στίξης ή κεφαλαία γράμματα."
+
+#: forms.py:23
+msgid "First name"
+msgstr "Ονομα"
+
+#: forms.py:24
+msgid "Last name"
+msgstr "Επώνυμο"
+
+#: forms.py:25
+msgid "Username"
+msgstr "Όνομα χρήστη"
+
+#: forms.py:26
+msgid "Country"
+msgstr "Χώρα"
+
+#: forms.py:27
+msgid "Profile photo"
+msgstr "Φωτογραφία προφίλ"
+
+#: forms.py:28
+msgid "Language"
+msgstr "Γλώσσα"
+
+#: forms.py:54
+msgid "This username is already taken."
+msgstr "Αυτό το όνομα χρήστη είναι ήδη κατειλημμένο."
+
+#: models.py:39
+msgid "user"
+msgstr "μεταχειριζόμενος"
+
+#: models.py:40
+msgid "bio"
+msgstr "βιογραφικό"
+
+#: models.py:40
+msgid "A short bio"
+msgstr "Ένα σύντομο βιογραφικό"
+
+#: models.py:41
+msgid "qualifications"
+msgstr "προσόντα"
+
+#: models.py:41 templates/indigo_social/user_layout.html:66
+msgid "Qualifications"
+msgstr "Προσόντα"
+
+#: models.py:42
+msgid "skills"
+msgstr "δεξιότητες"
+
+#: models.py:42 templates/indigo_social/user_layout.html:61
+msgid "Skills"
+msgstr "Δεξιότητες"
+
+#: models.py:43
+msgid "organisations"
+msgstr "οργανισμοί"
+
+#: models.py:43 templates/indigo_social/user_layout.html:56
+msgid "Organisations"
+msgstr "Οργανισμοί"
+
+#: models.py:44
+msgid "specialisations"
+msgstr "ειδικότητες"
+
+#: models.py:44 templates/indigo_social/user_layout.html:71
+msgid "Specialisations"
+msgstr "Εξειδικεύσεις"
+
+#: models.py:45
+msgid "areas of law"
+msgstr "τομείς του δικαίου"
+
+#: models.py:45 templates/indigo_social/user_layout.html:76
+msgid "Areas of law"
+msgstr "Τομείς του δικαίου"
+
+#: models.py:46
+msgid "profile photo"
+msgstr "φωτογραφία προφίλ"
+
+#: models.py:47
+msgid "profile photo nonce"
+msgstr "φωτογραφία προφίλ χωρίς προηγούμενο"
+
+#: models.py:48
+msgid "twitter username"
+msgstr "όνομα χρήστη twitter"
+
+#: models.py:49
+msgid "linkedin profile"
+msgstr "προφίλ στο LinkedIn"
+
+#: templates/indigo_app/user_account/edit.html:4
+msgid "Edit Profile"
+msgstr "Επεξεργασία προφίλ"
+
+#: templates/indigo_app/user_account/edit.html:32
+msgid "Email"
+msgstr "E-mail"
+
+#: templates/indigo_app/user_account/edit.html:35
+msgid "manage your email addresses"
+msgstr "διαχειριστείτε τις διευθύνσεις ηλεκτρονικού ταχυδρομείου σας"
+
+#: templates/indigo_app/user_account/edit.html:42
+msgid "Tell us a bit about yourself"
+msgstr "Πείτε μας λίγα πράγματα για τον εαυτό σας"
+
+#: templates/indigo_app/user_account/edit.html:64
+msgid "Are you sure you want to remove your profile photo?"
+msgstr "Είστε σίγουροι ότι θέλετε να καταργήσετε τη φωτογραφία προφίλ σας;"
+
+#: templates/indigo_app/user_account/edit.html:70
+msgid "Upload a photo"
+msgstr "Ανεβάστε μια φωτογραφία"
+
+#: templates/indigo_app/user_account/edit.html:72
+msgid "A square photo at least 200 pixels wide is best."
+msgstr "Μια τετράγωνη φωτογραφία με πλάτος τουλάχιστον 200 pixel είναι η καλύτερη επιλογή."
+
+#: templates/indigo_app/user_account/edit.html:88
+msgid "Professional skills"
+msgstr "Επαγγελματικές δεξιότητες"
+
+#: templates/indigo_app/user_account/edit.html:95
+msgid "What organisations do you work for or with?"
+msgstr "Για ποιους οργανισμούς ή με ποιους οργανισμούς εργάζεστε;"
+
+#: templates/indigo_app/user_account/edit.html:157
+msgid "Social media profiles"
+msgstr "Προφίλ κοινωνικών μέσων"
+
+#: templates/indigo_app/user_account/edit.html:195
+msgid "Save"
+msgstr "Εκτός"
+
+#: templates/indigo_app/user_account/edit.html:196
+msgid "View my profile"
+msgstr "Δείτε το προφίλ μου"
+
+#: templates/indigo_social/badge_detail.html:7
+#: templates/indigo_social/badges.html:4 templates/indigo_social/badges.html:7
+#: templates/indigo_social/badges.html:16
+msgid "Badges"
+msgstr "Εμβλήματα"
+
+#: templates/indigo_social/badge_detail.html:25
+msgid "Awarded to"
+msgstr "Απονεμήθηκε σε"
+
+#: templates/indigo_social/badge_detail.html:31
+#, python-format
+msgid "%(ts)s ago"
+msgstr "%(ts)s πριν"
+
+#: templates/indigo_social/badge_detail.html:36
+msgid "No-one has been awarded this badge."
+msgstr "Κανείς δεν έχει λάβει αυτό το σήμα."
+
+#: templates/indigo_social/badge_detail.html:42
+msgid "Permissions granted by this badge"
+msgstr "Δικαιώματα που χορηγούνται από αυτό το σήμα"
+
+#: templates/indigo_social/badge_detail.html:57
+#, python-format
+msgid "Users awarded this badge are added to the <a href=\"%(url)s\">%(name)s group</a>."
+msgstr "Οι χρήστες που έχουν λάβει αυτό το σήμα προστίθενται στην ομάδα <a href=\"%(url)s\">%(name)s</a>."
+
+#: templates/indigo_social/badges.html:18
+msgid "Badges indicate expertise and are earned by completing tasks."
+msgstr "Τα badges υποδεικνύουν εξειδίκευση και αποκτώνται ολοκληρώνοντας εργασίες."
+
+#: templates/indigo_social/contributors.html:4
+#: templates/indigo_social/contributors.html:6
+#: templates/indigo_social/contributors.html:12
+#: templates/indigo_social/user_layout.html:7
+msgid "Contributors"
+msgstr "Συντελεστές"
+
+#: templates/indigo_social/user_activity.html:6
+#: templates/indigo_social/user_layout.html:92
+msgid "Activity"
+msgstr "Δραστηριότητα"
+
+#: templates/indigo_social/user_layout.html:82
+msgid "Edit profile"
+msgstr "Επεξεργασία προφίλ"
+
+#: templates/indigo_social/user_layout.html:89
+msgid "Overview"
+msgstr "Επισκόπηση"
+
+#: templates/indigo_social/user_layout.html:95
+msgid "Tasks"
+msgstr "Εργασίες"
+
+#: templates/indigo_social/user_profile.html:8
+msgid "Achievements"
+msgstr "Επιτεύγματα"
+
+#: templates/indigo_social/user_profile.html:16
+msgid "No badges earned yet"
+msgstr "Δεν έχετε κερδίσει ακόμη σήματα"
+
+#: templates/indigo_social/user_profile.html:26
+msgid "Award a new badge to this user:"
+msgstr "Απονομή νέου σήματος σε αυτόν τον χρήστη:"
+
+#: templates/indigo_social/user_profile.html:33
+#: templates/indigo_social/user_profile.html:48
+msgid "Are you sure?"
+msgstr "Είσαι σίγουρος/η;"
+
+#: templates/indigo_social/user_profile.html:33
+msgid "Award badge"
+msgstr "σήμα βραβείου"
+
+#: templates/indigo_social/user_profile.html:48
+msgid "Remove badge"
+msgstr "Αφαίρεση σήματος"
+
+#: templates/indigo_social/user_profile.html:55
+msgid "Recent activity"
+msgstr "Πρόσφατη δραστηριότητα"
+
+#: templates/indigo_social/user_profile.html:60
+msgid "More activity"
+msgstr "Περισσότερη δραστηριότητα"
+
+#: templates/main.html:14
+msgid "Profile"
+msgstr "Προφίλ"
+
+#: templates/main.html:15
+msgid "Account"
+msgstr "Λογαριασμός"
+
+#: templates/main.html:19
+msgid "Site settings"
+msgstr "Ρυθμίσεις ιστότοπου"
+
+#: templates/main.html:23
+msgid "Log out"
+msgstr "Αποσύνδεση"
+
+#: templates/main.html:27
+msgid "Log in"
+msgstr "Σύνδεση"
+
+#: views.py:135
+#, python-format
+msgid "%(badge)s badge awarded to %(user)s"
+msgstr "%(badge)s σήμα που απονεμήθηκε στον/στην %(user)s"
+
+#: views.py:137
+#, python-format
+msgid "%(badge)s badge couldn't be awarded to %(user)s"
+msgstr "Το σήμα %(badge)s δεν μπόρεσε να απονεμηθεί στον/στην %(user)s"
+
+#: views.py:154
+#, python-format
+msgid "%(badge)s badge removed from %(user)s"
+msgstr "Το σήμα %(badge)s αφαιρέθηκε από το %(user)s"
+

@@ -1,0 +1,3686 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-04-17 15:58+0200\n"
+"PO-Revision-Date: 2026-06-17 10:20\n"
+"Last-Translator: \n"
+"Language-Team: Arabic\n"
+"Language: ar_SA\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5);\n"
+"X-Crowdin-Project: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
+"X-Crowdin-Project-ID: 2\n"
+"X-Crowdin-Language: ar\n"
+"X-Crowdin-File: /master/indigo_app/locale/en/LC_MESSAGES/django.po\n"
+"X-Crowdin-File-ID: 206\n"
+
+#: forms/documents.py:28
+msgid "Invalid json data"
+msgstr "بيانات JSON غير صالحة"
+
+#: forms/places.py:25 forms/works.py:1638
+msgid "Please enter a valid Google Sheets URL, such as https://docs.google.com/spreadsheets/d/ABCXXX/"
+msgstr "يرجى إدخال رابط صحيح لملف Google Sheets، مثل https://docs.google.com/spreadsheets/d/ABCXXX/"
+
+#: forms/places.py:36
+msgid "Users with edit permissions"
+msgstr "المستخدمون الذين لديهم صلاحيات التحرير"
+
+#: forms/places.py:52
+msgid "XPath"
+msgstr "XPath"
+
+#: forms/places.py:53
+msgid "Parent context"
+msgstr "السياق الأبوي"
+
+#: forms/places.py:53 forms/tasks.py:23 forms/tasks.py:34
+#: templates/indigo_api/task/_labels.html:10
+#: templates/indigo_api/work/_publication_document.html:39 views/tasks.py:338
+msgid "None"
+msgstr "لا أحد"
+
+#: forms/places.py:53
+msgid "1 level"
+msgstr "المستوى 1"
+
+#: forms/places.py:53
+msgid "2 levels"
+msgstr "مستويان"
+
+#: forms/places.py:54
+msgid "Include localities"
+msgstr "أدرج المناطق"
+
+#: forms/places.py:55
+msgid "Global search"
+msgstr "بحث عالمي"
+
+#: forms/tasks.py:23 forms/works.py:887
+#: templates/indigo_api/work/batch_create.html:151
+#: templates/indigo_api/work/batch_create.html:285
+msgid "Type"
+msgstr "يكتب"
+
+#: forms/tasks.py:98 templates/indigo_api/task/_detail.html:77
+msgid "Input file"
+msgstr "ملف الإدخال"
+
+#: forms/tasks.py:98 templates/indigo_api/task/_detail.html:90
+msgid "Output file"
+msgstr "ملف الإخراج"
+
+#: forms/tasks.py:100
+msgid "Input URL"
+msgstr "عنوان URL المدخل"
+
+#: forms/tasks.py:100
+msgid "Output URL"
+msgstr "عنوان URL الناتج"
+
+#: forms/tasks.py:140 templates/indigo_api/task/_detail.html:176
+msgid "Labels"
+msgstr "الملصقات"
+
+#: forms/tasks.py:141
+msgid "State"
+msgstr "ولاية"
+
+#: forms/tasks.py:142 templates/indigo_api/task/_card_single.html:59
+#: templates/indigo_api/task/_detail.html:139
+#: templates/indigo_api/task/_list_table.html:19
+#: templates/templated_email/_task_detail_block.html:12
+#: templates/templated_email/_task_detail_block.html:17
+msgid "Assigned to"
+msgstr "مُسند إلى"
+
+#: forms/tasks.py:143 templates/indigo_api/task/_card_single.html:119
+msgid "Submitted by"
+msgstr "مقدم من"
+
+#: forms/tasks.py:144
+msgid "Task type"
+msgstr "نوع المهمة"
+
+#: forms/tasks.py:163 forms/tasks.py:164
+msgid "(Not assigned)"
+msgstr "(غير مُخصص)"
+
+#: forms/tasks.py:182 forms/works.py:953
+msgid "Created at (newest first)"
+msgstr "تاريخ الإنشاء (الأحدث أولاً)"
+
+#: forms/tasks.py:182 forms/works.py:953
+msgid "Created at (oldest first)"
+msgstr "تاريخ الإنشاء (من الأقدم إلى الأقدم)"
+
+#: forms/tasks.py:183 forms/works.py:954
+msgid "Updated at (newest first)"
+msgstr "تم التحديث في (الأحدث أولاً)"
+
+#: forms/tasks.py:183 forms/works.py:954
+msgid "Updated at (oldest first)"
+msgstr "تم التحديث في (الأقدم أولاً)"
+
+#: forms/tasks.py:326 templates/indigo_api/task/_detail.html:145
+msgid "Unassigned"
+msgstr "غير مُعيّن"
+
+#: forms/tasks.py:337
+#, python-format
+msgid "That user doesn't have appropriate permissions for %(country)s"
+msgstr "لا يملك هذا المستخدم الصلاحيات المناسبة لـ %(country)s"
+
+#: forms/users.py:12 forms/users.py:28
+msgid "First name"
+msgstr "الاسم الأول"
+
+#: forms/users.py:13 forms/users.py:29
+msgid "Last name"
+msgstr "اسم العائلة"
+
+#: forms/users.py:14 templates/indigo_api/document/_properties.html:19
+msgid "Language"
+msgstr "لغة"
+
+#: forms/users.py:30
+msgid "Country"
+msgstr "دولة"
+
+#: forms/users.py:33
+msgid "Please accept the Terms of Use."
+msgstr "يرجى الموافقة على شروط الاستخدام."
+
+#: forms/users.py:39 templates/account/signup.html:139
+msgid "Creating new accounts is currently not allowed."
+msgstr "إنشاء حسابات جديدة غير مسموح به حاليًا."
+
+#: forms/works.py:294
+msgid "Error building FRBR URI"
+msgstr "حدث خطأ أثناء إنشاء FRBR URI"
+
+#: forms/works.py:383
+msgid "Alias"
+msgstr "الاسم المستعار"
+
+#: forms/works.py:471
+msgid "Amending work and date must be unique together."
+msgstr "يجب أن يكون كل من تعديل العمل والتاريخ فريدًا معًا."
+
+#: forms/works.py:476 templates/indigo_api/work/batch_create.html:152
+#: templates/indigo_api/work/batch_create.html:286
+msgid "Number"
+msgstr "رقم"
+
+#: forms/works.py:477
+msgid "Validity start date"
+msgstr "تاريخ بدء الصلاحية"
+
+#: forms/works.py:478
+msgid "Validity end date"
+msgstr "تاريخ انتهاء الصلاحية"
+
+#: forms/works.py:479
+msgid "Revision name"
+msgstr "اسم المراجعة"
+
+#: forms/works.py:487
+msgid "Name"
+msgstr "اسم"
+
+#: forms/works.py:587
+msgid "Consolidation dates must be unique."
+msgstr "يجب أن تكون تواريخ التوحيد فريدة."
+
+#: forms/works.py:621
+msgid "A main commencement already exists."
+msgstr "يوجد بالفعل حفل افتتاح رئيسي."
+
+#: forms/works.py:631
+msgid "A commencement for all provisions must be the only commencement."
+msgstr "يجب أن يكون بدء العمل بجميع الأحكام هو البدء الوحيد."
+
+#: forms/works.py:638
+msgid "Cannot specify all provisions, and a list of provisions."
+msgstr "لا يمكن تحديد جميع الأحكام، وقائمة الأحكام."
+
+#: forms/works.py:645
+msgid "A commencement at this date and with this commencing work already exists."
+msgstr "تم البدء في هذا التاريخ، وبناءً على ذلك، تم بالفعل بدء العمل."
+
+#: forms/works.py:713 forms/works.py:765
+msgid "It seems that commencements have been edited elsewhere. Cancel your edits and make them again."
+msgstr "يبدو أن حفلات التخرج قد تم تعديلها في مكان آخر. قم بإلغاء تعديلاتك وأعد إجراؤها."
+
+#: forms/works.py:724
+msgid "Commencing work and date must be unique together."
+msgstr "يجب أن يكون بدء العمل وتاريخه فريدين معاً."
+
+#: forms/works.py:775
+msgid "Commenced work, commencing work, and date must be unique together."
+msgstr "يجب أن تكون عبارة \"بدأ العمل\" و\"بدء العمل\" والتاريخ فريدة معًا."
+
+#: forms/works.py:872 templates/indigo_app/place/_work_detail.html:35
+msgid "Amendments"
+msgstr "التعديلات"
+
+#: forms/works.py:876 templates/indigo_api/work/related.html:18
+msgid "Commencement"
+msgstr "بدء"
+
+#: forms/works.py:877
+msgid "Not commenced"
+msgstr "لم يبدأ بعد"
+
+#: forms/works.py:877
+msgid "Commencement date unknown"
+msgstr "تاريخ البدء غير معروف"
+
+#: forms/works.py:877 views/places.py:57
+msgid "Commenced"
+msgstr "بدأ"
+
+#: forms/works.py:878
+msgid "Partially commenced"
+msgstr "بدأ جزئياً"
+
+#: forms/works.py:878
+msgid "Multiple commencements"
+msgstr "حفلات تخرج متعددة"
+
+#: forms/works.py:883 templates/indigo_app/place/_work_detail.html:43
+msgid "Repeals"
+msgstr "إلغاء"
+
+#: forms/works.py:883
+msgid "Not repealed"
+msgstr "لم يتم إلغاؤه"
+
+#: forms/works.py:883
+msgid "Repealed"
+msgstr "تم إلغاؤه"
+
+#: forms/works.py:888 templates/place/detail.html:63
+msgid "Stubs"
+msgstr "بقايا"
+
+#: forms/works.py:888 templates/indigo_api/work/_form_content.html:253
+msgid "Stub"
+msgstr "جذع"
+
+#: forms/works.py:888
+msgid "Not a stub"
+msgstr "ليس بذرة"
+
+#: forms/works.py:889 forms/works.py:890
+msgid "Work in progress"
+msgstr "العمل جارٍ"
+
+#: forms/works.py:890 templates/indigo_api/work/overview.html:101
+msgid "Approved"
+msgstr "موافقة"
+
+#: forms/works.py:892
+msgid "Point in time status"
+msgstr "حالة نقطة زمنية"
+
+#: forms/works.py:893
+msgid "Published"
+msgstr "نُشر"
+
+#: forms/works.py:893
+msgid "Draft"
+msgstr "مسودة"
+
+#: forms/works.py:897 forms/works.py:898 views/places.py:83
+msgid "Principal"
+msgstr "رئيسي"
+
+#: forms/works.py:898
+msgid "Not Principal"
+msgstr "ليس رئيسيًا"
+
+#: forms/works.py:900 templates/indigo_api/document/_secondary_pane.html:11
+#: templates/indigo_api/task/list.html:4
+#: templates/indigo_api/work/batch_create.html:160
+#: templates/indigo_api/work/batch_create.html:293
+#: templates/indigo_api/work/layout.html:46
+#: templates/indigo_api/work/tasks.html:4
+#: templates/indigo_app/place/_work_detail.html:60 templates/main.html:38
+#: templates/place/detail.html:102 templates/place/tabbed_layout.html:47
+msgid "Tasks"
+msgstr "المهام"
+
+#: forms/works.py:901
+msgid "Has open tasks"
+msgstr "يحتوي على مهام مفتوحة"
+
+#: forms/works.py:901
+msgid "Has unblocked tasks"
+msgstr "تم حل المهام المحظورة"
+
+#: forms/works.py:902
+msgid "Has only blocked tasks"
+msgstr "لم يتم حظر سوى المهام"
+
+#: forms/works.py:902
+msgid "Has no open tasks"
+msgstr "لا توجد مهام مفتوحة لديه"
+
+#: forms/works.py:904
+msgid "Primary and subsidiary"
+msgstr "الأساسي والفرعي"
+
+#: forms/works.py:905 templates/place/detail.html:69
+msgid "Primary"
+msgstr "أساسي"
+
+#: forms/works.py:905 templates/indigo_api/work/related.html:11
+#: templates/indigo_app/place/_work_detail.html:51
+#: templates/place/detail.html:78
+msgid "Subsidiary"
+msgstr "شركة تابعة"
+
+#: forms/works.py:907 templates/indigo_api/work/_form_consolidations.html:4
+msgid "Consolidations"
+msgstr "عمليات الدمج"
+
+#: forms/works.py:908
+msgid "Has consolidation"
+msgstr "هل هناك توحيد"
+
+#: forms/works.py:908
+msgid "No consolidation"
+msgstr "لا يوجد توحيد"
+
+#: forms/works.py:910 templates/indigo_api/work/_publication_document.html:4
+#: templates/indigo_app/place/_work_detail_overview.html:17
+msgid "Publication document"
+msgstr "وثيقة النشر"
+
+#: forms/works.py:911
+msgid "Has publication document"
+msgstr "يتضمن وثيقة النشر"
+
+#: forms/works.py:912
+msgid "No publication document"
+msgstr "لا يوجد مستند للنشر"
+
+#: forms/works.py:914 templates/indigo_api/work/amendments.html:5
+#: templates/indigo_api/work/amendments.html:8
+#: templates/indigo_api/work/layout.html:40
+#: templates/indigo_app/place/_work_detail.html:17
+msgid "Points in time"
+msgstr "نقاط زمنية"
+
+#: forms/works.py:915
+msgid "Has one point in time"
+msgstr "له نقطة زمنية واحدة"
+
+#: forms/works.py:915
+msgid "Has multiple points in time"
+msgstr "يحتوي على نقاط زمنية متعددة"
+
+#: forms/works.py:916
+msgid "Has no points in time"
+msgstr "ليس لديه نقاط زمنية"
+
+#: forms/works.py:920 templates/indigo_api/work/_amendment_tables.html:10
+#: templates/indigo_api/work/_amendment_tables.html:38
+#: templates/indigo_api/work/_commencement_tables.html:10
+#: templates/indigo_api/work/_commencement_tables.html:46
+#: templates/indigo_api/work/_repeal_tables.html:9
+#: templates/indigo_api/work/_repeal_tables.html:34
+msgid "Date"
+msgstr "تاريخ"
+
+#: forms/works.py:955
+msgid "Date (newest first)"
+msgstr "التاريخ (الأحدث أولاً)"
+
+#: forms/works.py:955
+msgid "Date (oldest first)"
+msgstr "التاريخ (من الأقدم إلى الأول)"
+
+#: forms/works.py:956
+msgid "Title (A-Z)"
+msgstr "العنوان (أريزونا)"
+
+#: forms/works.py:956
+msgid "Title (Z-A)"
+msgstr "العنوان (جنوب أفريقيا)"
+
+#: forms/works.py:957
+msgid "Number (ascending)"
+msgstr "الرقم (تصاعديًا)"
+
+#: forms/works.py:957
+msgid "Number (descending)"
+msgstr "الرقم (تنازليًا)"
+
+#: forms/works.py:1589
+msgid "Create and block tasks"
+msgstr "إنشاء المهام وحظرها"
+
+#: forms/works.py:1589
+msgid "Create and cancel tasks"
+msgstr "إنشاء المهام وإلغاؤها"
+
+#: forms/works.py:1651
+msgid "Import content"
+msgstr "استيراد المحتوى"
+
+#: forms/works.py:1651
+msgid "Link gazette"
+msgstr "لينكجيت"
+
+#: models.py:23
+msgid "user"
+msgstr "مستخدم"
+
+#: models.py:24 models.py:59
+msgid "country"
+msgstr "دولة"
+
+#: models.py:25
+msgid "accepted terms"
+msgstr "الشروط المقبولة"
+
+#: models.py:26
+msgid "Countries the user can work with."
+msgstr "الدول التي يمكن للمستخدم العمل معها."
+
+#: models.py:26
+msgid "permitted countries"
+msgstr "الدول المسموح بها"
+
+#: models.py:27
+msgid "language"
+msgstr "لغة"
+
+#: models.py:27
+msgid "Preferred language"
+msgstr "اللغة المفضلة"
+
+#: models.py:32
+msgid "editor"
+msgstr "محرر"
+
+#: models.py:33
+msgid "editors"
+msgstr "المحررون"
+
+#: models.py:60
+msgid "name"
+msgstr "اسم"
+
+#: models.py:60
+msgid "Name of this publication"
+msgstr "اسم هذا المنشور"
+
+#: models.py:65
+msgid "publication"
+msgstr "منشور"
+
+#: models.py:66
+msgid "publications"
+msgstr "المنشورات"
+
+#: templates/400.html:6 templates/400.html:9
+msgid "400 Bad Request"
+msgstr "400 طلب غير صالح"
+
+#: templates/400.html:11 templates/404.html:13 templates/500.html:13
+#: templates/main.html:37
+msgid "Home"
+msgstr "بيت"
+
+#: templates/403.html:4 templates/403.html:14
+msgid "Permission Denied"
+msgstr "تم رفض الإذن"
+
+#: templates/403.html:16
+msgid "You don't have permission to do that."
+msgstr "ليس لديك إذن للقيام بذلك."
+
+#: templates/404.html:6 templates/404.html:9
+msgid "404 Not Found"
+msgstr "404 غير موجود"
+
+#: templates/404.html:11
+msgid "We could not find that page."
+msgstr "لم نتمكن من العثور على تلك الصفحة."
+
+#: templates/500.html:6
+msgid "400 Server Error"
+msgstr "خطأ في الخادم 400"
+
+#: templates/500.html:9
+msgid "500 Server Error"
+msgstr "خطأ في الخادم 500"
+
+#: templates/500.html:11
+msgid "Whoops, something went wrong."
+msgstr "عفواً، حدث خطأ ما."
+
+#: templates/account/email.html:16
+msgid "You can use any of these email addresses to log in."
+msgstr "يمكنك استخدام أي من عناوين البريد الإلكتروني هذه لتسجيل الدخول."
+
+#: templates/account/email.html:18
+#: templates/indigo_api/commencement_detail.html:60
+#: templates/indigo_api/work/batch_create.html:55
+msgid "Note:"
+msgstr "ملحوظة:"
+
+#: templates/account/email.html:19
+msgid "We only send email notifications to your <strong>primary</strong> email address."
+msgstr "نرسل إشعارات البريد الإلكتروني فقط إلى عنوان بريدك الإلكتروني الأساسي <strong></strong>."
+
+#: templates/account/email.html:33 templates/account/login.html:28
+#: templates/account/password_reset.html:18
+msgid "Email address"
+msgstr "عنوان البريد الإلكتروني"
+
+#: templates/account/email.html:34
+#: templates/indigo_api/work/batch_create.html:149
+#: templates/indigo_api/work/batch_create.html:283
+#: templates/indigo_api/work/batch_update.html:50
+#: templates/indigo_api/work/batch_update.html:128
+msgid "Status"
+msgstr "حالة"
+
+#: templates/account/email.html:45
+msgid "verified"
+msgstr "تم التحقق"
+
+#: templates/account/email.html:48
+msgid "unverified"
+msgstr "غير موثق"
+
+#: templates/account/email.html:50
+msgid "primary"
+msgstr "أساسي"
+
+#: templates/account/email.html:58
+msgid "Re-send verification"
+msgstr "أعد إرسال التحقق"
+
+#: templates/account/email.html:62
+msgid "Make primary"
+msgstr "اجعلها أساسية"
+
+#: templates/account/email.html:63 templates/indigo_api/_active_facets.html:9
+#: templates/indigo_api/work/_form_amendments_form.html:54
+#: templates/indigo_api/work/_form_commencements_form.html:87
+#: templates/indigo_api/work/_form_commencements_made_form.html:55
+#: templates/indigo_api/work/_form_consolidations_form.html:42
+#: templates/indigo_api/work/_form_repeals_made_form.html:35
+#: templates/indigo_api/work/_publication_document.html:18
+#: templates/indigo_api/work/_publication_document.html:35
+msgid "Remove"
+msgstr "يزيل"
+
+#: templates/account/email.html:72
+msgid "Warning:"
+msgstr "تحذير:"
+
+#: templates/account/email.html:72
+msgid "You currently do not have any e-mail address set up. You should really add an e-mail address so you can receive notifications, reset your password, etc."
+msgstr "ليس لديك حاليًا أي عنوان بريد إلكتروني مُفعّل. يُنصح بشدة بإضافة عنوان بريد إلكتروني لتتمكن من تلقي الإشعارات، وإعادة تعيين كلمة المرور، وما إلى ذلك."
+
+#: templates/account/email.html:76
+msgid "Add an email address"
+msgstr "أضف عنوان بريد إلكتروني"
+
+#: templates/account/email.html:92
+msgid "Add email"
+msgstr "أضف بريدًا إلكترونيًا"
+
+#: templates/account/email_confirm.html:7
+msgid "Confirm E-mail Address"
+msgstr "تأكيد عنوان البريد الإلكتروني"
+
+#: templates/account/email_confirm.html:13
+#, python-format
+msgid "Please confirm that <a href=\"mailto:%(email)s\">%(email)s</a> is an e-mail address for user %(user_display)s."
+msgstr "يرجى التأكد من أن <a href=\"mailto:%(email)s\">%(email)s</a> هو عنوان بريد إلكتروني للمستخدم %(user_display)s."
+
+#: templates/account/email_confirm.html:17
+msgid "Confirm"
+msgstr "يتأكد"
+
+#: templates/account/email_confirm.html:24
+#, python-format
+msgid "This e-mail confirmation link expired or is invalid. Please <a href=\"%(email_url)s\">issue a new e-mail confirmation request</a>."
+msgstr "انتهت صلاحية رابط تأكيد البريد الإلكتروني هذا أو أنه غير صالح. يرجى <a href=\"%(email_url)s\">إرسال طلب تأكيد بريد إلكتروني جديد</a>."
+
+#: templates/account/login.html:11
+msgid "Log In"
+msgstr "تسجيل الدخول"
+
+#: templates/account/login.html:40
+#: templates/indigo_app/user_account/_sidebar.html:9
+msgid "Password"
+msgstr "كلمة المرور"
+
+#: templates/account/login.html:42
+msgid "Forgot your password?"
+msgstr "نسيت كلمة السر؟"
+
+#: templates/account/login.html:53
+#: templates/account/password_reset_from_key.html:55
+#: templates/account/password_reset_from_key_done.html:10
+#: templates/account/signup.html:135 templates/main.html:67
+#: templates/main.html:124
+msgid "Log in"
+msgstr "تسجيل الدخول"
+
+#: templates/account/login.html:54 templates/account/signup.html:132
+msgid "Sign up"
+msgstr "اشتراك"
+
+#: templates/account/login.html:69
+#, python-format
+msgid "Log in with %(provider)s"
+msgstr "سجّل الدخول باستخدام %(provider)s"
+
+#: templates/account/login.html:76
+#, python-format
+msgid "By logging in you agree to our <a href=\"%(tos_url)s\">Terms of Use and Privacy Policy</a>."
+msgstr "بتسجيل الدخول، فإنك توافق على شروط الاستخدام وسياسة الخصوصية الخاصة بنا <a href=\"%(tos_url)s\"></a>."
+
+#: templates/account/logout.html:4 templates/account/logout.html:7
+#: templates/account/logout.html:17
+msgid "Log Out"
+msgstr "تسجيل الخروج"
+
+#: templates/account/logout.html:9
+msgid "Are you sure you want to log out?"
+msgstr "هل أنت متأكد من رغبتك في تسجيل الخروج؟"
+
+#: templates/account/password_change.html:4
+#: templates/account/password_change.html:55
+msgid "Change Password"
+msgstr "تغيير كلمة المرور"
+
+#: templates/account/password_change.html:14
+msgid "Change Your Password"
+msgstr "قم بتغيير كلمة المرور الخاصة بك"
+
+#: templates/account/password_reset.html:7
+msgid "Reset Your Password"
+msgstr "إعادة تعيين كلمة المرور الخاصة بك"
+
+#: templates/account/password_reset.html:12
+msgid "Forgotten your password? Enter your e-mail address below, and we'll send you an e-mail to reset it."
+msgstr "هل نسيت كلمة مرورك؟ أدخل عنوان بريدك الإلكتروني أدناه، وسنرسل إليك رسالة بريد إلكتروني لإعادة تعيينها."
+
+#: templates/account/password_reset.html:29
+#: templates/account/password_reset_from_key.html:50
+msgid "Reset password"
+msgstr "إعادة تعيين كلمة المرور"
+
+#: templates/account/password_reset_from_key.html:7
+msgid "Bad Token"
+msgstr "رمز غير صالح"
+
+#: templates/account/password_reset_from_key.html:7
+#: templates/account/password_reset_from_key_done.html:7
+msgid "Reset Password"
+msgstr "إعادة تعيين كلمة المرور"
+
+#: templates/account/password_reset_from_key.html:11
+#, python-format
+msgid "The password reset link was invalid, possibly because it has already been used.  Please request a <a href=\"%(passwd_reset_url)s\">new password reset</a>."
+msgstr ""
+
+#: templates/account/password_reset_from_key.html:27
+msgid "New Password"
+msgstr "كلمة المرور الجديدة"
+
+#: templates/account/password_reset_from_key.html:39
+msgid "New Password (again)"
+msgstr "كلمة مرور جديدة (مرة أخرى)"
+
+#: templates/account/password_reset_from_key.html:54
+#: templates/account/password_reset_from_key_done.html:8
+msgid "Your password has been reset."
+msgstr "تمت إعادة تعيين كلمة مرورك."
+
+#: templates/account/password_set.html:4 templates/account/password_set.html:43
+msgid "Set Password"
+msgstr "تعيين كلمة المرور"
+
+#: templates/account/password_set.html:14
+msgid "Set Your Password"
+msgstr "قم بتعيين كلمة المرور الخاصة بك"
+
+#: templates/account/signup.html:7
+msgid "Sign Up"
+msgstr "اشتراك"
+
+#: templates/account/signup.html:9
+#, python-format
+msgid "Do you already have an account? Then please <a href=\"%(login_url)s\">log in</a>."
+msgstr "هل لديك حساب بالفعل؟ إذاً، يرجى تسجيل الدخول <a href=\"%(login_url)s\"></a>."
+
+#: templates/account/signup.html:107
+#, python-format
+msgid "I have read and accept the <a href=\"%(tou_url)s\" target=\"_blank\">Terms of Use</a>."
+msgstr "لقد قرأت ووافقت على شروط الاستخدام <a href=\"%(tou_url)s\" target=\"_blank\"></a>."
+
+#: templates/allauth/layouts/base.html:17 templates/indigo_app/terms.html:4
+#: templates/indigo_app/terms.html:9
+msgid "Terms of Use and Privacy Policy"
+msgstr "شروط الاستخدام وسياسة الخصوصية"
+
+#: templates/allauth/layouts/base.html:21
+#, python-format
+msgid "Need help? Please <a href=\"mailto:%(email)s\">email us</a>"
+msgstr "هل تحتاج إلى مساعدة؟ يرجى مراسلتنا عبر البريد الإلكتروني <a href=\"mailto:%(email)s\"></a>"
+
+#: templates/comments/preview.html:3
+msgid "You're not logged in, or something went wrong."
+msgstr "أنت غير مسجل الدخول، أو حدث خطأ ما."
+
+#: templates/indigo_api/_saved_searches.html:4
+msgid "Saved searches"
+msgstr "عمليات البحث المحفوظة"
+
+#: templates/indigo_api/task/_assign_to_menu.html:4
+#: templates/indigo_api/task/_card_single.html:83
+#: templates/indigo_api/task/_detail.html:156
+msgid "Unassign"
+msgstr "إلغاء التعيين"
+
+#: templates/indigo_api/task/_assign_to_menu.html:14
+msgid "too many tasks"
+msgstr "مهام كثيرة جداً"
+
+#: templates/indigo_api/task/_assign_to_menu.html:18
+msgid "No users available"
+msgstr "لا يوجد مستخدمون متاحون"
+
+#: templates/indigo_api/task/_blocked_by_menu.html:29
+#: templates/indigo_api/task/_detail.html:213
+msgid "Choose tasks"
+msgstr "اختيار المهام"
+
+#: templates/indigo_api/task/_bulk_update_form.html:11
+#: templates/indigo_api/task/_card_single.html:101
+#: templates/indigo_api/task/_detail.html:166
+msgid "Assign to"
+msgstr "تعيين إلى"
+
+#: templates/indigo_api/task/_bulk_update_form.html:19
+#: templates/indigo_api/task/_bulk_update_form.html:25
+msgid "Updating"
+msgstr "تحديث"
+
+#: templates/indigo_api/task/_bulk_update_form.html:20
+msgid "Unblock"
+msgstr "إلغاء الحظر"
+
+#: templates/indigo_api/task/_bulk_update_form.html:26
+msgid "Block"
+msgstr "حاجز"
+
+#: templates/indigo_api/task/_buttons.html:10
+msgid "Are you sure you want to request changes to this task?"
+msgstr "هل أنت متأكد من رغبتك في طلب تغييرات على هذه المهمة؟"
+
+#: templates/indigo_api/task/_buttons.html:11
+msgid "Request changes"
+msgstr "طلب التغييرات"
+
+#: templates/indigo_api/task/_buttons.html:14
+msgid "Review changes"
+msgstr "مراجعة التغييرات"
+
+#: templates/indigo_api/task/_buttons.html:20
+msgid "Are you sure you want to approve this task?"
+msgstr "هل أنت متأكد من رغبتك في الموافقة على هذه المهمة؟"
+
+#: templates/indigo_api/task/_buttons.html:21
+#: templates/indigo_api/work/overview.html:22
+#: templates/indigo_app/place/_bulk_approve_form.html:214
+#: templates/indigo_app/place/_work_detail.html:131
+msgid "Approve"
+msgstr "يعتمد"
+
+#: templates/indigo_api/task/_buttons.html:29
+msgid "Are you sure you want to reopen this task?"
+msgstr "هل أنت متأكد من رغبتك في إعادة فتح هذه المهمة؟"
+
+#: templates/indigo_api/task/_buttons.html:30
+msgid "Reopen"
+msgstr "إعادة فتح"
+
+#: templates/indigo_api/task/_buttons.html:38
+msgid "Are you sure you want to finish this task?"
+msgstr "هل أنت متأكد من رغبتك في إنهاء هذه المهمة؟"
+
+#: templates/indigo_api/task/_buttons.html:40
+msgid "Finish"
+msgstr "ينهي"
+
+#: templates/indigo_api/task/_buttons.html:46
+msgid "Are you sure you want to submit this task for review?"
+msgstr "هل أنت متأكد من رغبتك في إرسال هذه المهمة للمراجعة؟"
+
+#: templates/indigo_api/task/_buttons.html:47
+msgid "Submit for review"
+msgstr "تقديم الطلب للمراجعة"
+
+#: templates/indigo_api/task/_card_single.html:17
+#: templates/indigo_api/task/_detail.html:35
+#: templates/indigo_api/task/_list_table.html:60
+#: templates/indigo_api/document/_task_overview.html:19
+#: templates/templated_email/_task_detail_block.html:6
+msgid "Changes requested"
+msgstr "التغييرات المطلوبة"
+
+#: templates/indigo_api/task/_card_single.html:79
+msgid "Reassign"
+msgstr "إعادة التعيين"
+
+#: templates/indigo_api/task/_card_single.html:82
+#: templates/indigo_api/task/_detail.html:154
+msgid "Are you sure you want to unassign this task?"
+msgstr "هل أنت متأكد من رغبتك في إلغاء تعيين هذه المهمة؟"
+
+#: templates/indigo_api/task/_card_single.html:112
+msgid "Approved by"
+msgstr "تمت الموافقة من قبل"
+
+#: templates/indigo_api/task/_detail.html:8
+msgid "This task is blocked."
+msgstr "هذه المهمة محظورة."
+
+#: templates/indigo_api/task/_detail.html:10
+msgid "These tasks must be completed first:"
+msgstr "يجب إكمال هذه المهام أولاً:"
+
+#: templates/indigo_api/task/_detail.html:25
+#: templates/indigo_api/document/_task_overview.html:13
+msgid "assigned"
+msgstr "مُكَلَّف"
+
+#: templates/indigo_api/task/_detail.html:60
+msgid "Edit task"
+msgstr "مهمة التحرير"
+
+#: templates/indigo_api/task/_detail.html:114
+#, python-format
+msgid "Here is <a href=\"%(item_url)s\">%(title)s</a> as it appears currently"
+msgstr "هذا هو <a href=\"%(item_url)s\">%(title)s</a> كما يظهر حاليًا"
+
+#: templates/indigo_api/task/_detail.html:119
+#, python-format
+msgid "(<b>%(a)s</b> may have been moved or removed)"
+msgstr "(ربما تم نقل أو إزالة<b>%(a)s</b>)"
+
+#: templates/indigo_api/task/_detail.html:128
+#, python-format
+msgid "The content at <b>%(a)s</b> is not available and may have been moved or removed."
+msgstr "المحتوى الموجود في <b>%(a)s</b> غير متوفر وقد يكون تم نقله أو إزالته."
+
+#: templates/indigo_api/task/_detail.html:186
+msgid "Choose labels"
+msgstr "اختر التصنيفات"
+
+#: templates/indigo_api/task/_detail.html:203
+msgid "Blocked by"
+msgstr "تم حظره بواسطة"
+
+#: templates/indigo_api/task/_detail.html:239
+msgid "Blocking"
+msgstr "الحجب"
+
+#: templates/indigo_api/task/_detail.html:243
+msgid "This task is blocking these tasks:"
+msgstr "هذه المهمة تعيق هذه المهام:"
+
+#: templates/indigo_api/task/_form_input_file.html:21
+#: templates/indigo_api/task/_form_output_file.html:21
+#: templates/indigo_api/task/_form_work.html:30
+#: templates/indigo_api/work/_form_commencements_form.html:35
+#: templates/indigo_api/work/_parent_form.html:32
+#: templates/indigo_api/work/_repeal_form.html:32
+#: templates/indigo_api/commencements/_commencement_form_commencing_work.html:41
+msgid "Clear"
+msgstr "واضح"
+
+#: templates/indigo_api/task/_form_input_file.html:49
+msgid "Paste in a URL (preferred), or upload a file."
+msgstr "ألصق عنوان URL (مفضل)، أو قم بتحميل ملف."
+
+#: templates/indigo_api/task/_form_output_file.html:49
+msgid "Upload the converted file."
+msgstr "قم بتحميل الملف المحول."
+
+#: templates/indigo_api/task/_form_title.html:7
+msgid "A short description of this task"
+msgstr "وصف موجز لهذه المهمة"
+
+#: templates/indigo_api/task/_form_work.html:24
+msgid "Change work"
+msgstr "تغيير العمل"
+
+#: templates/indigo_api/task/_form_work.html:24
+msgid "Choose work"
+msgstr "اختر العمل"
+
+#: templates/indigo_api/task/_form_work.html:53
+msgid "Choose a document, or enter a date (optional)."
+msgstr "اختر مستندًا، أو أدخل تاريخًا (اختياري)."
+
+#: templates/indigo_api/task/_list_table.html:6
+#, python-format
+msgid "%(count)s task (of %(total_tasks)s total)"
+msgid_plural "%(count)s tasks (of %(total_tasks)s total)"
+msgstr[0] "%(count)s مهمة (من إجمالي %(total_tasks)s مهمة)"
+msgstr[1] "%(count)s مهمة (من إجمالي %(total_tasks)s)"
+msgstr[2] "%(count)s مهمة (من إجمالي %(total_tasks)s مهمة)"
+msgstr[3] "%(count)s مهمة (من إجمالي %(total_tasks)s مهمة)"
+msgstr[4] "%(count)s مهمة (من إجمالي %(total_tasks)s مهمة)"
+msgstr[5] "%(count)s مهمة (من إجمالي %(total_tasks)s مهمة)"
+
+#: templates/indigo_api/task/_list_table.html:17
+#: templates/indigo_api/document/_annotations.html:38
+msgid "Task"
+msgstr "مهمة"
+
+#: templates/indigo_api/task/_list_table.html:22
+msgid "Place"
+msgstr "مكان"
+
+#: templates/indigo_api/task/_list_table.html:25
+msgid "Document"
+msgstr "وثيقة"
+
+#: templates/indigo_api/task/_list_table.html:27
+msgid "Work or Document"
+msgstr "عمل أو وثيقة"
+
+#: templates/indigo_api/task/_list_table.html:29
+#: templates/indigo_api/work/batch_update.html:142
+#: templates/indigo_app/place/_work.html:42 templates/place/detail.html:164
+msgid "Updated"
+msgstr "تم التحديث"
+
+#: templates/indigo_api/task/_list_table.html:120
+msgid "No tasks found"
+msgstr "لم يتم العثور على أي مهام"
+
+#: templates/indigo_api/task/_timeline.html:8
+#: templates/indigo_api/work/_comments.html:8
+msgid "commented"
+msgstr "علّق"
+
+#: templates/indigo_api/task/_timeline.html:34
+#: templates/indigo_api/work/_comments.html:33
+msgid "Add a comment"
+msgstr "أضف تعليقًا"
+
+#: templates/indigo_api/task/_timeline.html:43
+#: templates/indigo_api/document/_annotations.html:45
+#: templates/indigo_api/document/_annotations.html:46
+msgid "Comment"
+msgstr "تعليق"
+
+#: templates/indigo_api/task/_timeline.html:47
+#, python-format
+msgid "Please <a href=\"%(login_url)s\">log in</a> to leave a comment."
+msgstr ""
+
+#: templates/indigo_api/work/_amendment_tables.html:3
+#: templates/indigo_api/work/_form_amended_by.html:4
+msgid "Amended by"
+msgstr "تم التعديل بواسطة"
+
+#: templates/indigo_api/work/_amendment_tables.html:11
+#: templates/indigo_api/work/_amendment_tables.html:39
+#: templates/indigo_api/work/_commencement_tables.html:11
+#: templates/indigo_api/work/_commencement_tables.html:47
+#: templates/indigo_api/work/_repeal_tables.html:10
+#: templates/indigo_api/work/_repeal_tables.html:35
+#: templates/place/detail.html:163 templates/place/detail.html:199
+msgid "Work"
+msgstr "عمل"
+
+#: templates/indigo_api/work/_amendment_tables.html:31
+#: templates/indigo_api/work/_form_amendments_made.html:4
+msgid "Amendments made"
+msgstr "التعديلات التي تم إدخالها"
+
+#: templates/indigo_api/work/_chooser_modal.html:7
+#: templates/indigo_app/place/_work_chooser.html:6
+msgid "Choose a work"
+msgstr "اختر عملاً"
+
+#: templates/indigo_api/work/_chooser_modal.html:28
+#: templates/indigo_api/document/_cheatsheet.html:8
+#: templates/indigo_app/place/_work_chooser.html:51
+msgid "Search..."
+msgstr "يبحث..."
+
+#: templates/indigo_api/work/_chooser_modal.html:37
+#: templates/indigo_app/place/_work_chooser.html:82
+msgid "Create a new work"
+msgstr "إنشاء عمل جديد"
+
+#: templates/indigo_api/work/_chooser_modal.html:38
+#: templates/indigo_api/commencement_form.html:137
+#: templates/indigo_api/document/_annotations.html:47
+#: templates/indigo_api/document/_attachments.html:67
+#: templates/indigo_api/document/_insert_image_modal.html:16
+#: templates/indigo_api/document/_text_editor.html:63
+#: templates/indigo_api/document/_toolbar.html:100
+#: templates/indigo_api/task/form.html:131
+#: templates/indigo_api/task/form.html:133
+#: templates/indigo_api/timeline/_edit_amendment.html:26
+#: templates/indigo_api/timeline/_edit_consolidation.html:26
+#: templates/indigo_api/work/form.html:12
+#: templates/indigo_app/place/_bulk_approve_form.html:206
+#: templates/indigo_app/place/_bulk_link_refs_form.html:40
+#: templates/indigo_app/place/_bulk_unapprove_form.html:34
+#: templates/indigo_app/place/_bulk_update_form.html:50
+#: templates/indigo_app/place/_work_chooser.html:83
+msgid "Cancel"
+msgstr "يلغي"
+
+#: templates/indigo_api/work/_chooser_modal.html:39
+#: templates/indigo_api/document/_attachments.html:66
+#: templates/indigo_app/place/_work_chooser.html:84
+msgid "OK"
+msgstr "نعم"
+
+#: templates/indigo_api/work/_chooser_modal.html:52
+#: templates/indigo_api/work/batch_create.html:153
+#: templates/indigo_api/work/batch_create.html:287
+#: templates/indigo_app/place/_work_chooser.html:68
+msgid "Year"
+msgstr "سنة"
+
+#: templates/indigo_api/work/_chooser_modal.html:53
+#: templates/indigo_api/work/_form_content.html:125
+#: templates/indigo_api/document/_properties.html:15
+#: templates/indigo_app/place/_work_chooser.html:69
+msgid "Title"
+msgstr "عنوان"
+
+#: templates/indigo_api/work/_chooser_modal.html:54
+#: templates/indigo_api/work/batch_create.html:157
+#: templates/indigo_api/work/batch_create.html:291
+#: templates/indigo_api/work/batch_update.html:52
+#: templates/indigo_api/work/batch_update.html:130
+#: templates/indigo_app/place/_work_chooser.html:70
+msgid "FRBR URI"
+msgstr "FRBR URI"
+
+#: templates/indigo_api/work/_chooser_modal.html:65
+#: templates/indigo_api/work/_info_badges.html:11
+msgid "stub"
+msgstr "جذع"
+
+#: templates/indigo_api/work/_chooser_modal.html:68
+#: templates/indigo_api/work/_info_badges.html:17
+msgid "not commenced"
+msgstr "لم يبدأ بعد"
+
+#: templates/indigo_api/work/_chooser_modal.html:72
+#: templates/indigo_api/work/_info_badges.html:19
+msgid "commencement date unknown"
+msgstr "تاريخ البدء غير معروف"
+
+#: templates/indigo_api/work/_chooser_modal.html:83
+msgid "Load more..."
+msgstr "تحميل المزيد..."
+
+#: templates/indigo_api/work/_commencement_tables.html:3
+#: templates/indigo_api/work/_form_commencements.html:4
+#: templates/indigo_api/work/commencements.html:5
+#: templates/indigo_api/work/layout.html:43
+#: templates/indigo_app/place/_work_detail.html:26
+msgid "Commencements"
+msgstr "حفلات التخرج"
+
+#: templates/indigo_api/work/_commencement_tables.html:12
+#: templates/indigo_api/work/_commencement_tables.html:48
+msgid "Note"
+msgstr "ملحوظة"
+
+#: templates/indigo_api/work/_commencement_tables.html:13
+#: templates/indigo_api/work/_commencement_tables.html:49
+msgid "In full"
+msgstr "بالكامل"
+
+#: templates/indigo_api/work/_commencement_tables.html:39
+#: templates/indigo_api/work/_form_commencements_made.html:4
+msgid "Commencements made"
+msgstr "حفل التخرج"
+
+#: templates/indigo_api/work/_comments.html:36
+msgid "Add comment"
+msgstr "أضف تعليقًا"
+
+#: templates/indigo_api/work/_diff_card.html:5
+#, python-format
+msgid "made %(n_changes)s change"
+msgid_plural "made %(n_changes)s changes"
+msgstr[0] "تم إجراء %(n_changes)s تغييرات"
+msgstr[1] "تم إجراء %(n_changes)s تغيير"
+msgstr[2] "تم إجراء %(n_changes)s تغييرات"
+msgstr[3] "تم إجراء %(n_changes)s تغييرات"
+msgstr[4] "تم إجراء %(n_changes)s تغييرات"
+msgstr[5] "تم إجراء %(n_changes)s تغييرات"
+
+#: templates/indigo_api/work/_diff_card.html:14
+msgid "Show changes"
+msgstr "إظهار التغييرات"
+
+#: templates/indigo_api/work/_diff_card.html:22
+#: templates/indigo_api/work/_diff_card.html:24
+msgid "Version"
+msgstr "إصدار"
+
+#: templates/indigo_api/work/_diff_card.html:24
+msgid "Current version"
+msgstr "الإصدار الحالي"
+
+#: templates/indigo_api/work/_diff_card.html:43
+msgid "Are you sure?"
+msgstr "هل أنت متأكد؟"
+
+#: templates/indigo_api/work/_diff_card.html:43
+msgid "Restore this version"
+msgstr "استعادة هذه النسخة"
+
+#: templates/indigo_api/work/_filter_form.html:14
+msgid "Filter..."
+msgstr "فلتر..."
+
+#: templates/indigo_api/work/_filter_form.html:27
+msgid "Advanced..."
+msgstr "متقدم..."
+
+#: templates/indigo_api/work/_filter_form.html:30
+msgid "Clear all filters"
+msgstr "مسح جميع التطبيقات"
+
+#: templates/indigo_api/work/_filter_form.html:33
+msgid "Apply"
+msgstr "يتقدم"
+
+#: templates/indigo_api/work/_filter_form.html:50
+msgid "Publication date range"
+msgstr "نطاق تاريخ النشر"
+
+#: templates/indigo_api/work/_filter_form.html:66
+msgid "Commencement date range"
+msgstr "نطاق تاريخ البدء"
+
+#: templates/indigo_api/work/_filter_form.html:82
+msgid "Amendment date range"
+msgstr "نطاق تاريخ التعديل"
+
+#: templates/indigo_api/work/_filter_form.html:98
+msgid "Repeal date range"
+msgstr "نطاق تاريخ الإلغاء"
+
+#: templates/indigo_api/work/_filter_form.html:114
+msgid "Assent date range"
+msgstr "نطاق تاريخ الموافقة"
+
+#: templates/indigo_api/work/_filter_form.html:129
+msgid "FRBR URIs"
+msgstr "معرّفات موارد النظام FRBR"
+
+#: templates/indigo_api/work/_filter_form.html:139
+msgid "Clear filters"
+msgstr "مساحة فارغة"
+
+#: templates/indigo_api/work/_filter_form.html:140
+msgid "Apply filters"
+msgstr "تطبيق الفلاتر"
+
+#: templates/indigo_api/work/_form_amended_by.html:22
+#: templates/indigo_api/work/_form_amendments_made.html:22
+#: templates/indigo_api/timeline/_work_points_in_time.html:9
+msgid "Add amendment"
+msgstr "إضافة تعديل"
+
+#: templates/indigo_api/work/_form_chapter_numbers_form.html:51
+msgid "e.g. Revised Laws 2004"
+msgstr "مثال: القوانين المعدلة لعام 2004"
+
+#: templates/indigo_api/work/_form_chapter_numbers_form.html:78
+#: templates/indigo_api/work/_form_content.html:616
+#: templates/indigo_api/commencement_detail.html:16
+#: templates/indigo_api/document/_annotations.html:24
+#: templates/indigo_api/document/_toolbar.html:75
+#: templates/indigo_api/document/_toolbar.html:119
+#: templates/indigo_api/timeline/_edit_amendment.html:15
+#: templates/indigo_api/timeline/_edit_consolidation.html:15
+msgid "Delete"
+msgstr "يمسح"
+
+#: templates/indigo_api/work/_form_commencements.html:20
+#: templates/indigo_api/work/_form_commencements_made.html:22
+msgid "Add commencement"
+msgstr "أضف بداية"
+
+#: templates/indigo_api/work/_form_commencements_form.html:50
+#: templates/indigo_api/commencements/_commencement_form_commencing_work.html:26
+msgid "Change commencing work"
+msgstr "تغيير بدء العمل"
+
+#: templates/indigo_api/work/_form_commencements_form.html:52
+#: templates/indigo_api/commencements/_commencement_form_commencing_work.html:28
+msgid "Choose commencing work"
+msgstr "اختر بدء العمل"
+
+#: templates/indigo_api/work/_form_consolidations.html:21
+msgid "Add consolidation"
+msgstr "إضافة التوحيد"
+
+#: templates/indigo_api/work/_form_content.html:6
+msgid "You don't have permission to create or change a work."
+msgstr "ليس لديك إذن لإنشاء عمل أو تغييره."
+
+#: templates/indigo_api/work/_form_content.html:11
+msgid "There were some errors in the information you entered. Please correct the following:"
+msgstr "لقد وردت بعض الأخطاء في المعلومات التي أدخلتها. يرجى تصحيح ما يلي:"
+
+#: templates/indigo_api/work/_form_content.html:116
+#: templates/indigo_api/document/_properties.html:14
+msgid "Short title"
+msgstr "العنوان المختصر"
+
+#: templates/indigo_api/work/_form_content.html:130
+msgid "Work type"
+msgstr "نوع العمل"
+
+#: templates/indigo_api/work/_form_content.html:145
+msgid "Work subtype"
+msgstr "نوع العمل الفرعي"
+
+#: templates/indigo_api/work/_form_content.html:152
+msgid "(none)"
+msgstr "(لا أحد)"
+
+#: templates/indigo_api/work/_form_content.html:161
+msgid "Year (or date) of introduction"
+msgstr "سنة (أو تاريخ) الإصدار"
+
+#: templates/indigo_api/work/_form_content.html:175
+msgid "Number within year"
+msgstr "العدد خلال السنة"
+
+#: templates/indigo_api/work/_form_content.html:187
+msgid "Number or short name that uniquely identifies this legislation within the year of introduction. Numbers, letters and '-' only."
+msgstr "رقم أو اسم مختصر يميز هذا التشريع بشكل فريد خلال سنة تقديمه. الأرقام والحروف وعلامة \"-\" فقط."
+
+#: templates/indigo_api/work/_form_content.html:216
+msgid "Chapter numbers"
+msgstr "أرقام الفصول"
+
+#: templates/indigo_api/work/_form_content.html:226
+msgid "Responsible organisation (actor)"
+msgstr "المنظمة المسؤولة (الجهة الفاعلة)"
+
+#: templates/indigo_api/work/_form_content.html:238
+msgid "Organisation that created this work. Not normally used for national legislation. Numbers, letters and '-' only."
+msgstr "الجهة التي أنشأت هذا العمل. لا يُستخدم عادةً في التشريعات الوطنية. الأرقام والحروف وعلامة \"-\" فقط."
+
+#: templates/indigo_api/work/_form_content.html:245
+msgid "Principal work"
+msgstr "العمل الرئيسي"
+
+#: templates/indigo_api/work/_form_content.html:249 views/places.py:84
+msgid "Principal works are not simply repeals, amendments or commencements, and should have full text content."
+msgstr "الأعمال الرئيسية ليست مجرد عمليات إلغاء أو تعديل أو بدء، ويجب أن تحتوي على محتوى نصي كامل."
+
+#: templates/indigo_api/work/_form_content.html:258
+msgid "Check this option for commencing or amending works, or other works for which content won't be marked up."
+msgstr "حدد هذا الخيار لبدء أو تعديل الأعمال، أو الأعمال الأخرى التي لن يتم وضع علامات على محتواها."
+
+#: templates/indigo_api/work/_form_content.html:271
+#: templates/indigo_api/work/batch_create.html:159
+msgid "Taxonomy topics"
+msgstr "مواضيع التصنيف"
+
+#: templates/indigo_api/work/_form_content.html:282 views/places.py:54
+msgid "Assent date"
+msgstr "تاريخ الموافقة"
+
+#: templates/indigo_api/work/_form_content.html:302
+msgid "Publication date"
+msgstr "تاريخ النشر"
+
+#: templates/indigo_api/work/_form_content.html:318
+msgid "Publication name"
+msgstr "اسم المنشور"
+
+#: templates/indigo_api/work/_form_content.html:334
+msgid "Usually the Government Gazette."
+msgstr "عادةً ما تكون الجريدة الرسمية."
+
+#: templates/indigo_api/work/_form_content.html:338
+msgid "Publication number"
+msgstr "رقم النشر"
+
+#: templates/indigo_api/work/_form_content.html:348
+msgid "Usually the gazette number."
+msgstr "عادةً ما يكون رقم الجريدة الرسمية."
+
+#: templates/indigo_api/work/_form_content.html:372
+msgid "Check if this work has come into force, or has a future commencement date."
+msgstr "تحقق مما إذا كان هذا العمل قد دخل حيز التنفيذ، أو أن له تاريخ بدء مستقبلي."
+
+#: templates/indigo_api/work/_form_content.html:375
+#, python-format
+msgid "Add basic commencement details below, or go to the <a href=\"%(comm_url)s\" target=\"_blank\">Commencements</a> page for more options."
+msgstr "أضف تفاصيل حفل التخرج الأساسية أدناه، أو انتقل إلى صفحة <a href=\"%(comm_url)s\" target=\"_blank\">حفلات التخرج</a> لمزيد من الخيارات."
+
+#: templates/indigo_api/work/_form_content.html:381
+#, python-format
+msgid "Changes to commencement dates will not automatically update the <a href=\"%(related_url)s\" target=\"_blank\">commencements, amendments, and repeals made</a> by this work."
+msgstr ""
+
+#: templates/indigo_api/work/_form_content.html:478
+#: templates/indigo_app/place/_work_detail_overview.html:40
+msgid "Aliases"
+msgstr "الأسماء المستعارة"
+
+#: templates/indigo_api/work/_form_content.html:499
+msgid "Common aliases for this work, such as 'Penal Code' or 'POPIA'."
+msgstr "الأسماء الشائعة لهذا العمل، مثل \"قانون العقوبات\" أو \"POPIA\"."
+
+#: templates/indigo_api/work/_form_content.html:513
+#, python-format
+msgid "Date up to which this work was last checked for updates. Only set this if it should be different from %(name)s's as-at date"
+msgstr "تاريخ آخر تحديثات تم إجراؤها لهذا العمل. حدد هذا التاريخ فقط إذا كان يجب أن يختلف عن تاريخ %(name)sالحالي"
+
+#: templates/indigo_api/work/_form_content.html:533
+#, python-format
+msgid "Consolidation note that applies to just this work. Overrides a consolidation note in %(name)s if set."
+msgstr "ملاحظة توحيد تنطبق على هذا العمل فقط. تلغي ملاحظة التوحيد الموجودة في %(name)s إذا تم تعيينها."
+
+#: templates/indigo_api/work/_form_content.html:554
+msgid "Disclaimer for this work; it will be shown on all expressions."
+msgstr "إخلاء مسؤولية عن هذا العمل؛ سيتم عرضه على جميع التعبيرات."
+
+#: templates/indigo_api/work/_form_content.html:571
+msgid "Change country or locality"
+msgstr "تغيير البلد أو المنطقة"
+
+#: templates/indigo_api/work/_form_content.html:575
+msgid "Country and locality (advanced)"
+msgstr "البلد والمنطقة (متقدم)"
+
+#: templates/indigo_api/work/_form_content.html:608
+#, python-format
+msgid "This work cannot be deleted while <a href=\"%(amendments_url)s\">linked documents</a> and <a href=\"%(related_url)s\">related works</a> exist."
+msgstr "لا يمكن حذف هذا العمل طالما أن <a href=\"%(amendments_url)s\">المستندات المرتبطة</a> و <a href=\"%(related_url)s\">الأعمال ذات الصلة</a> موجودة."
+
+#: templates/indigo_api/work/_form_content.html:615
+msgid "Are you sure you want to delete this work?"
+msgstr "هل أنت متأكد من رغبتك في حذف هذا العمل؟"
+
+#: templates/indigo_api/work/_form_offcanvas_body.html:9
+msgid "Saving"
+msgstr "توفير"
+
+#: templates/indigo_api/work/_form_offcanvas_body.html:11
+#: templates/indigo_api/commencement_form.html:138
+#: templates/indigo_api/task/form.html:135
+#: templates/indigo_api/timeline/_edit_amendment.html:25
+#: templates/indigo_api/timeline/_edit_consolidation.html:25
+#: templates/indigo_api/work/form.html:21
+#: templates/indigo_app/user_account/edit.html:20
+#: templates/place/settings.html:125 templates/place/users.html:15
+msgid "Save"
+msgstr "يحفظ"
+
+#: templates/indigo_api/work/_form_offcanvas_body.html:11
+#: templates/indigo_api/timeline/_work_points_in_time.html:102
+#: templates/indigo_api/work/form.html:21
+msgid "Create"
+msgstr "يخلق"
+
+#: templates/indigo_api/work/_form_offcanvas_body.html:14
+#: templates/indigo_api/document/_attachments.html:16
+#: templates/indigo_api/document/_cheatsheet.html:765
+#: templates/indigo_api/document/_defined_terms.html:36
+#: templates/indigo_api/document/_italics_terms.html:51
+#: templates/indigo_api/document/_properties.html:61
+#: templates/indigo_api/document/_references.html:16
+#: templates/indigo_api/document/_revisions.html:18
+msgid "Close"
+msgstr "يغلق"
+
+#: templates/indigo_api/work/_form_repeals_made.html:4
+#: templates/indigo_api/work/_repeal_tables.html:27
+msgid "Repeals made"
+msgstr "تم إلغاء القوانين"
+
+#: templates/indigo_api/work/_form_repeals_made.html:22
+msgid "Add repealed work"
+msgstr "أضف العمل الملغى"
+
+#: templates/indigo_api/work/_info_badges.html:5
+msgid "principal"
+msgstr "رئيسي"
+
+#: templates/indigo_api/work/_info_badges.html:14
+msgid "subsidiary"
+msgstr "شركة تابعة"
+
+#: templates/indigo_api/work/_info_badges.html:22
+msgid "work in progress"
+msgstr "العمل جارٍ"
+
+#: templates/indigo_api/work/_parent_form.html:4
+#: templates/indigo_api/work/_subsidiary_tables.html:3
+#: templates/indigo_app/place/_work_detail_overview.html:28
+msgid "Primary work"
+msgstr "العمل الأساسي"
+
+#: templates/indigo_api/work/_parent_form.html:25
+msgid "Choose primary work"
+msgstr "اختر العمل الأساسي"
+
+#: templates/indigo_api/work/_parent_form.html:37
+msgid "The primary work for regulations is the Act in terms of which they were promulgated."
+msgstr "إن العمل الأساسي للوائح هو القانون الذي تم بموجبه إصدارها."
+
+#: templates/indigo_api/work/_possible_duplicates.html:6
+msgid "A work with this FRBR URI already exists. Edit it instead, or change the core fields on this work to avoid a clash."
+msgstr "يوجد عملٌ يحمل هذا المعرّف الموحّد للموارد (URI) الخاص بـ FRBR بالفعل. قم بتعديله بدلاً من ذلك، أو غيّر الحقول الأساسية في هذا العمل لتجنب التعارض."
+
+#: templates/indigo_api/work/_possible_duplicates.html:20
+msgid "This work may be a duplicate. Edit one of the below instead?"
+msgstr "قد يكون هذا العمل مكررًا. هل تريد تعديل أحد العناصر أدناه بدلاً من ذلك؟"
+
+#: templates/indigo_api/work/_possible_publication_documents.html:5
+msgid "Possible documents"
+msgstr "المستندات المحتملة"
+
+#: templates/indigo_api/work/_possible_publication_documents.html:18
+msgid "Attach document"
+msgstr "إرفاق المستند"
+
+#: templates/indigo_api/work/_publication_document.html:45
+msgid "Upload publication document"
+msgstr "تحميل وثيقة النشر"
+
+#: templates/indigo_api/work/_repeal_form.html:4
+#: templates/indigo_api/work/_repeal_tables.html:3
+msgid "Repealed by"
+msgstr "تم إلغاؤه بواسطة"
+
+#: templates/indigo_api/work/_repeal_form.html:25
+msgid "Choose repealing work"
+msgstr "اختر العمل القابل للإلغاء"
+
+#: templates/indigo_api/work/_repeal_form.html:39
+msgid "Repeal date"
+msgstr "تاريخ الإلغاء"
+
+#: templates/indigo_api/work/_repeal_form.html:48
+msgid "The default date of repeal is the date of commencement of the selected repealing work."
+msgstr "التاريخ الافتراضي للإلغاء هو تاريخ بدء العمل المحدد للإلغاء."
+
+#: templates/indigo_api/work/_repeal_form.html:56
+msgid "Repeal verb"
+msgstr "إلغاء الفعل"
+
+#: templates/indigo_api/work/_repeal_form.html:68
+msgid "Repeal note"
+msgstr "مذكرة الإلغاء"
+
+#: templates/indigo_api/work/_subsidiary_tables.html:20
+#: templates/indigo_api/work/overview.html:84
+msgid "Subsidiary works"
+msgstr "الأعمال الفرعية"
+
+#: templates/indigo_api/commencement_detail.html:15
+msgid "Really delete this commencement? There is no undo."
+msgstr "هل يجب حذف هذه البداية حقاً؟ لا يمكن التراجع عنها."
+
+#: templates/indigo_api/commencement_detail.html:24
+#: templates/indigo_api/document/_annotations.html:23
+#: templates/indigo_api/document/_text_editor.html:5
+#: templates/indigo_api/document/_toolbar.html:59
+#: templates/indigo_api/work/form.html:5
+#: templates/indigo_app/place/_work_detail.html:114
+msgid "Edit"
+msgstr "يحرر"
+
+#: templates/indigo_api/commencement_detail.html:31
+msgid "This commencement doesn't have a date."
+msgstr "ليس لهذا الحفل تاريخ محدد."
+
+#: templates/indigo_api/commencement_detail.html:37
+msgid "Commenced by"
+msgstr "بدأ بواسطة"
+
+#: templates/indigo_api/commencement_detail.html:43
+msgid "Main commencement"
+msgstr "بدء التشغيل الرئيسي"
+
+#: templates/indigo_api/commencement_detail.html:44
+msgid "Commences all provisions"
+msgstr "يبدأ سريان جميع الأحكام"
+
+#: templates/indigo_api/commencement_detail.html:47
+#, python-format
+msgid "%(count)s provision commenced:"
+msgid_plural "%(count)s provisions commenced:"
+msgstr[0] "%(count)s تم البدء بتنفيذ الأحكام:"
+msgstr[1] "بدأ التوفير %(count)s:"
+msgstr[2] "%(count)s تم البدء بتنفيذ الأحكام:"
+msgstr[3] "%(count)s تم البدء بتنفيذ الأحكام:"
+msgstr[4] "%(count)s تم البدء بتنفيذ الأحكام:"
+msgstr[5] "%(count)s تم البدء بتنفيذ الأحكام:"
+
+#: templates/indigo_api/commencement_detail.html:58
+#: templates/indigo_api/commencement_form.html:126
+msgid "Loading provisions…"
+msgstr "تحميل الأحكام…"
+
+#: templates/indigo_api/commencement_form.html:48
+msgid "Example: See section 1 ..."
+msgstr "مثال: انظر القسم 1 ..."
+
+#: templates/indigo_api/commencement_form.html:79
+msgid "Another commencement has already been marked as 'main'."
+msgstr "وقد تم بالفعل تحديد بداية أخرى على أنها \"رئيسية\"."
+
+#: templates/indigo_api/commencement_form.html:109
+msgid "A commencement can only commence all provisions if it's the only one."
+msgstr "لا يمكن أن يبدأ سريان جميع الأحكام إلا إذا كان هو الحكم الوحيد."
+
+#: templates/indigo_api/commencement_form.html:136
+msgid "Discard all changes to this commencement?"
+msgstr "هل نتجاهل جميع التغييرات التي طرأت على هذا البدء؟"
+
+#: templates/indigo_api/commencement_form.html:138
+#: templates/indigo_api/work/form.html:19
+msgid "Saving…"
+msgstr "جارٍ التوفير…"
+
+#: templates/indigo_api/commencements/_commencement_provisions_edit.html:18
+msgid "Select all provisions"
+msgstr "اختر جميع الأحكام"
+
+#: templates/indigo_api/commencements/_commencement_provisions_edit.html:27
+msgid "Available provisions will appear here once the content has been marked up."
+msgstr "ستظهر الأحكام المتاحة هنا بمجرد وضع علامات على المحتوى."
+
+#: templates/indigo_api/commencements/_commencement_provisions_edit.html:28
+msgid "Wait until the content has been finalised before selecting provisions."
+msgstr "انتظر حتى يتم الانتهاء من المحتوى قبل اختيار الأحكام."
+
+#: templates/indigo_api/commencements/_provisions_tree.html:15
+msgid "(and all subprovisions)"
+msgstr "(وجميع الأحكام الفرعية)"
+
+#: templates/indigo_api/commencements/_work_uncommenced_provisions_detail.html:6
+msgid "Uncommenced provisions"
+msgstr "الأحكام غير المُفعّلة"
+
+#: templates/indigo_api/document/_annotations.html:11
+msgid "Resolve"
+msgstr "حل"
+
+#: templates/indigo_api/document/_annotations.html:16
+#: templates/indigo_api/task/form.html:135
+#: templates/indigo_api/work/overview.html:43
+#: templates/indigo_api/work/tasks.html:9
+msgid "Create task"
+msgstr "إنشاء مهمة"
+
+#: templates/indigo_api/document/_attachments.html:7
+#: templates/indigo_api/document/_toolbar.html:5
+msgid "Attachments"
+msgstr "المرفقات"
+
+#: templates/indigo_api/document/_attachments.html:54
+#: templates/indigo_api/work/import_document.html:56
+msgid "Choose a file"
+msgstr "اختر ملفًا"
+
+#: templates/indigo_api/document/_cheatsheet.html:7
+msgid "Editor help"
+msgstr "مساعدة المحرر"
+
+#: templates/indigo_api/document/_cheatsheet.html:18
+msgid "Starting the Preface"
+msgstr "بداية المقدمة"
+
+#: templates/indigo_api/document/_cheatsheet.html:21
+msgid "Mark the start of the Preface, before the Preamble and body."
+msgstr "حدد بداية المقدمة، قبل الديباجة والمتن."
+
+#: templates/indigo_api/document/_cheatsheet.html:33
+msgid "Starting the Preamble"
+msgstr "بداية الديباجة"
+
+#: templates/indigo_api/document/_cheatsheet.html:36
+msgid "Mark the start of the Preamble, after the Preface and before the body."
+msgstr "حدد بداية الديباجة، بعد المقدمة وقبل متن النص."
+
+#: templates/indigo_api/document/_cheatsheet.html:48
+msgid "Markup the long title"
+msgstr "قم بتحديد العنوان الطويل"
+
+#: templates/indigo_api/document/_cheatsheet.html:52
+msgid "Indicate the long title of the work using <code>LONGTITLE</code>."
+msgstr "أشر إلى العنوان الطويل للعمل باستخدام <code>LONGTITLE</code>."
+
+#: templates/indigo_api/document/_cheatsheet.html:75
+msgid "Starting the body of the document"
+msgstr "بدء متن المستند"
+
+#: templates/indigo_api/document/_cheatsheet.html:79
+msgid "Start the body of the document with <code>BODY</code>. This comes after the Preface and Preamble."
+msgstr "ابدأ متن المستند بـ <code>BODY</code>. يأتي هذا بعد المقدمة والتمهيد."
+
+#: templates/indigo_api/document/_cheatsheet.html:94
+msgid "Starting a new Chapter"
+msgstr "بداية فصل جديد"
+
+#: templates/indigo_api/document/_cheatsheet.html:98
+msgid "Start a Chapter with <code>CHAPTER</code> and a number, followed by <code> - </code> and the title. The number and title are both optional."
+msgstr "ابدأ الفصل بـ <code>الفصل</code> متبوعًا برقم، ثم <code> - </code> متبوعًا بالعنوان. الرقم والعنوان اختياريان."
+
+#: templates/indigo_api/document/_cheatsheet.html:123
+msgid "Starting a new Part"
+msgstr "بدء جزء جديد"
+
+#: templates/indigo_api/document/_cheatsheet.html:127
+msgid "Start a Part with <code>PART</code> and a number, followed by <code> - </code> and the title. The number and title are both optional."
+msgstr "ابدأ الجزء بـ <code>الجزء</code> متبوعًا برقم، ثم <code> - </code> متبوعًا بالعنوان. الرقم والعنوان اختياريان."
+
+#: templates/indigo_api/document/_cheatsheet.html:152
+msgid "Starting a new Subpart"
+msgstr "بدء جزء فرعي جديد"
+
+#: templates/indigo_api/document/_cheatsheet.html:156
+msgid "A subpart is a grouping container, like a Part, but without \"Part\" in the generated heading."
+msgstr "الجزء الفرعي هو حاوية تجميع، مثل الجزء، ولكن بدون كلمة \"جزء\" في العنوان المُنشأ."
+
+#: templates/indigo_api/document/_cheatsheet.html:161
+msgid "Start a subpart with <code>SUBPART</code> and a number, followed by <code> - </code> and the title. The number and title are both optional."
+msgstr "ابدأ الجزء الفرعي بـ <code>SUBPART</code> متبوعًا برقم، ثم <code> - </code> متبوعًا بالعنوان. الرقم والعنوان اختياريان."
+
+#: templates/indigo_api/document/_cheatsheet.html:186
+msgid "Include a Crossheading"
+msgstr "أضف عنوانًا فرعيًا"
+
+#: templates/indigo_api/document/_cheatsheet.html:190
+msgid "Use <code>CROSSHEADING</code> to include a heading that isn't a chapter, part, or subpart."
+msgstr "استخدم <code>CROSSHEADING</code> لإدراج عنوان ليس فصلاً أو جزءاً أو جزءاً فرعياً."
+
+#: templates/indigo_api/document/_cheatsheet.html:212
+msgid "Starting a Section"
+msgstr "بدء قسم"
+
+#: templates/indigo_api/document/_cheatsheet.html:216
+msgid "Start a numbered section with <code>SEC</code> and a number, followed by <code> - </code> and the title. The number and title are both optional."
+msgstr "ابدأ قسمًا مرقمًا بـ <code>القسم</code> متبوعًا برقم، ثم <code> - </code> متبوعًا بالعنوان. الرقم والعنوان اختياريان."
+
+#: templates/indigo_api/document/_cheatsheet.html:241
+msgid "Starting a Subsection"
+msgstr "بدء قسم فرعي"
+
+#: templates/indigo_api/document/_cheatsheet.html:245
+msgid "Start a numbered subsection with <code>SUBSEC</code> and a number, followed by <code> - </code> and the title. The number and title are both optional."
+msgstr "ابدأ قسمًا فرعيًا مرقمًا بالرمز <code>القسم الفرعي</code> متبوعًا برقم، ثم <code> - </code> متبوعًا بالعنوان. الرقم والعنوان اختياريان."
+
+#: templates/indigo_api/document/_cheatsheet.html:269
+msgid "Add a numbered paragraph"
+msgstr "أضف فقرة مرقمة"
+
+#: templates/indigo_api/document/_cheatsheet.html:273
+msgid "Start a paragraph with <code>PARA</code> and a number, followed by <code> - </code> and the title. The number and title are both optional."
+msgstr "ابدأ فقرة بـ <code>PARA</code> متبوعًا برقم، ثم <code> - </code> متبوعًا بالعنوان. الرقم والعنوان اختياريان."
+
+#: templates/indigo_api/document/_cheatsheet.html:302
+msgid "Create a numbered list (a blocklist)"
+msgstr "أنشئ قائمة مرقمة (قائمة حظر)"
+
+#: templates/indigo_api/document/_cheatsheet.html:306
+msgid "Start a numbered list with <code>ITEMS</code>. Use <code>ITEM</code> and a number for each item in the list, and indent them under <code>ITEMS</code>. Indent nested lists under the relevant item, starting with <code>ITEMS</code> again."
+msgstr "ابدأ قائمة مرقمة بالعناصر <code></code>. استخدم العناصر <code></code> ورقمًا لكل عنصر في القائمة، ثم قم بإزاحتها أسفل العناصر <code></code>. قم بإزاحة القوائم المتداخلة أسفل العنصر ذي الصلة، بدءًا من العناصر <code></code> مرة أخرى."
+
+#: templates/indigo_api/document/_cheatsheet.html:371
+msgid "Starting a new Article"
+msgstr "بدء مقال جديد"
+
+#: templates/indigo_api/document/_cheatsheet.html:375
+msgid "Start an Article with <code>ART</code> and a number, followed by <code> - </code> and the title. The number and title are both optional."
+msgstr "ابدأ مقالًا بـ <code>ART</code> ورقم، متبوعًا بـ <code> - </code> والعنوان. الرقم والعنوان اختياريان."
+
+#: templates/indigo_api/document/_cheatsheet.html:400
+msgid "Insert a special character"
+msgstr "أدخل أحرفًا خاصة"
+
+#: templates/indigo_api/document/_cheatsheet.html:404
+msgid "See guidance on using special characters in the <a href=\"https://docs.laws.africa/editing-a-document/special-characters\" target=\"_blank\">Editor Guide</a>."
+msgstr "راجع الإرشادات المتعلقة باستخدام الأحرف الخاصة في دليل المحرر <a href=\"https://docs.laws.africa/editing-a-document/special-characters\" target=\"_blank\"></a>."
+
+#: templates/indigo_api/document/_cheatsheet.html:415
+msgid "Make text italics"
+msgstr "اجعل النص مائلاً"
+
+#: templates/indigo_api/document/_cheatsheet.html:419
+msgid "Display a word or a sentence as italics using <code>//word//</code>. Do this for non-English and other special terms."
+msgstr "اعرض كلمة أو جملة بخط مائل باستخدام <code>//كلمة//</code>. كرر ذلك مع الكلمات غير الإنجليزية والمصطلحات الخاصة الأخرى."
+
+#: templates/indigo_api/document/_cheatsheet.html:424
+msgid "For editorial remarks, use"
+msgstr "لإبداء الملاحظات التحريرية، استخدم"
+
+#: templates/indigo_api/document/_cheatsheet.html:444
+msgid "Make text bold"
+msgstr "اجعل النص غامقًا"
+
+#: templates/indigo_api/document/_cheatsheet.html:448
+msgid "Display a word or a sentence as bold using <code>**word**</code>. Do not use for headings or defined terms."
+msgstr "لعرض كلمة أو جملة بخط غامق، استخدم <code>**الكلمة**</code>. لا تستخدم هذا الخيار للعناوين أو المصطلحات المُعرَّفة."
+
+#: templates/indigo_api/document/_cheatsheet.html:470
+msgid "Underline text"
+msgstr "ضع خطاً تحت النص"
+
+#: templates/indigo_api/document/_cheatsheet.html:474
+msgid "Underline a word or a sentence using two underscores on either side: <code>__word__</code>. Do not use for headings."
+msgstr "ضع خطًا تحت كلمة أو جملة باستخدام خطين سفليين على كلا الجانبين: <code>__word__</code>. لا تستخدمه للعناوين."
+
+#: templates/indigo_api/document/_cheatsheet.html:496
+msgid "Add a link to a webpage"
+msgstr "أضف رابطًا إلى صفحة ويب"
+
+#: templates/indigo_api/document/_cheatsheet.html:500
+msgid "Link to a webpage using"
+msgstr "رابط إلى صفحة ويب باستخدام"
+
+#: templates/indigo_api/document/_cheatsheet.html:520
+msgid "Add a link to another Act or work"
+msgstr "أضف رابطًا إلى عمل أو مشروع آخر"
+
+#: templates/indigo_api/document/_cheatsheet.html:524
+msgid "Link to another Act or work using"
+msgstr "رابط إلى عمل أو فصل آخر باستخدام"
+
+#: templates/indigo_api/document/_cheatsheet.html:525
+msgid "where <code>frbr-uri</code> is the FRBR URI of the work you want to link to, such as <code>/akn/za/act/1998/2</code>."
+msgstr "حيث <code>frbr-uri</code> هو FRBR URI للعمل الذي تريد الربط به، مثل <code>/akn/za/act/1998/2</code>."
+
+#: templates/indigo_api/document/_cheatsheet.html:545
+msgid "Insert an image"
+msgstr "أدرج صورة"
+
+#: templates/indigo_api/document/_cheatsheet.html:550
+#, python-format
+msgid "Insert an image by clicking <i>Insert, Insert image...</i> in the menu, or use <code>%(markup)s</code>. Click <i>Attachments <span class=\"fa fa-paperclip\"></span></i> to see images you can insert, or upload new ones."
+msgstr "لإدراج صورة، انقر على <i>إدراج، ثم إدراج صورة...</i> في القائمة، أو استخدم <code>%(markup)s</code>. انقر على <i>المرفقات <span class=\"fa fa-paperclip\"></span></i> لعرض الصور التي يمكنك إدراجها، أو لتحميل صور جديدة."
+
+#: templates/indigo_api/document/_cheatsheet.html:574
+msgid "Add an editorial remark"
+msgstr "أضف ملاحظة تحريرية"
+
+#: templates/indigo_api/document/_cheatsheet.html:578
+#, python-format
+msgid "Add an editorial remark, text that isn't part of the original document, using <code>%(markup)s</code>."
+msgstr "أضف ملاحظة تحريرية، نص ليس جزءًا من المستند الأصلي، باستخدام <code>%(markup)s</code>."
+
+#: templates/indigo_api/document/_cheatsheet.html:602
+msgid "Ignore text that looks like a chapter, part or section but isn't"
+msgstr "تجاهل النص الذي يبدو وكأنه فصل أو جزء أو قسم ولكنه ليس كذلك"
+
+#: templates/indigo_api/document/_cheatsheet.html:606
+msgid "You can tell the system to ignore text that looks like a chapter, part, section or any other special words, by putting a backslash <code>\\</code> just before it."
+msgstr "يمكنك إخبار النظام بتجاهل النص الذي يبدو وكأنه فصل أو جزء أو قسم أو أي كلمات خاصة أخرى، عن طريق وضع شرطة مائلة عكسية <code>\\</code> قبلها مباشرة."
+
+#: templates/indigo_api/document/_cheatsheet.html:633
+msgid "Starting a Schedule"
+msgstr "بدء جدول زمني"
+
+#: templates/indigo_api/document/_cheatsheet.html:637
+msgid "Start a schedule using <code>SCHEDULE</code> and an optional number and title."
+msgstr "ابدأ جدولًا باستخدام <code>SCHEDULE</code> ورقم وعنوان اختياريين."
+
+#: templates/indigo_api/document/_cheatsheet.html:689
+msgid "Insert a table"
+msgstr "أدرج جدولاً"
+
+#: templates/indigo_api/document/_cheatsheet.html:693
+msgid "Insert a table by clicking <i>Insert, Insert table</i> in the menu."
+msgstr "قم بإدراج جدول بالنقر على <i>إدراج، إدراج جدول</i> في القائمة."
+
+#: templates/indigo_api/document/_cheatsheet.html:698
+msgid "See guidance on working with tables in the <a href=\"https://docs.laws.africa/how-tos/tables\" target=\"_blank\">Editor Guide</a>."
+msgstr "راجع الإرشادات المتعلقة بالعمل مع الجداول في دليل المحرر <a href=\"https://docs.laws.africa/how-tos/tables\" target=\"_blank\"></a>."
+
+#: templates/indigo_api/document/_cheatsheet.html:740
+msgid "Paste a table"
+msgstr "ألصق جدولاً"
+
+#: templates/indigo_api/document/_cheatsheet.html:743
+msgid "Paste a table from a PDF or MS Word by copying it from the source, then pasting it into the editor when in Edit mode."
+msgstr "قم بلصق جدول من ملف PDF أو MS Word عن طريق نسخه من المصدر، ثم لصقه في المحرر عند وجودك في وضع التحرير."
+
+#: templates/indigo_api/document/_cheatsheet.html:761
+#: templates/indigo_api/document/_toolbar.html:53
+#, python-format
+msgid "%(country)s Style Guide"
+msgstr "%(country)s دليل الأسلوب"
+
+#: templates/indigo_api/document/_cheatsheet.html:764
+msgid "Full editor documentation"
+msgstr "توثيق كامل للمحرر"
+
+#: templates/indigo_api/document/_defined_terms.html:7
+msgid "Defined Terms"
+msgstr "المصطلحات المحددة"
+
+#: templates/indigo_api/document/_defined_terms.html:12
+msgid "These are terms that are explicitly defined in this document. Always refresh defined terms before publishing a document to ensure that all references to terms are captured."
+msgstr "هذه مصطلحات مُعرَّفة صراحةً في هذه الوثيقة. يُرجى تحديث المصطلحات المُعرَّفة دائمًا قبل نشر الوثيقة لضمان تضمين جميع الإشارات إلى المصطلحات."
+
+#: templates/indigo_api/document/_defined_terms.html:21
+msgid "Only uses of defined terms can be linked while editing a provision."
+msgstr "لا يمكن ربط سوى استخدامات المصطلحات المحددة أثناء تعديل أي بند."
+
+#: templates/indigo_api/document/_defined_terms.html:22
+msgid "To mark up definitions, edit the full document."
+msgstr "لتمييز التعريفات، قم بتحرير المستند بالكامل."
+
+#: templates/indigo_api/document/_defined_terms.html:27
+msgid "Remove defined terms"
+msgstr "إزالة المصطلحات المحددة"
+
+#: templates/indigo_api/document/_defined_terms.html:31
+msgid "Find and link defined terms"
+msgstr "ابحث عن المصطلحات المحددة واربطها ببعضها البعض"
+
+#: templates/indigo_api/document/_defined_terms.html:33
+msgid "Link defined terms"
+msgstr "تعريفات الروابط"
+
+#: templates/indigo_api/document/_defined_terms.html:54
+msgid "No defined terms."
+msgstr "لا توجد مصطلحات محددة."
+
+#: templates/indigo_api/document/_insert_image_modal.html:7
+msgid "Choose an image"
+msgstr "اختر صورة"
+
+#: templates/indigo_api/document/_insert_image_modal.html:17
+msgid "Insert image"
+msgstr "إدراج صورة"
+
+#: templates/indigo_api/document/_italics_terms.html:8
+msgid "Italicised terms"
+msgstr "المصطلحات المكتوبة بخط مائل"
+
+#: templates/indigo_api/document/_italics_terms.html:15
+msgid "In this document"
+msgstr "في هذه الوثيقة"
+
+#: templates/indigo_api/document/_italics_terms.html:18
+#, python-format
+msgid "In %(country)s"
+msgstr "في %(country)s"
+
+#: templates/indigo_api/document/_italics_terms.html:31
+#, python-format
+msgid "Terms that will be italicised in %(country)s:"
+msgstr "المصطلحات التي ستُكتب بخط مائل في %(country)s:"
+
+#: templates/indigo_api/document/_italics_terms.html:42
+#, python-format
+msgid "No terms have been selected to be italicised in %(country)s."
+msgstr "لم يتم اختيار أي مصطلحات ليتم كتابتها بخط مائل في %(country)s."
+
+#: templates/indigo_api/document/_italics_terms.html:49
+msgid "Remove italics"
+msgstr "إزالة الخط المائل"
+
+#: templates/indigo_api/document/_italics_terms.html:50
+msgid "Mark up italics"
+msgstr "استخدم الخط المائل."
+
+#: templates/indigo_api/document/_italics_terms.html:73
+msgid "No italicised terms."
+msgstr "لا توجد مصطلحات مكتوبة بخط مائل."
+
+#: templates/indigo_api/document/_properties.html:7
+msgid "Details of this expression"
+msgstr "تفاصيل هذا التعبير"
+
+#: templates/indigo_api/document/_properties.html:29
+msgid "Expression date"
+msgstr "تاريخ التعبير"
+
+#: templates/indigo_api/document/_properties.html:38
+msgid "initial publication"
+msgstr "النشر الأولي"
+
+#: templates/indigo_api/document/_properties.html:40
+msgid "amendment"
+msgstr "تعديل"
+
+#: templates/indigo_api/document/_properties.html:42
+msgid "consolidation"
+msgstr "توحيد"
+
+#: templates/indigo_api/document/_properties.html:46
+msgid "Date of this version of the document, either the publication date or an amendment date"
+msgstr "تاريخ هذه النسخة من الوثيقة، إما تاريخ النشر أو تاريخ التعديل"
+
+#: templates/indigo_api/document/_properties.html:49
+#: templates/indigo_api/document/show.html:174
+msgid "Manage amendments"
+msgstr "إدارة التعديلات"
+
+#: templates/indigo_api/document/_properties.html:55
+msgid "Published URL:"
+msgstr "الرابط المنشور:"
+
+#: templates/indigo_api/document/_provisions.html:4
+msgid "Choose provision"
+msgstr "اختر التوفير"
+
+#: templates/indigo_api/document/_provisions.html:17
+msgid "Choose a provision to edit"
+msgstr "اختر بندًا لتعديله"
+
+#: templates/indigo_api/document/_references.html:7
+msgid "References"
+msgstr "مراجع"
+
+#: templates/indigo_api/document/_references.html:14
+msgid "Remove references"
+msgstr "إزالة المراجع"
+
+#: templates/indigo_api/document/_references.html:15
+msgid "Find references"
+msgstr "ابحث عن المراجع"
+
+#: templates/indigo_api/document/_revisions.html:9
+#: templates/indigo_api/work/versions.html:26
+#: templates/indigo_app/_paginator.html:5
+#: templates/indigo_app/_paginator.html:7
+msgid "Previous"
+msgstr "سابق"
+
+#: templates/indigo_api/document/_revisions.html:10
+#: templates/indigo_api/work/versions.html:34
+#: templates/indigo_app/_paginator.html:27
+#: templates/indigo_app/_paginator.html:29
+msgid "Next"
+msgstr "التالي"
+
+#: templates/indigo_api/document/_revisions.html:14
+msgid "Recent Changes"
+msgstr "التغييرات الأخيرة"
+
+#: templates/indigo_api/document/_revisions.html:47
+msgid "Restore this revision"
+msgstr "استعادة هذه النسخة"
+
+#: templates/indigo_api/document/_secondary_pane.html:4
+msgid "Source"
+msgstr "مصدر"
+
+#: templates/indigo_api/document/_source_att.html:9 views/places.py:230
+msgid "Open"
+msgstr "يفتح"
+
+#: templates/indigo_api/document/_task_list.html:5
+#: templates/indigo_app/tasks/all_tasks.html:4
+#: templates/indigo_app/tasks/tabbed_layout.html:16
+msgid "All tasks"
+msgstr "جميع المهام"
+
+#: templates/indigo_api/document/_task_list.html:20
+#, python-format
+msgid "\n"
+"          No tasks at %(expression_date)s.\n"
+"        "
+msgstr "لا توجد مهام في \n"
+"          . %(expression_date)s.\n"
+"        "
+
+#: templates/indigo_api/document/_text_editor.html:7
+msgid "Find..."
+msgstr "يجد..."
+
+#: templates/indigo_api/document/_text_editor.html:8
+msgid "Find next"
+msgstr "ابحث عن التالي"
+
+#: templates/indigo_api/document/_text_editor.html:9
+msgid "Find previous"
+msgstr "البحث عن السابق"
+
+#: templates/indigo_api/document/_text_editor.html:10
+msgid "Find and replace..."
+msgstr "البحث والاستبدال..."
+
+#: templates/indigo_api/document/_text_editor.html:12
+msgid "Move lines up"
+msgstr "قم بتحريك التشكيلات لأعلى"
+
+#: templates/indigo_api/document/_text_editor.html:13
+msgid "Move lines down"
+msgstr "حرك الأسطر لأسفل"
+
+#: templates/indigo_api/document/_text_editor.html:14
+msgid "Join lines"
+msgstr "خطوط متصلة"
+
+#: templates/indigo_api/document/_text_editor.html:16
+msgid "All commands..."
+msgstr "جميع الأوامر..."
+
+#: templates/indigo_api/document/_text_editor.html:20
+#: templates/indigo_api/document/_toolbar.html:106
+msgid "Insert"
+msgstr "أدخل"
+
+#: templates/indigo_api/document/_text_editor.html:22
+msgid "Insert image..."
+msgstr "أدرج الصورة..."
+
+#: templates/indigo_api/document/_text_editor.html:23
+msgid "Insert table"
+msgstr "إدراج جدول"
+
+#: templates/indigo_api/document/_text_editor.html:24
+msgid "Insert footnote"
+msgstr "أضف حاشية"
+
+#: templates/indigo_api/document/_text_editor.html:25
+msgid "Insert Schedule"
+msgstr "جدول الإدراج"
+
+#: templates/indigo_api/document/_text_editor.html:27
+msgid "Insert annotation"
+msgstr "أضف تعليقًا"
+
+#: templates/indigo_api/document/_text_editor.html:29
+msgid "Substitution"
+msgstr "الاستبدال"
+
+#: templates/indigo_api/document/_text_editor.html:30
+#: templates/indigo_api/work/related.html:25
+msgid "Amendment"
+msgstr "تعديل"
+
+#: templates/indigo_api/document/_text_editor.html:31
+msgid "Insertion"
+msgstr "الإدخال"
+
+#: templates/indigo_api/document/_text_editor.html:32
+msgid "Addition"
+msgstr "إضافة"
+
+#: templates/indigo_api/document/_text_editor.html:33
+msgid "Deletion"
+msgstr "الحذف"
+
+#: templates/indigo_api/document/_text_editor.html:34
+#: templates/indigo_api/work/related.html:32
+msgid "Repeal"
+msgstr "إلغاء"
+
+#: templates/indigo_api/document/_text_editor.html:35
+msgid "Other"
+msgstr "آخر"
+
+#: templates/indigo_api/document/_text_editor.html:50
+msgid "Remark"
+msgstr "ملاحظة"
+
+#: templates/indigo_api/document/_text_editor.html:53
+msgid "Wrap lines"
+msgstr "خطوط الالتفاف"
+
+#: templates/indigo_api/document/_text_editor.html:58
+msgid "Preview changes"
+msgstr "معاينة التغييرات"
+
+#: templates/indigo_api/document/_text_editor.html:62
+#: templates/indigo_api/document/_toolbar.html:99
+msgid "Update"
+msgstr "تحديث"
+
+#: templates/indigo_api/document/_toolbar.html:6
+#: templates/indigo_api/work/batch_update.html:54
+#: templates/indigo_api/work/layout.html:53
+#: templates/indigo_api/work/versions.html:4
+#: templates/indigo_api/work/versions.html:7
+msgid "Changes"
+msgstr "التغييرات"
+
+#: templates/indigo_api/document/_toolbar.html:10
+msgid "Compare to"
+msgstr "قارن بـ"
+
+#: templates/indigo_api/document/_toolbar.html:15
+msgid "current point in time"
+msgstr "اللحظة الحالية"
+
+#: templates/indigo_api/document/_toolbar.html:21
+msgid "Show source"
+msgstr "عرض المصدر"
+
+#: templates/indigo_api/document/_toolbar.html:25
+msgid "Outline Akoma Ntoso Structure"
+msgstr "مخطط هيكل أكوما نتوسو"
+
+#: templates/indigo_api/document/_toolbar.html:25
+msgid "Structure"
+msgstr "بناء"
+
+#: templates/indigo_api/document/_toolbar.html:29
+msgid "Analysis"
+msgstr "تحليل"
+
+#: templates/indigo_api/document/_toolbar.html:34
+msgid "Defined terms..."
+msgstr "المصطلحات المحددة..."
+
+#: templates/indigo_api/document/_toolbar.html:37
+msgid "References..."
+msgstr "مراجع..."
+
+#: templates/indigo_api/document/_toolbar.html:40
+msgid "Italicised terms..."
+msgstr "المصطلحات المكتوبة بخط مائل..."
+
+#: templates/indigo_api/document/_toolbar.html:44
+msgid "Make headings Sentence case"
+msgstr "اجعل العناوين مكتوبة بأحرف كبيرة في بداية كل جملة."
+
+#: templates/indigo_api/document/_toolbar.html:63
+#: templates/place/settings.html:4 templates/place/settings.html:11
+#: templates/place/settings_layout.html:4
+#: templates/place/settings_layout.html:12
+#: templates/place/tabbed_layout.html:59
+msgid "Settings"
+msgstr "إعدادات"
+
+#: templates/indigo_api/document/_toolbar.html:65
+msgid "Properties..."
+msgstr "ملكيات..."
+
+#: templates/indigo_api/document/_toolbar.html:67
+msgid "Download as"
+msgstr "تنزيل كملف"
+
+#: templates/indigo_api/document/_toolbar.html:80 templates/main.html:72
+msgid "Help"
+msgstr "يساعد"
+
+#: templates/indigo_api/document/_toolbar.html:83
+msgid "Sidebar"
+msgstr "الشريط الجانبي"
+
+#: templates/indigo_api/document/_toolbar.html:93
+msgid "Edit table"
+msgstr "تعديل الجدول"
+
+#: templates/indigo_api/document/_toolbar.html:109
+msgid "Insert row above"
+msgstr "أدخل الصف أعلاه"
+
+#: templates/indigo_api/document/_toolbar.html:110
+msgid "Insert row below"
+msgstr "أدخل الصف أدناه"
+
+#: templates/indigo_api/document/_toolbar.html:112
+msgid "Insert column left"
+msgstr "أدخل العمود الأيسر"
+
+#: templates/indigo_api/document/_toolbar.html:113
+msgid "Insert column right"
+msgstr "أدرج العمود الأيمن"
+
+#: templates/indigo_api/document/_toolbar.html:122
+msgid "Delete row"
+msgstr "حذف الصف"
+
+#: templates/indigo_api/document/_toolbar.html:123
+msgid "Delete column"
+msgstr "حذف العمود"
+
+#: templates/indigo_api/document/_toolbar.html:133
+msgid "Merge cells"
+msgstr "دمج الخلايا"
+
+#: templates/indigo_api/document/_toolbar.html:134
+msgid "Heading"
+msgstr "عنوان"
+
+#: templates/indigo_api/document/show.html:26
+#: templates/indigo_api/document_popup.html:9
+#: templates/indigo_app/place/_work_detail_documents.html:13
+msgid "published"
+msgstr "تم النشر"
+
+#: templates/indigo_api/document/show.html:27
+#: templates/indigo_api/document_popup.html:7
+#: templates/indigo_app/place/_work_detail_documents.html:11
+msgid "draft"
+msgstr "مسودة"
+
+#: templates/indigo_api/document/show.html:41
+#: templates/indigo_api/document/show.html:46
+msgid "Save &amp; publish"
+msgstr "حفظ &amp; نشر"
+
+#: templates/indigo_api/document/show.html:42
+msgid "Save draft"
+msgstr "حفظ المسودة"
+
+#: templates/indigo_api/document/show.html:47
+msgid "Unpublish &amp; save"
+msgstr "إلغاء النشر &amp; حفظ"
+
+#: templates/indigo_api/document/show.html:51
+msgid "You don't have permission to make changes."
+msgstr "ليس لديك إذن لإجراء تغييرات."
+
+#: templates/indigo_api/document/show.html:57
+#, python-format
+msgid "<a href=\"%(url)s\">Log in </a> to make changes."
+msgstr "<a href=\"%(url)s\">سجل الدخول </a> لإجراء التغييرات."
+
+#: templates/indigo_api/document/show.html:158
+#: templates/indigo_api/work/layout.html:15
+#: templates/indigo_app/place/works.html:4 templates/main.html:39
+#: templates/place/detail.html:12 templates/place/detail.html:29
+#: templates/place/detail.html:30 templates/place/detail.html:156
+#: templates/place/detail.html:192 templates/place/tabbed_layout.html:43
+msgid "Works"
+msgstr "أعمال"
+
+#: templates/indigo_api/document/show.html:169
+msgid "this document"
+msgstr "هذه الوثيقة"
+
+#: templates/indigo_api/document/show.html:179
+#: templates/indigo_api/timeline/_work_points_in_time.html:76
+msgid "Provision editor"
+msgstr "محرر المناصب"
+
+#: templates/indigo_api/task/form.html:4 templates/indigo_api/task/list.html:25
+msgid "New task"
+msgstr "مهمة جديدة"
+
+#: templates/indigo_api/task/form.html:9
+msgid "You don't have permission to create a task."
+msgstr "ليس لديك إذن لإنشاء مهمة."
+
+#: templates/indigo_api/task/form.html:19
+msgid "Loading..."
+msgstr "تحميل..."
+
+#: templates/indigo_api/task/form.html:54
+msgid "Choose a type, or enter a title."
+msgstr "اختر نوعاً، أو أدخل عنواناً."
+
+#: templates/indigo_api/task/form.html:115
+msgid "Are you sure you want to cancel this task?"
+msgstr "هل أنت متأكد من رغبتك في إلغاء هذه المهمة؟"
+
+#: templates/indigo_api/task/form.html:116
+msgid "Cancel task"
+msgstr "إلغاء المهمة"
+
+#: templates/indigo_api/task/form.html:121
+msgid "Are you sure you want to block this task?"
+msgstr "هل أنت متأكد من رغبتك في حظر هذه المهمة؟"
+
+#: templates/indigo_api/task/form.html:122
+msgid "Block task"
+msgstr "مهمة الكتلة"
+
+#: templates/indigo_api/task/form.html:125
+msgid "Are you sure you want to unblock this task?"
+msgstr "هل أنت متأكد من رغبتك في إلغاء حظر هذه المهمة؟"
+
+#: templates/indigo_api/task/form.html:126
+msgid "Unblock task"
+msgstr "إلغاء حظر المهمة"
+
+#: templates/indigo_api/timeline/_edit_amendment.html:10
+#: templates/indigo_api/timeline/_edit_consolidation.html:10
+msgid "Options"
+msgstr "خيارات"
+
+#: templates/indigo_api/timeline/_edit_amendment.html:13
+#: templates/indigo_api/timeline/_edit_consolidation.html:13
+msgid "Change date"
+msgstr "تغيير التاريخ"
+
+#: templates/indigo_api/timeline/_edit_amendment.html:15
+msgid "Really delete this amendment?"
+msgstr "هل يجب حذف هذا التعديل فعلاً؟"
+
+#: templates/indigo_api/timeline/_edit_consolidation.html:15
+msgid "Really delete this consolidation?"
+msgstr "هل يجب حذف هذا الدمج؟"
+
+#: templates/indigo_api/timeline/_work_points_in_time.html:21
+msgid "Consolidation already exists at"
+msgstr "يوجد بالفعل اندماج في"
+
+#: templates/indigo_api/timeline/_work_points_in_time.html:27
+msgid "Add consolidation date"
+msgstr "إضافة تاريخ التوحيد"
+
+#: templates/indigo_api/timeline/_work_points_in_time.html:46
+msgid "No event recorded for this date"
+msgstr "لم يتم تسجيل أي حدث لهذا التاريخ"
+
+#: templates/indigo_api/timeline/_work_points_in_time.html:49
+msgid "Stranded documents:"
+msgstr "وثائق عالقة:"
+
+#: templates/indigo_api/timeline/_work_points_in_time.html:104
+msgid "Create amended version"
+msgstr "إنشاء نسخة معدلة"
+
+#: templates/indigo_api/timeline/_work_points_in_time.html:114
+msgid "Import document"
+msgstr "مستند الاستيراد"
+
+#: templates/indigo_api/work/amendments.html:13
+msgid "Stub works should not have points in time."
+msgstr "لا ينبغي أن تحتوي الأعمال الفرعية على نقاط زمنية."
+
+#: templates/indigo_api/work/amendments.html:15
+msgid "Either remove these points in time or don't mark this work as a stub."
+msgstr "إما قم بإزالة هذه النقاط الزمنية أو لا تقم بتصنيف هذا العمل على أنه عمل غير مكتمل."
+
+#: templates/indigo_api/work/batch_create.html:5
+msgid "Create a new batch"
+msgstr "إنشاء دفعة جديدة"
+
+#: templates/indigo_api/work/batch_create.html:10
+msgid "Import a batch of works from Google Sheets"
+msgstr "استورد مجموعة من الأعمال من جداول بيانات جوجل"
+
+#: templates/indigo_api/work/batch_create.html:34
+msgid "Google Sheets URL"
+msgstr "رابط جداول بيانات جوجل"
+
+#: templates/indigo_api/work/batch_create.html:35
+msgid "The URL of the spreadsheet"
+msgstr "رابط جدول البيانات"
+
+#: templates/indigo_api/work/batch_create.html:45
+msgid "Spreadsheet tab"
+msgstr "علامة تبويب جدول البيانات"
+
+#: templates/indigo_api/work/batch_create.html:55
+msgid "The first (leftmost) sheet will be imported."
+msgstr "سيتم استيراد الورقة الأولى (الأيسر)."
+
+#: templates/indigo_api/work/batch_create.html:60
+msgid "Choose a topic for newly created works"
+msgstr "اختر موضوعًا للأعمال التي تم إنشاؤها حديثًا"
+
+#: templates/indigo_api/work/batch_create.html:66
+msgid "Choose a project topic"
+msgstr "اختر موضوع المشروع"
+
+#: templates/indigo_api/work/batch_create.html:78
+msgid "There are no project topics"
+msgstr "لا توجد مواضيع للمشاريع"
+
+#: templates/indigo_api/work/batch_create.html:85
+msgid "Block ALL 'Convert document' tasks on creation"
+msgstr "حظر جميع مهام \"تحويل المستند\" عند الإنشاء"
+
+#: templates/indigo_api/work/batch_create.html:90
+msgid "Cancel ALL 'Convert document' tasks on creation (this will override blocking them)"
+msgstr "قم بإلغاء جميع مهام \"تحويل المستند\" عند إنشائها (سيؤدي هذا إلى تجاوز حظرها)."
+
+#: templates/indigo_api/work/batch_create.html:95
+msgid "Block ALL 'Import content' tasks on creation"
+msgstr "قم بحظر جميع مهام \"استيراد المحتوى\" عند الإنشاء"
+
+#: templates/indigo_api/work/batch_create.html:100
+msgid "Cancel ALL 'Import content' tasks on creation (this will override blocking them)"
+msgstr "قم بإلغاء جميع مهام \"استيراد المحتوى\" عند إنشائها (سيؤدي هذا إلى تجاوز حظرها)."
+
+#: templates/indigo_api/work/batch_create.html:105
+msgid "Block ALL 'Link gazette' tasks on creation"
+msgstr "حظر جميع مهام \"رابط الجريدة\" عند الإنشاء"
+
+#: templates/indigo_api/work/batch_create.html:110
+msgid "Cancel ALL 'Link gazette' tasks on creation (this will override blocking them)"
+msgstr "قم بإلغاء جميع مهام \"ربط الجريدة الرسمية\" عند إنشائها (سيؤدي هذا إلى تجاوز حظرها)."
+
+#: templates/indigo_api/work/batch_create.html:115
+msgid "Block ALL 'Apply amendment' tasks on creation"
+msgstr "قم بحظر جميع مهام \"تطبيق التعديل\" عند الإنشاء"
+
+#: templates/indigo_api/work/batch_create.html:120
+msgid "Cancel ALL 'Apply amendment' tasks on creation (this will override blocking them)"
+msgstr "قم بإلغاء جميع مهام \"تطبيق التعديل\" عند الإنشاء (سيؤدي هذا إلى تجاوز حظرها)."
+
+#: templates/indigo_api/work/batch_create.html:129
+msgid "Preview"
+msgstr "معاينة"
+
+#: templates/indigo_api/work/batch_create.html:131
+#: templates/indigo_api/work/batch_create.html:269
+#: templates/indigo_api/work/batch_create.html:382
+msgid "You don't have permission to create works."
+msgstr "ليس لديك إذن لإنشاء أعمال."
+
+#: templates/indigo_api/work/batch_create.html:142
+msgid "Preview of your import"
+msgstr "معاينة عملية الاستيراد الخاصة بك"
+
+#: templates/indigo_api/work/batch_create.html:148
+#: templates/indigo_api/work/batch_create.html:282
+#: templates/indigo_api/work/batch_update.html:49
+#: templates/indigo_api/work/batch_update.html:127
+msgid "Row"
+msgstr "صف"
+
+#: templates/indigo_api/work/batch_create.html:150
+#: templates/indigo_api/work/batch_create.html:284
+#: templates/indigo_api/work/batch_update.html:51
+#: templates/indigo_api/work/batch_update.html:129
+msgid "Title / Error message"
+msgstr "العنوان / رسالة الخطأ"
+
+#: templates/indigo_api/work/batch_create.html:158
+#: templates/indigo_api/work/batch_create.html:292
+msgid "Taxonomy"
+msgstr "التصنيف"
+
+#: templates/indigo_api/work/batch_create.html:161
+#: templates/indigo_api/work/batch_create.html:294
+msgid "Relationships"
+msgstr "العلاقات"
+
+#: templates/indigo_api/work/batch_create.html:162
+msgid "Notes"
+msgstr "ملحوظات"
+
+#: templates/indigo_api/work/batch_create.html:173
+msgid "Ready to import"
+msgstr "جاهز للاستيراد"
+
+#: templates/indigo_api/work/batch_create.html:175
+#: templates/indigo_api/work/batch_create.html:307
+msgid "Duplicate"
+msgstr "ينسخ"
+
+#: templates/indigo_api/work/batch_create.html:177
+#: templates/indigo_api/work/batch_create.html:309
+#: templates/indigo_api/work/batch_update.html:69
+#: templates/indigo_api/work/batch_update.html:146
+msgid "Error"
+msgstr "خطأ"
+
+#: templates/indigo_api/work/batch_create.html:184
+#: templates/indigo_api/work/batch_create.html:316
+msgid "A work with this type, year and number already exists in this place."
+msgstr "يوجد عمل فني من هذا النوع والسنة والرقم بالفعل في هذا المكان."
+
+#: templates/indigo_api/work/batch_create.html:266
+#: templates/indigo_api/work/batch_create.html:379
+#: templates/indigo_api/work/batch_update.html:111
+#: templates/indigo_api/work/batch_update.html:179
+msgid "Refresh preview"
+msgstr "تحديث المعاينة"
+
+#: templates/indigo_api/work/batch_create.html:267
+#: templates/indigo_api/work/batch_create.html:380
+#: templates/indigo_api/work/batch_create.html:420
+msgid "Import works"
+msgstr "أعمال الاستيراد"
+
+#: templates/indigo_api/work/batch_create.html:276
+msgid "Import complete"
+msgstr "اكتملت عملية الاستيراد"
+
+#: templates/indigo_api/work/batch_create.html:305
+msgid "Imported"
+msgstr "مستورد"
+
+#: templates/indigo_api/work/batch_create.html:399
+msgid "Instructions"
+msgstr "تعليمات"
+
+#: templates/indigo_api/work/batch_create.html:403
+#, python-format
+msgid "Make a copy of the <a href=\"%(template_href)s\" target=\"_blank\">Legislation index template</a>: 'File | Make a copy'."
+msgstr "قم بعمل نسخة من قالب فهرس التشريعات <a href=\"%(template_href)s\" target=\"_blank\"></a>: 'ملف | إنشاء نسخة'."
+
+#: templates/indigo_api/work/batch_create.html:408
+#, python-format
+msgid "Record the Spreadsheet URL under <a href=\"%(place_url)s\" target=\"_blank\">Settings</a>."
+msgstr "قم بتسجيل عنوان URL لجدول البيانات ضمن <a href=\"%(place_url)s\" target=\"_blank\">الإعدادات</a>."
+
+#: templates/indigo_api/work/batch_create.html:413
+#, python-format
+msgid "Share the spreadsheet with %(share)s."
+msgstr "شارك جدول البيانات مع %(share)s."
+
+#: templates/indigo_api/work/batch_create.html:414
+msgid "Choose a spreadsheet tab and a project."
+msgstr "اختر علامة تبويب جدول البيانات ومشروعًا."
+
+#: templates/indigo_api/work/batch_create.html:416
+msgid "Make it accessible by turning link sharing on: 'Share | General access | Anyone with the link' (top-right corner)."
+msgstr "اجعل الوصول إليه متاحًا عن طريق تشغيل مشاركة الرابط: \"مشاركة | الوصول العام | أي شخص لديه الرابط\" (الزاوية العلوية اليمنى)."
+
+#: templates/indigo_api/work/batch_create.html:417
+msgid "Choose a project."
+msgstr "اختر مشروعًا."
+
+#: templates/indigo_api/work/batch_create.html:419
+msgid "<strong>Preview</strong> the new works to be created, resolve any errors / duplicates and <strong>Refresh preview</strong>."
+msgstr "<strong>معاينة</strong> الأعمال الجديدة المراد إنشاؤها، وحل أي أخطاء / تكرارات و <strong>تحديث المعاينة</strong>."
+
+#: templates/indigo_api/work/batch_update.html:5
+msgid "Update an existing batch"
+msgstr "تحديث دفعة موجودة"
+
+#: templates/indigo_api/work/batch_update.html:8
+msgid "Update a batch of works from Google Sheets"
+msgstr "تحديث مجموعة من الأعمال من جداول بيانات جوجل"
+
+#: templates/indigo_api/work/batch_update.html:12
+msgid "Please note we are phasing out projects, and no project needs to be chosen for new tasks on existing works. Instead, tasks are now grouped according to their work's topic. You're welcome to choose a project during the transition."
+msgstr "يرجى العلم بأننا بصدد إيقاف المشاريع تدريجياً، ولن تحتاج إلى اختيار أي مشروع للمهام الجديدة المتعلقة بالأعمال الحالية. بدلاً من ذلك، يتم الآن تجميع المهام وفقاً لموضوع العمل. يمكنك اختيار مشروع خلال هذه الفترة الانتقالية."
+
+#: templates/indigo_api/work/batch_update.html:18
+msgid "Choose columns to update"
+msgstr "اختر الأعمدة المراد تحديثها"
+
+#: templates/indigo_api/work/batch_update.html:23
+msgid "(Choose at least one column to update)"
+msgstr "(اختر عمودًا واحدًا على الأقل لتحديثه)"
+
+#: templates/indigo_api/work/batch_update.html:43
+msgid "Preview of your update"
+msgstr "معاينة التحديث الخاص بك"
+
+#: templates/indigo_api/work/batch_update.html:53
+msgid "Tasks (new)"
+msgstr "المهام (جديدة)"
+
+#: templates/indigo_api/work/batch_update.html:65
+msgid "Ready to update"
+msgstr "جاهز للتحديث"
+
+#: templates/indigo_api/work/batch_update.html:67
+#: templates/indigo_api/work/batch_update.html:144
+msgid "No change"
+msgstr "لا تغيير"
+
+#: templates/indigo_api/work/batch_update.html:112
+#: templates/indigo_api/work/batch_update.html:180
+msgid "Update works"
+msgstr "التحديث يعمل"
+
+#: templates/indigo_api/work/batch_update.html:114
+#: templates/indigo_api/work/batch_update.html:182
+msgid "You don't have permission to update works."
+msgstr "ليس لديك إذن لتحديث الأعمال."
+
+#: templates/indigo_api/work/batch_update.html:121
+msgid "Update complete"
+msgstr "اكتمل التحديث"
+
+#: templates/indigo_api/work/batch_update.html:131
+#: templates/indigo_api/work/overview.html:145
+msgid "Open tasks"
+msgstr "المهام المفتوحة"
+
+#: templates/indigo_api/work/commencements.html:9
+msgid "This work has commenced, but the commencement date is unknown."
+msgstr "بدأ هذا العمل، لكن تاريخ البدء غير معروف."
+
+#: templates/indigo_api/work/commencements.html:13
+msgid "This work has not commenced."
+msgstr "لم يبدأ هذا العمل بعد."
+
+#: templates/indigo_api/work/commencements.html:18
+msgid "This work has <a href=\"#uncommenced-provisions\">uncommenced provisions</a>."
+msgstr "يحتوي هذا العمل على <a href=\"#uncommenced-provisions\">أحكام غير مفعلة</a>."
+
+#: templates/indigo_api/work/commencements.html:30
+msgid "A commencement without a date or a commencing work already exists. Edit it before adding another one."
+msgstr "يوجد بدء عمل بدون تاريخ أو بدء عمل بالفعل. قم بتعديله قبل إضافة بدء عمل آخر."
+
+#: templates/indigo_api/work/commencements.html:37
+msgid "Add a commencement"
+msgstr "أضف بداية"
+
+#: templates/indigo_api/work/commencements.html:48
+msgid "Unknown"
+msgstr "مجهول"
+
+#: templates/indigo_api/work/commencements.html:62
+msgid "Loading uncommenced provisions…"
+msgstr "جارٍ تحميل الأحكام غير المُفعّلة…"
+
+#: templates/indigo_api/work/commencements.html:68
+msgid "Not yet commenced?"
+msgstr "لم يبدأ بعد؟"
+
+#: templates/indigo_api/work/commencements.html:69
+msgid "Remove all commencement detail and mark as not commenced."
+msgstr "قم بإزالة جميع تفاصيل بدء العمل وقم بتحديدها على أنها لم تبدأ."
+
+#: templates/indigo_api/work/commencements.html:70
+msgid "Are you sure? ALL commencement information will be permanently deleted."
+msgstr "هل أنت متأكد؟ سيتم حذف جميع معلومات حفل التخرج نهائياً."
+
+#: templates/indigo_api/work/commencements.html:70
+msgid "This work has not commenced"
+msgstr "لم يبدأ هذا العمل بعد"
+
+#: templates/indigo_api/work/commencements.html:81
+msgid "Loading…"
+msgstr "جارٍ التحميل…"
+
+#: templates/indigo_api/work/form.html:5
+msgid "New work"
+msgstr "عمل جديد"
+
+#: templates/indigo_api/work/import_document.html:4
+msgid "Import"
+msgstr "يستورد"
+
+#: templates/indigo_api/work/import_document.html:19
+msgid "Import a document"
+msgstr "استيراد مستند"
+
+#: templates/indigo_api/work/import_document.html:36
+msgid "What language is the document in?"
+msgstr "ما هي لغة المستند؟"
+
+#: templates/indigo_api/work/import_document.html:53
+msgid "Drag and drop your file here"
+msgstr "اسحب ملفك وأفلته هنا"
+
+#: templates/indigo_api/work/import_document.html:54
+msgid "or"
+msgstr "أو"
+
+#: templates/indigo_api/work/import_document.html:59
+msgid "You can import legislation from most document formats including PDF, Word, RTF and plain text."
+msgstr "يمكنك استيراد التشريعات من معظم تنسيقات المستندات بما في ذلك PDF و Word و RTF والنص العادي."
+
+#: templates/indigo_api/work/import_document.html:76
+msgid "Pages to import"
+msgstr "الصفحات المراد استيرادها"
+
+#: templates/indigo_api/work/import_document.html:78
+msgid "eg."
+msgstr "مثال:"
+
+#: templates/indigo_api/work/import_document.html:84
+msgid "What do section titles look like?"
+msgstr "كيف تبدو عناوين الأقسام؟"
+
+#: templates/indigo_api/work/import_document.html:115
+msgid "Guess automatically"
+msgstr "التخمين التلقائي"
+
+#: templates/indigo_api/work/import_document.html:124
+msgid "Go for it!"
+msgstr "أذهب خلفها !"
+
+#: templates/indigo_api/work/import_document.html:135
+msgid "Importing, this may take a few minutes..."
+msgstr "جارٍ الاستيراد، قد يستغرق هذا بضع دقائق..."
+
+#: templates/indigo_api/work/layout.html:37
+#: templates/indigo_app/place/_work.html:53
+#: templates/indigo_app/place/_work_detail.html:8
+#: templates/place/tabbed_layout.html:39
+msgid "Overview"
+msgstr "ملخص"
+
+#: templates/indigo_api/work/layout.html:50
+#: templates/indigo_api/work/related.html:5
+#: templates/indigo_api/work/related.html:8
+msgid "Related works"
+msgstr "الأعمال ذات الصلة"
+
+#: templates/indigo_api/work/overview.html:37
+#: templates/indigo_app/place/_bulk_unapprove_form.html:42
+#: templates/indigo_app/place/_work_detail.html:139
+msgid "Unapprove"
+msgstr "رفض"
+
+#: templates/indigo_api/work/overview.html:44
+msgid "Edit work"
+msgstr "تحرير العمل"
+
+#: templates/indigo_api/work/overview.html:62
+msgid "updated"
+msgstr "تم التحديث"
+
+#: templates/indigo_api/work/overview.html:65
+msgid "recent changes"
+msgstr "التغييرات الأخيرة"
+
+#: templates/indigo_api/work/overview.html:88
+#, python-format
+msgid "%(n_kids)s subsidiary works"
+msgstr "%(n_kids)s أعمال فرعية"
+
+#: templates/indigo_api/work/overview.html:123
+msgid "Manage points in time"
+msgstr "إدارة النقاط الزمنية"
+
+#: templates/indigo_api/work/overview.html:130
+msgid "Stub works should not have points in time. Either remove these points in time or don't mark this work as a stub."
+msgstr "لا ينبغي أن تحتوي الأعمال غير المكتملة على نقاط زمنية. إما أن تحذف هذه النقاط الزمنية أو لا تُصنّف هذا العمل على أنه غير مكتمل."
+
+#: templates/indigo_api/work/overview.html:138
+#: templates/indigo_app/place/_work_detail.html:69
+msgid "Comments"
+msgstr "تعليقات"
+
+#: templates/indigo_api/work/overview.html:155
+msgid "Contributors"
+msgstr "المساهمون"
+
+#: templates/indigo_api/work/overview.html:162
+#, python-format
+msgid "%(count)s task"
+msgid_plural "%(count)s tasks"
+msgstr[0] "%(count)s مهام"
+msgstr[1] "%(count)s مهمة"
+msgstr[2] "%(count)s مهام"
+msgstr[3] "%(count)s مهام"
+msgstr[4] "%(count)s مهام"
+msgstr[5] "%(count)s مهام"
+
+#: templates/indigo_api/work/tasks.html:18
+msgid "No tasks."
+msgstr "لا توجد مهام."
+
+#: templates/indigo_api/work/versions.html:41
+msgid "There are no saved previous versions of this work."
+msgstr "لا توجد نسخ سابقة محفوظة من هذا العمل."
+
+#: templates/indigo_app/_offline.html:5
+msgid "It looks like you're offline or the server is unavailable."
+msgstr "يبدو أنك غير متصل بالإنترنت أو أن الخادم غير متاح."
+
+#: templates/indigo_app/actions/_action_amendment.html:4
+#, python-format
+msgid "\n"
+"    an amendment at %(date)s on\n"
+"  "
+msgstr "\n"
+"    تعديل في %(date)s بتاريخ\n"
+"  "
+
+#: templates/indigo_app/actions/_action_amendment.html:8
+#: templates/indigo_app/actions/_action_commencement.html:9
+#: templates/place/detail.html:180 templates/place/detail.html:216
+msgid "by"
+msgstr "بواسطة"
+
+#: templates/indigo_app/actions/_action_arbitraryexpressiondate.html:4
+#, python-format
+msgid "\n"
+"    a consolidation at %(date)s on\n"
+"  "
+msgstr "\n"
+"    عملية توحيد عند %(date)s في\n"
+"  "
+
+#: templates/indigo_app/actions/_action_commencement.html:4
+#, python-format
+msgid "\n"
+"    a commencement at %(date)s on\n"
+"  "
+msgstr "\n"
+"    بدء الحفل في %(date)s بتاريخ\n"
+"  "
+
+#: templates/indigo_app/actions/_action_document.html:5
+msgid "a document on"
+msgstr "وثيقة حول"
+
+#: templates/indigo_app/actions/_action_placesettings.html:4
+msgid "the settings for"
+msgstr "إعدادات لـ"
+
+#: templates/indigo_app/actions/_action_task.html:10
+msgid "this task"
+msgstr "هذه المهمة"
+
+#: templates/indigo_app/actions/_action_task.html:17
+msgid "on this work"
+msgstr "حول هذا العمل"
+
+#: templates/indigo_app/actions/_action_task.html:19
+msgid "on"
+msgstr "على"
+
+#: templates/indigo_app/actions/_action_task.html:30
+msgid "from"
+msgstr "من"
+
+#: templates/indigo_app/actions/_action_task.html:32
+msgid "to"
+msgstr "ل"
+
+#: templates/indigo_app/actions/_action_task.html:44
+msgid "for review"
+msgstr "للمراجعة"
+
+#: templates/indigo_app/actions/_activity_list.html:20
+msgid "No recent activity"
+msgstr "لا يوجد نشاط حديث"
+
+#: templates/indigo_app/actions/_in_place.html:4
+msgid "in"
+msgstr "في"
+
+#: templates/indigo_app/maintenance.html:8
+#, python-format
+msgid "%(org)s is undergoing maintenance. We'll be back soon."
+msgstr "الموقع %(org)s يخضع للصيانة. سنعود قريباً."
+
+#: templates/indigo_app/place/_bulk_approve_form.html:7
+#, python-format
+msgid "\n"
+"          Approve %(works_length)s work in progress\n"
+"        "
+msgid_plural "\n"
+"          Approve %(works_length)s works in progress\n"
+"        "
+msgstr[0] "\n"
+"          الموافقة %(works_length)s الأعمال قيد التنفيذ\n"
+"        "
+msgstr[1] "\n"
+"          الموافقة %(works_length)s العمل قيد التنفيذ\n"
+"        "
+msgstr[2] "\n"
+"          الموافقة %(works_length)s الأعمال قيد التنفيذ\n"
+"        "
+msgstr[3] "\n"
+"          الموافقة %(works_length)s الأعمال قيد التنفيذ\n"
+"        "
+msgstr[4] "\n"
+"          الموافقة %(works_length)s الأعمال قيد التنفيذ\n"
+"        "
+msgstr[5] "\n"
+"          الموافقة %(works_length)s الأعمال قيد التنفيذ\n"
+"        "
+
+#: templates/indigo_app/place/_bulk_approve_form.html:42
+msgid "These works cannot be approved in bulk:"
+msgstr "لا يمكن الموافقة على هذه الأعمال بشكل جماعي:"
+
+#: templates/indigo_app/place/_bulk_approve_form.html:59
+msgid "Conversion and Import tasks will be created – Import tasks will be blocked"
+msgstr "سيتم إنشاء مهام التحويل والاستيراد - سيتم حظر مهام الاستيراد"
+
+#: templates/indigo_app/place/_bulk_approve_form.html:72
+msgid "Import date missing – add a publication date, a commencement date, or a consolidation date"
+msgstr "تاريخ الاستيراد مفقود – أضف تاريخ النشر أو تاريخ البدء أو تاريخ التوحيد"
+
+#: templates/indigo_app/place/_bulk_approve_form.html:78
+msgid "Task description: Conversion tasks"
+msgstr "وصف المهمة: مهام التحويل"
+
+#: templates/indigo_app/place/_bulk_approve_form.html:79
+msgid "Convert the input file into a .docx file and remove automatic numbering."
+msgstr "قم بتحويل ملف الإدخال إلى ملف بصيغة .docx وقم بإزالة الترقيم التلقائي."
+
+#: templates/indigo_app/place/_bulk_approve_form.html:95
+msgid "Task description: Import tasks"
+msgstr "وصف المهمة: استيراد المهام"
+
+#: templates/indigo_app/place/_bulk_approve_form.html:96
+msgid "Import the content for this work at the appropriate date — usually the publication or consolidation date."
+msgstr "قم باستيراد محتوى هذا العمل في التاريخ المناسب - عادةً تاريخ النشر أو تاريخ التوحيد."
+
+#: templates/indigo_app/place/_bulk_approve_form.html:113
+msgid "Gazette tasks will be created"
+msgstr "سيتم إنشاء مهام الجريدة الرسمية"
+
+#: templates/indigo_app/place/_bulk_approve_form.html:125
+msgid "Task description"
+msgstr "وصف المهمة"
+
+#: templates/indigo_app/place/_bulk_approve_form.html:126
+msgid "Find and link the Gazette (original publication document) for this work."
+msgstr "ابحث عن رابط الجريدة الرسمية (وثيقة النشر الأصلية) لهذا العمل وقم بربطه."
+
+#: templates/indigo_app/place/_bulk_approve_form.html:143
+msgid "Amendment tasks will be created"
+msgstr "سيتم إنشاء مهام التعديل"
+
+#: templates/indigo_app/place/_bulk_approve_form.html:158
+#, python-format
+msgid "\n"
+"                                Create task: %(amended_title)s (%(amended_numbered_title)s) amended by %(amending_title)s (%(amending_numbered_title)s) – %(date)s\n"
+"                              "
+msgstr "\n"
+"                                إنشاء مهمة: %(amended_title)s (%(amended_numbered_title)s) تم تعديلها بواسطة %(amending_title)s (%(amending_numbered_title)s) – %(date)s\n"
+"                              "
+
+#: templates/indigo_app/place/_bulk_approve_form.html:163
+#, python-format
+msgid "\n"
+"Apply the amendments made by %(title)s (%(numbered_title)s) on the given date.\n\n"
+"The amendment has already been linked, so start at Step 3 of https://docs.laws.africa/managing-works/amending-works."
+msgstr "\n"
+"قم بتطبيق التعديلات التي أجراها %(title)s (%(numbered_title)s) في التاريخ المحدد.\n\n"
+"تم ربط التعديل مسبقًا، لذا ابدأ من الخطوة 3 من https://docs.laws.africa/managing-works/amending-works."
+
+#: templates/indigo_app/place/_bulk_approve_form.html:174
+msgid "Potential duplicates"
+msgstr "نسخ مكررة محتملة"
+
+#: templates/indigo_app/place/_bulk_approve_form.html:213
+msgid "Approving..."
+msgstr "الموافقة..."
+
+#: templates/indigo_app/place/_bulk_link_refs_form.html:7
+#, python-format
+msgid "Link references for %(works_length)s works"
+msgstr "روابط مرجعية لأعمال %(works_length)s"
+
+#: templates/indigo_app/place/_bulk_link_refs_form.html:23
+msgid "References will be linked for all documents."
+msgstr "سيتم ربط المراجع بجميع المستندات."
+
+#: templates/indigo_app/place/_bulk_link_refs_form.html:27
+msgid "Remove existing references first"
+msgstr "قم بإزالة المراجع الموجودة أولاً"
+
+#: templates/indigo_app/place/_bulk_link_refs_form.html:47
+msgid "Linking references..."
+msgstr "ربط المراجع..."
+
+#: templates/indigo_app/place/_bulk_link_refs_form.html:48
+msgid "Link references"
+msgstr "روابط مرجعية"
+
+#: templates/indigo_app/place/_bulk_unapprove_form.html:7
+#, python-format
+msgid "Unapprove %(works_length)s works"
+msgstr "إلغاء الموافقة %(works_length)s يعمل"
+
+#: templates/indigo_app/place/_bulk_unapprove_form.html:23
+msgid "Any documents will be unpublished."
+msgstr "لن يتم نشر أي وثائق."
+
+#: templates/indigo_app/place/_bulk_unapprove_form.html:41
+msgid "Unapproving..."
+msgstr "غير موافق..."
+
+#: templates/indigo_app/place/_bulk_update_form.html:7
+#, python-format
+msgid "Update %(works_length)s works"
+msgstr "التحديث %(works_length)s يعمل"
+
+#: templates/indigo_app/place/_bulk_update_form.html:24
+msgid "Add taxonomy topics"
+msgstr "إضافة مواضيع التصنيف"
+
+#: templates/indigo_app/place/_bulk_update_form.html:33
+msgid "Remove taxonomy topics"
+msgstr "إزالة مواضيع التصنيف"
+
+#: templates/indigo_app/place/_bulk_update_form.html:57
+msgid "Updating..."
+msgstr "جارٍ التحديث..."
+
+#: templates/indigo_app/place/_bulk_update_form.html:58
+msgid "Save changes"
+msgstr "حفظ التغييرات"
+
+#: templates/indigo_app/place/_overridden.html:3
+msgid "Overridden"
+msgstr "تم تجاوزها"
+
+#: templates/indigo_app/place/_work.html:38
+msgid "Created"
+msgstr "مخلوق"
+
+#: templates/indigo_app/place/_work_chooser_list.html:5
+#, python-format
+msgid "%(count)s total"
+msgstr "%(count)s المجموع الكلي"
+
+#: templates/indigo_app/place/_work_detail_overview.html:55
+msgid "Topics"
+msgstr "المواضيع"
+
+#: templates/indigo_app/place/_works_actions.html:22
+#, python-format
+msgid "Update %(works_length)s selected..."
+msgstr "تم تحديد التحديث %(works_length)s..."
+
+#: templates/indigo_app/place/_works_actions.html:47
+#, python-format
+msgid "Approve %(works_length)s selected..."
+msgstr "الموافقة على الاختيار %(works_length)s..."
+
+#: templates/indigo_app/place/_works_actions.html:73
+#, python-format
+msgid "Unapprove %(works_length)s selected..."
+msgstr "إلغاء الموافقة على %(works_length)s المحدد..."
+
+#: templates/indigo_app/place/_works_actions.html:98
+#, python-format
+msgid "Link references for %(works_length)s selected..."
+msgstr "روابط مرجعية للعناصر المحددة %(works_length)s..."
+
+#: templates/indigo_app/place/_works_actions.html:114
+#, python-format
+msgid "You do not have country permissions to update %(n_disallowed)s of the selected works."
+msgstr "ليس لديك صلاحيات البلد لتحديث %(n_disallowed)s الأعمال المحددة."
+
+#: templates/indigo_app/place/_works_list.html:15
+#, python-format
+msgid "%(count)s work (of %(total_works)s total)"
+msgid_plural "%(count)s works (of %(total_works)s total)"
+msgstr[0] "%(count)s عمل (من إجمالي %(total_works)s)"
+msgstr[1] "%(count)s عمل (من إجمالي %(total_works)s)"
+msgstr[2] "%(count)s عمل (من إجمالي %(total_works)s)"
+msgstr[3] "%(count)s عمل (من إجمالي %(total_works)s)"
+msgstr[4] "%(count)s عمل (من إجمالي %(total_works)s)"
+msgstr[5] "%(count)s عمل (من إجمالي %(total_works)s)"
+
+#: templates/indigo_app/place/_works_list.html:27
+msgid "Download to Excel"
+msgstr "تنزيل إلى Excel"
+
+#: templates/indigo_app/place/_works_list.html:45
+#, python-format
+msgid "Select all %(works_length)s matching works"
+msgstr "حدد جميع الأعمال المطابقة %(works_length)s"
+
+#: templates/indigo_app/place/works.html:20
+msgid "Add new work"
+msgstr "أضف عملاً جديداً"
+
+#: templates/indigo_app/place/works.html:24
+msgid "Batch add new works"
+msgstr "إضافة أعمال جديدة دفعة واحدة"
+
+#: templates/indigo_app/place/works.html:25
+msgid "Batch update works"
+msgstr "يعمل التحديث المجمع"
+
+#: templates/indigo_app/tasks/_user_tasks.html:9
+msgid "Your current tasks"
+msgstr "مهامك الحالية"
+
+#: templates/indigo_app/tasks/_user_tasks.html:11
+#: templates/place/detail.html:103
+msgid "Current tasks"
+msgstr "المهام الحالية"
+
+#: templates/indigo_app/tasks/_user_tasks.html:21
+msgid "You don't have any assigned tasks right now."
+msgstr "ليس لديك أي مهام محددة في الوقت الحالي."
+
+#: templates/indigo_app/tasks/_user_tasks.html:23
+#, python-format
+msgid "%(username)s doesn't have any assigned tasks right now."
+msgstr "لا توجد مهام محددة لـ %(username)s في الوقت الحالي."
+
+#: templates/indigo_app/tasks/_user_tasks.html:37
+msgid "Tasks waiting for approval"
+msgstr "المهام بانتظار الموافقة"
+
+#: templates/indigo_app/tasks/_user_tasks.html:45
+msgid "You have no tasks waiting for approval."
+msgstr "ليس لديك أي مهام تنتظر الموافقة."
+
+#: templates/indigo_app/tasks/_user_tasks.html:48
+#, python-format
+msgid "%(username)s has no tasks waiting for approval."
+msgstr "لا توجد مهام تنتظر الموافقة لدى %(username)s."
+
+#: templates/indigo_app/tasks/_user_tasks.html:63
+msgid "Your recently approved tasks"
+msgstr "مهامك التي تمت الموافقة عليها مؤخراً"
+
+#: templates/indigo_app/tasks/_user_tasks.html:65
+msgid "Recently approved tasks"
+msgstr "المهام التي تمت الموافقة عليها مؤخراً"
+
+#: templates/indigo_app/tasks/_user_tasks.html:74
+msgid "You have no tasks that have been approved."
+msgstr "ليس لديك أي مهام تمت الموافقة عليها."
+
+#: templates/indigo_app/tasks/_user_tasks.html:77
+#, python-format
+msgid "%(username)s has no tasks that have been approved."
+msgstr "لا توجد مهام تمت الموافقة عليها في %(username)s."
+
+#: templates/indigo_app/tasks/my_tasks.html:4
+#: templates/indigo_app/tasks/tabbed_layout.html:10
+msgid "My tasks"
+msgstr "مهامي"
+
+#: templates/indigo_app/user_account/_sidebar.html:6
+msgid "Profile"
+msgstr "حساب تعريفي"
+
+#: templates/indigo_app/user_account/_sidebar.html:12
+msgid "Email addresses"
+msgstr "عناوين البريد الإلكتروني"
+
+#: templates/indigo_app/user_account/_sidebar.html:17
+#: templates/socialaccount/connections.html:4
+#: templates/socialaccount/connections.html:11
+msgid "Social accounts"
+msgstr "الحسابات الاجتماعية"
+
+#: templates/indigo_app/user_account/_sidebar.html:21
+#: templates/indigo_app/user_account/api.html:4
+#: templates/indigo_app/user_account/api.html:14
+msgid "API access"
+msgstr "الوصول إلى واجهة برمجة التطبيقات (API)"
+
+#: templates/indigo_app/user_account/accept_terms.html:4
+msgid "Accept terms"
+msgstr "قبول الشروط"
+
+#: templates/indigo_app/user_account/accept_terms.html:7
+msgid "To continue, please accept the Terms of Use"
+msgstr "للمتابعة، يرجى قبول شروط الاستخدام"
+
+#: templates/indigo_app/user_account/accept_terms.html:16
+#, python-format
+msgid "I have read and accept the <a href=\"%(url)s\" target=\"_blank\">Terms of Use</a>."
+msgstr "لقد قرأت ووافقت على شروط الاستخدام <a href=\"%(url)s\" target=\"_blank\"></a>."
+
+#: templates/indigo_app/user_account/accept_terms.html:30
+msgid "Continue"
+msgstr "يكمل"
+
+#: templates/indigo_app/user_account/api.html:17
+msgid "Use the API token below to authenticate your calls to the Indigo API. <strong>Keep it secret!</strong>"
+msgstr "استخدم رمز API الموضح أدناه للتحقق من صحة طلباتك إلى واجهة برمجة تطبيقات Indigo. <strong>احتفظ به سراً!</strong>"
+
+#: templates/indigo_app/user_account/api.html:26
+msgid "Generate a new API token if your current token has been leaked. <strong>Your old token will stop working.</strong>"
+msgstr "قم بإنشاء رمز API جديد إذا تم تسريب رمزك الحالي. <strong>سيتوقف رمزك القديم عن العمل.</strong>"
+
+#: templates/indigo_app/user_account/api.html:32
+msgid "Generate new API token"
+msgstr "إنشاء رمز API جديد"
+
+#: templates/indigo_app/user_account/edit.html:4
+msgid "Edit Profile"
+msgstr "تعديل الملف الشخصي"
+
+#: templates/main.html:14
+msgid "Mainentance mode. Only staff can use the site."
+msgstr "وضع الصيانة. لا يُسمح باستخدام الموقع إلا للموظفين."
+
+#: templates/main.html:55
+msgid "Account"
+msgstr "حساب"
+
+#: templates/main.html:59
+msgid "Site settings"
+msgstr "إعدادات الموقع"
+
+#: templates/main.html:63 templates/main.html:122
+msgid "Log out"
+msgstr "تسجيل الخروج"
+
+#: templates/main.html:74 templates/main.html:133
+msgid "Documentation"
+msgstr "الوثائق"
+
+#: templates/main.html:75 templates/main.html:134
+msgid "Feedback"
+msgstr "تعليق"
+
+#: templates/main.html:78 templates/main.html:135
+msgid "Indigo on GitHub"
+msgstr "إنديجو على جيت هاب"
+
+#: templates/main.html:81 templates/main.html:142
+msgid "Terms of Use &amp; Privacy Policy"
+msgstr "شروط الاستخدام &amp; سياسة الخصوصية"
+
+#: templates/main.html:121
+msgid "Your account"
+msgstr "حسابك"
+
+#: templates/place/_place_cards.html:15
+msgid "\n"
+"                    Work\n"
+"                  "
+msgid_plural "\n"
+"                    Works\n"
+"                  "
+msgstr[0] "\n"
+"                    يعمل\n"
+"                  "
+msgstr[1] "\n"
+"                    العمل\n"
+"                  "
+msgstr[2] "\n"
+"                    يعمل\n"
+"                  "
+msgstr[3] "\n"
+"                    يعمل\n"
+"                  "
+msgstr[4] "\n"
+"                    يعمل\n"
+"                  "
+msgstr[5] "\n"
+"                    يعمل\n"
+"                  "
+
+#: templates/place/_place_cards.html:23
+msgid "\n"
+"                    Task\n"
+"                  "
+msgid_plural "\n"
+"                    Tasks\n"
+"                  "
+msgstr[0] "\n"
+"                    المهام\n"
+"                  "
+msgstr[1] "\n"
+"                    المهمة\n"
+"                  "
+msgstr[2] "\n"
+"                    المهام\n"
+"                  "
+msgstr[3] "\n"
+"                    المهام\n"
+"                  "
+msgstr[4] "\n"
+"                    المهام\n"
+"                  "
+msgstr[5] "\n"
+"                    المهام\n"
+"                  "
+
+#: templates/place/_place_cards.html:36
+msgid "As at date"
+msgstr "حتى تاريخه"
+
+#: templates/place/_place_top_contributors.html:8
+#, python-format
+msgid "%(counter)s task"
+msgid_plural "%(counter)s tasks"
+msgstr[0] "%(counter)s مهام"
+msgstr[1] "%(counter)s مهمة"
+msgstr[2] "%(counter)s مهام"
+msgstr[3] "%(counter)s مهام"
+msgstr[4] "%(counter)s مهام"
+msgstr[5] "%(counter)s مهام"
+
+#: templates/place/activity.html:4 templates/place/activity.html:9
+#: templates/place/tabbed_layout.html:50
+msgid "Activity"
+msgstr "نشاط"
+
+#: templates/place/detail.html:17
+msgid "Works up to date as at"
+msgstr "يعمل بشكل محدّث اعتبارًا من"
+
+#: templates/place/detail.html:54
+msgid "Principal works"
+msgstr "الأعمال الرئيسية"
+
+#: templates/place/detail.html:89
+msgid "Contributor leaderboard"
+msgstr "قائمة المساهمين"
+
+#: templates/place/detail.html:157
+msgid "Recently updated works"
+msgstr "أعمال تم تحديثها مؤخراً"
+
+#: templates/place/detail.html:178 templates/place/detail.html:214
+msgid "by you"
+msgstr "بواسطتك"
+
+#: templates/place/detail.html:193
+msgid "Recently added works"
+msgstr "الأعمال المضافة حديثًا"
+
+#: templates/place/detail.html:200
+msgid "Added"
+msgstr "تمت الإضافة"
+
+#: templates/place/detail.html:207
+msgid "repealed"
+msgstr "تم إلغاؤه"
+
+#: templates/place/explorer.html:8 templates/place/insights_layout.html:8
+msgid "Explorer"
+msgstr "مستكشف"
+
+#: templates/place/explorer.html:16
+msgid "Go"
+msgstr "يذهب"
+
+#: templates/place/explorer.html:20
+msgid "Use <code>a:</code> as the Akoma Ntoso namespace prefix, and <code>re:</code> for <a href=\"https://lxml.de/xpathxslt.html#regular-expressions-in-xpath\" target=\"_blank\" rel=\"noreferrer noopener\">regular expressions</a>. Also see the <a href=\"https://devhints.io/xpath\" target=\"_blank\" rel=\"noreferrer noopener\">XPath cheatsheet</a>."
+msgstr "استخدم <code>a:</code> كبادئة لمساحة اسم Akoma Ntoso، و <code>re:</code> للتعبيرات النمطية <a href=\"https://lxml.de/xpathxslt.html#regular-expressions-in-xpath\" target=\"_blank\" rel=\"noreferrer noopener\"></a>. راجع أيضًا <a href=\"https://devhints.io/xpath\" target=\"_blank\" rel=\"noreferrer noopener\">ورقة غش XPath</a>."
+
+#: templates/place/explorer.html:55
+msgid "Examples"
+msgstr "أمثلة"
+
+#: templates/place/explorer.html:67
+#, python-format
+msgid "%(n_matches)s matches in %(n_documents)s documents"
+msgstr "%(n_matches)s يطابق في %(n_documents)s مستندًا"
+
+#: templates/place/list.html:4
+msgid "Places"
+msgstr "الأماكن"
+
+#: templates/place/localities.html:4 templates/place/tabbed_layout.html:54
+msgid "Localities"
+msgstr "المناطق المحلية"
+
+#: templates/place/settings.html:17
+msgid "URL of the Google Sheets spreadsheet with work metadata."
+msgstr "رابط جدول بيانات جوجل الذي يحتوي على بيانات تعريف العمل."
+
+#: templates/place/settings.html:31
+msgid "Date up to which all works have been consolidated."
+msgstr "التاريخ الذي تم فيه توحيد جميع الأعمال."
+
+#: templates/place/settings.html:45
+#, python-format
+msgid "URL of the Style Guide documentation for %(place_name)s."
+msgstr "رابط توثيق دليل الأسلوب لـ %(place_name)s."
+
+#: templates/place/settings.html:58
+msgid "The text to display on a document's coverpage when no Gazette (or publication document) is associated with the work."
+msgstr "النص الذي يظهر على صفحة غلاف المستند عندما لا تكون هناك جريدة رسمية (أو وثيقة نشر) مرتبطة بالعمل."
+
+#: templates/place/settings.html:71
+msgid "The text to display on a document's coverpage when it's part of a consolidation."
+msgstr "النص الذي سيظهر على صفحة غلاف المستند عندما يكون جزءًا من عملية دمج."
+
+#: templates/place/settings.html:87
+msgid "Is a consolidation being worked on in this place?<br> If checked, a Consolidation point in time will be created on bulk import for all principal works that are older than the given consolidation date — which is either the consolidation_date given per work in the spreadsheet or the as-at date recorded here.<br> For example, if the consolidation date is in 2000 and an Act is from 2001, a consolidation point in time will NOT be created for that Act on bulk import."
+msgstr "هل يجري العمل على عملية دمج هنا؟<br> في حال التحديد، سيتم إنشاء نقطة دمج زمنية عند الاستيراد المجمع لجميع الأعمال الرئيسية الأقدم من تاريخ الدمج المحدد - وهو إما تاريخ الدمج المحدد لكل عمل في جدول البيانات أو التاريخ الحالي المسجل هنا.<br> على سبيل المثال، إذا كان تاريخ الدمج في عام 2000 وكان القانون من عام 2001، فلن يتم إنشاء نقطة دمج زمنية لهذا القانون عند الاستيراد المجمع."
+
+#: templates/place/settings.html:103
+msgid "Are Chapters used for Acts in this place?<br> If checked, the 'cap' column will be recorded on bulk import."
+msgstr "هل تُستخدم الفصول للأجزاء في هذا المكان؟<br> إذا تم تحديد هذا الخيار، فسيتم تسجيل عمود \"cap\" عند الاستيراد المجمع."
+
+#: templates/place/settings.html:117
+msgid "Is the publication date optional in this place?"
+msgstr "هل تاريخ النشر اختياري هنا؟"
+
+#: templates/place/settings.html:131
+#, python-format
+msgid "Download full legislation index for %(place)s"
+msgstr "قم بتنزيل فهرس التشريعات الكامل لـ %(place)s"
+
+#: templates/place/settings_layout.html:15
+msgid "Permissions"
+msgstr "الأذونات"
+
+#: templates/place/tabbed_layout.html:19
+msgid "Change locality"
+msgstr "تغيير الموقع"
+
+#: templates/place/tabbed_layout.html:19
+msgid "Choose locality"
+msgstr "اختر المنطقة"
+
+#: templates/place/users.html:4
+msgid "Users"
+msgstr "المستخدمون"
+
+#: templates/place/users.html:10
+msgid "Allowed Users"
+msgstr "المستخدمون المسموح لهم"
+
+#: templates/socialaccount/authentication_error.html:5
+#: templates/socialaccount/authentication_error.html:8
+msgid "Social Network Login Failure"
+msgstr "فشل تسجيل الدخول إلى الشبكة الاجتماعية"
+
+#: templates/socialaccount/authentication_error.html:10
+msgid "An error occurred while attempting to login via your social network account."
+msgstr "حدث خطأ أثناء محاولة تسجيل الدخول عبر حسابك على الشبكة الاجتماعية."
+
+#: templates/socialaccount/authentication_error.html:12
+msgid "Details"
+msgstr "تفاصيل"
+
+#: templates/socialaccount/connections.html:14
+msgid "You can sign in to your account using any of these third party accounts:"
+msgstr "يمكنك تسجيل الدخول إلى حسابك باستخدام أي من حسابات الجهات الخارجية التالية:"
+
+#: templates/socialaccount/connections.html:36
+msgid "Really remove this social account?"
+msgstr "هل تريد حقاً حذف هذا الحساب الاجتماعي؟"
+
+#: templates/socialaccount/connections.html:36
+msgid "Disconnect"
+msgstr "قطع الاتصال"
+
+#: templates/socialaccount/connections.html:46
+msgid "You currently have no social network accounts connected to this account."
+msgstr "لا توجد لديك حاليًا أي حسابات على مواقع التواصل الاجتماعي مرتبطة بهذا الحساب."
+
+#: templates/socialaccount/connections.html:51
+msgid "Connect a social account"
+msgstr "ربط حساب اجتماعي"
+
+#: templates/socialaccount/connections.html:53
+msgid "Connecting to a social account allows you to use it to login to Indigo."
+msgstr "يتيح لك ربط حسابك على مواقع التواصل الاجتماعي استخدامه لتسجيل الدخول إلى إنديجو."
+
+#: templates/socialaccount/connections.html:62
+msgid "Connect to"
+msgstr "اتصل بـ"
+
+#: templates/templated_email/_footer.html:6
+#, python-format
+msgid "The %(INDIGO_ORGANISATION)s Team"
+msgstr "فريق %(INDIGO_ORGANISATION)s"
+
+#: views/documents.py:142
+#, python-format
+msgid "No provision with this id found: '%(eid)s'"
+msgstr "لم يتم العثور على أي عنصر بهذا المعرّف: '%(eid)s'"
+
+#: views/places.py:51
+msgid "Publication"
+msgstr "منشور"
+
+#: views/places.py:68
+msgid "As-at date"
+msgstr "حتى تاريخه"
+
+#: views/places.py:72
+msgid "Consolidation date"
+msgstr "تاريخ التوحيد"
+
+#: views/places.py:76
+msgid "Consolidation note"
+msgstr "مذكرة توحيد"
+
+#: views/places.py:80
+msgid "Disclaimer"
+msgstr "تنصل"
+
+#: views/places.py:236
+msgid "Assigned"
+msgstr "مُكَلَّف"
+
+#: views/places.py:242
+msgid "Pending review"
+msgstr "قيد المراجعة"
+
+#: views/places.py:311
+msgid "List introductions containing remarks"
+msgstr "قائمة المقدمات التي تتضمن ملاحظات"
+
+#: views/places.py:312
+msgid "Adjacent block lists"
+msgstr "قوائم الحظر المتجاورة"
+
+#: views/places.py:376
+#, python-format
+msgid "Expression must produce elements, but found %(classname)s instead."
+msgstr "يجب أن ينتج التعبير عناصر، ولكن تم العثور على %(classname)s بدلاً من ذلك."
+
+#: views/places.py:425
+msgid "Settings updated."
+msgstr "تم تحديث الإعدادات."
+
+#: views/places.py:451
+msgid "Users updated."
+msgstr "تم تحديث بيانات المستخدمين."
+
+#: views/places.py:464
+#, python-format
+msgid "Full index for %(place)s.xlsx"
+msgstr "فهرس كامل لملف %(place)s.xlsx"
+
+#: views/places.py:510
+#, python-format
+msgid "legislation %(place)s.xlsx"
+msgstr "التشريع %(place)s.xlsx"
+
+#: views/places.py:653
+#, python-format
+msgid "Updated %(works_count)s works."
+msgstr "تم تحديث %(works_count)s يعمل."
+
+#: views/places.py:679
+#, python-format
+msgid "Approved %(works_count)s works."
+msgstr "تمت الموافقة على الأعمال %(works_count)s."
+
+#: views/places.py:681
+#, python-format
+msgid "Created %(import_tasks_count)s Import tasks."
+msgstr "تم إنشاء %(import_tasks_count)s مهام الاستيراد."
+
+#: views/places.py:683
+#, python-format
+msgid "Created %(gazette_tasks_count)s Gazette tasks."
+msgstr "تم إنشاء %(gazette_tasks_count)s مهام الجريدة الرسمية."
+
+#: views/places.py:685
+#, python-format
+msgid "Created %(amendment_tasks_count)s Amendment tasks."
+msgstr "تم إنشاء %(amendment_tasks_count)s مهام التعديل."
+
+#: views/places.py:702
+#, python-format
+msgid "Unapproved %(works_count)s works."
+msgstr "أعمال غير معتمدة %(works_count)s."
+
+#: views/places.py:742
+#, python-format
+msgid "Linked references for %(n_docs)s documents, with %(n_changed)s documents changed."
+msgstr "المراجع المرتبطة للمستندات %(n_docs)s ، مع تغيير المستندات %(n_changed)s."
+
+#: views/tasks.py:431
+msgid "submitted for review"
+msgstr "تم تقديمه للمراجعة"
+
+#: views/tasks.py:433
+msgid "returned with changes requested"
+msgstr "تمت إعادة المنتج مع التغييرات المطلوبة"
+
+#: views/tasks.py:434
+#, python-format
+msgid "Task '%(title)s' has been %(verb)s"
+msgstr "تم إنجاز المهمة '%(title)s' %(verb)s"
+
+#: views/tasks.py:471
+#, python-format
+msgid "Task '%(title)s' has been unassigned"
+msgstr "تم إلغاء تعيين المهمة '%(title)s'"
+
+#: views/tasks.py:478
+#, python-format
+msgid "You have picked up the task '%(title)s'"
+msgstr "لقد اخترت المهمة '%(title)s'"
+
+#: views/tasks.py:480
+#, python-format
+msgid "Task '%(title)s' has been assigned"
+msgstr "تم إسناد المهمة '%(title)s'"
+
+#: views/tasks.py:515
+#, python-format
+msgid "Task '%(title)s' has been updated"
+msgstr "تم تحديث المهمة '%(title)s'"
+
+#: views/tasks.py:520
+#, python-format
+msgid "Task '%(title)s' has been blocked"
+msgstr "تم حظر المهمة '%(title)s'"
+
+#: views/tasks.py:526
+#, python-format
+msgid "Task '%(title)s' has been unblocked"
+msgstr "تم إلغاء حظر المهمة '%(title)s'"
+
+#: views/tasks.py:565
+#, python-format
+msgid "Unassigned %(count)d task%(plural)s"
+msgstr "مهمة غير مُخصصة %(count)d%(plural)s"
+
+#: views/tasks.py:567
+#, python-format
+msgid "Assigned %(count)d task%(plural)s to %(user)s"
+msgstr ""
+
+#: views/tasks.py:572
+msgid "Computer says no."
+msgstr "يقول الكمبيوتر لا."
+
+#: views/tasks.py:594
+#, python-format
+msgid "%(verb)s %(count)d task%(plural)s"
+msgstr "%(verb)s %(count)d مهمة%(plural)s"
+
+#: views/tasks.py:598
+#, python-format
+msgid "Couldn't %(verb)s %(count)d task%(plural)s"
+msgstr "تعذر تنفيذ المهمة %(verb)s %(count)d%(plural)s"
+
+#: views/works.py:211
+msgid "Work updated."
+msgstr "تم تحديث العمل."
+
+#: views/works.py:314
+#, python-format
+msgid "Deleted %(title)s · %(frbr_uri)s"
+msgstr "تم الحذف %(title)s · %(frbr_uri)s"
+
+#: views/works.py:317
+msgid "This work cannot be deleted while linked documents and related works exist."
+msgstr "لا يمكن حذف هذا العمل طالما أن المستندات المرتبطة به والأعمال ذات الصلة موجودة."
+
+#: views/works.py:921 views/works.py:923
+#, python-format
+msgid "Restored version %(version_id)s"
+msgstr "النسخة المستعادة %(version_id)s"
+
+#: views/works.py:982
+msgid "Unable to get spreadsheet ID from URL"
+msgstr "تعذر الحصول على مُعرّف جدول البيانات من عنوان URL"
+
+#: views/works.py:989
+#, python-format
+msgid "Unable to fetch spreadsheet information. Is your spreadsheet shared with %(email)s?"
+msgstr "تعذر جلب معلومات جدول البيانات. هل جدول البيانات الخاص بك مشترك مع %(email)s؟"
+
+#: views/works.py:1086
+#, python-format
+msgid "Error during import: %(error)s"
+msgstr "خطأ أثناء الاستيراد: %(error)s"
+
+#: views/works.py:1199
+msgid "Match on title"
+msgstr "مباراة على اللقب"
+
+#: views/works.py:1200
+msgid "Match on year and number"
+msgstr "تطابق السنة والرقم"
+

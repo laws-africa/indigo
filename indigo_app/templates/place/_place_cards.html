@@ -12,7 +12,7 @@
               {% block first-row %}
                 <div class="col mb-2">
                   <h5 class="mb-0">{{ place.n_works }}</h5>
-                  {% blocktrans count counter=place.n_works %}
+                  {% blocktrans trimmed count counter=place.n_works %}
                     Work
                   {% plural %}
                     Works
@@ -20,7 +20,7 @@
                 </div>
                 <div class="col mb-2">
                   <h5 class="mb-0">{{ place.n_open_tasks|default_if_none:0 }}</h5>
-                  {% blocktrans count counter=place.n_open_tasks|default_if_none:0 %}
+                  {% blocktrans trimmed count counter=place.n_open_tasks|default_if_none:0 %}
                     Task
                   {% plural %}
                     Tasks

@@ -1,0 +1,291 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-08-28 13:29+0200\n"
+"PO-Revision-Date: 2026-06-17 10:20\n"
+"Last-Translator: \n"
+"Language-Team: Spanish\n"
+"Language: es_ES\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: 6dbd8a386c58cbb3cf8bf6a67e82186a\n"
+"X-Crowdin-Project-ID: 2\n"
+"X-Crowdin-Language: es\n"
+"X-Crowdin-File: /master/indigo_social/locale/en/LC_MESSAGES/django.po\n"
+"X-Crowdin-File-ID: 208\n"
+
+#: forms.py:19
+msgid "Your username cannot include spaces, punctuation or capital letters."
+msgstr "Tu nombre de usuario no puede incluir espacios, signos de puntuación ni letras mayúsculas."
+
+#: forms.py:23
+msgid "First name"
+msgstr "Nombre de pila"
+
+#: forms.py:24
+msgid "Last name"
+msgstr "Apellido"
+
+#: forms.py:25
+msgid "Username"
+msgstr "Nombre de usuario"
+
+#: forms.py:26
+msgid "Country"
+msgstr "País"
+
+#: forms.py:27
+msgid "Profile photo"
+msgstr "Foto de perfil"
+
+#: forms.py:28
+msgid "Language"
+msgstr "Idioma"
+
+#: forms.py:54
+msgid "This username is already taken."
+msgstr "Este nombre de usuario ya está ocupado."
+
+#: models.py:39
+msgid "user"
+msgstr "usuario"
+
+#: models.py:40
+msgid "bio"
+msgstr "bio"
+
+#: models.py:40
+msgid "A short bio"
+msgstr "Una breve biografía"
+
+#: models.py:41
+msgid "qualifications"
+msgstr "cualificaciones"
+
+#: models.py:41 templates/indigo_social/user_layout.html:66
+msgid "Qualifications"
+msgstr "Requisitos"
+
+#: models.py:42
+msgid "skills"
+msgstr "habilidades"
+
+#: models.py:42 templates/indigo_social/user_layout.html:61
+msgid "Skills"
+msgstr "Habilidades"
+
+#: models.py:43
+msgid "organisations"
+msgstr "organizaciones"
+
+#: models.py:43 templates/indigo_social/user_layout.html:56
+msgid "Organisations"
+msgstr "Organizaciones"
+
+#: models.py:44
+msgid "specialisations"
+msgstr "especializaciones"
+
+#: models.py:44 templates/indigo_social/user_layout.html:71
+msgid "Specialisations"
+msgstr "Especializaciones"
+
+#: models.py:45
+msgid "areas of law"
+msgstr "áreas del derecho"
+
+#: models.py:45 templates/indigo_social/user_layout.html:76
+msgid "Areas of law"
+msgstr "Áreas del derecho"
+
+#: models.py:46
+msgid "profile photo"
+msgstr "foto de perfil"
+
+#: models.py:47
+msgid "profile photo nonce"
+msgstr "foto de perfil nonce"
+
+#: models.py:48
+msgid "twitter username"
+msgstr "nombre de usuario de Twitter"
+
+#: models.py:49
+msgid "linkedin profile"
+msgstr "perfil de LinkedIn"
+
+#: templates/indigo_app/user_account/edit.html:4
+msgid "Edit Profile"
+msgstr "Editar perfil"
+
+#: templates/indigo_app/user_account/edit.html:32
+msgid "Email"
+msgstr "Correo electrónico"
+
+#: templates/indigo_app/user_account/edit.html:35
+msgid "manage your email addresses"
+msgstr "Administra tus direcciones de correo electrónico"
+
+#: templates/indigo_app/user_account/edit.html:42
+msgid "Tell us a bit about yourself"
+msgstr "Cuéntanos un poco sobre ti."
+
+#: templates/indigo_app/user_account/edit.html:64
+msgid "Are you sure you want to remove your profile photo?"
+msgstr "¿Estás seguro de que quieres eliminar tu foto de perfil?"
+
+#: templates/indigo_app/user_account/edit.html:70
+msgid "Upload a photo"
+msgstr "Sube una foto"
+
+#: templates/indigo_app/user_account/edit.html:72
+msgid "A square photo at least 200 pixels wide is best."
+msgstr "Lo ideal es una foto cuadrada de al menos 200 píxeles de ancho."
+
+#: templates/indigo_app/user_account/edit.html:88
+msgid "Professional skills"
+msgstr "Habilidades profesionales"
+
+#: templates/indigo_app/user_account/edit.html:95
+msgid "What organisations do you work for or with?"
+msgstr "¿Para qué organizaciones trabajas o con cuáles colaboras?"
+
+#: templates/indigo_app/user_account/edit.html:157
+msgid "Social media profiles"
+msgstr "perfiles en redes sociales"
+
+#: templates/indigo_app/user_account/edit.html:195
+msgid "Save"
+msgstr "Ahorrar"
+
+#: templates/indigo_app/user_account/edit.html:196
+msgid "View my profile"
+msgstr "Ver mi perfil"
+
+#: templates/indigo_social/badge_detail.html:7
+#: templates/indigo_social/badges.html:4 templates/indigo_social/badges.html:7
+#: templates/indigo_social/badges.html:16
+msgid "Badges"
+msgstr "Insignias"
+
+#: templates/indigo_social/badge_detail.html:25
+msgid "Awarded to"
+msgstr "Otorgado a"
+
+#: templates/indigo_social/badge_detail.html:31
+#, python-format
+msgid "%(ts)s ago"
+msgstr "%(ts)s hace"
+
+#: templates/indigo_social/badge_detail.html:36
+msgid "No-one has been awarded this badge."
+msgstr "Nadie ha recibido esta insignia."
+
+#: templates/indigo_social/badge_detail.html:42
+msgid "Permissions granted by this badge"
+msgstr "Permisos otorgados por esta insignia"
+
+#: templates/indigo_social/badge_detail.html:57
+#, python-format
+msgid "Users awarded this badge are added to the <a href=\"%(url)s\">%(name)s group</a>."
+msgstr "Los usuarios que reciben esta insignia se agregan al grupo <a href=\"%(url)s\">%(name)s</a>."
+
+#: templates/indigo_social/badges.html:18
+msgid "Badges indicate expertise and are earned by completing tasks."
+msgstr "Las insignias indican nivel de experiencia y se obtienen al completar tareas."
+
+#: templates/indigo_social/contributors.html:4
+#: templates/indigo_social/contributors.html:6
+#: templates/indigo_social/contributors.html:12
+#: templates/indigo_social/user_layout.html:7
+msgid "Contributors"
+msgstr "Colaboradores"
+
+#: templates/indigo_social/user_activity.html:6
+#: templates/indigo_social/user_layout.html:92
+msgid "Activity"
+msgstr "Actividad"
+
+#: templates/indigo_social/user_layout.html:82
+msgid "Edit profile"
+msgstr "Editar perfil"
+
+#: templates/indigo_social/user_layout.html:89
+msgid "Overview"
+msgstr "Descripción general"
+
+#: templates/indigo_social/user_layout.html:95
+msgid "Tasks"
+msgstr "Tareas"
+
+#: templates/indigo_social/user_profile.html:8
+msgid "Achievements"
+msgstr "Logros"
+
+#: templates/indigo_social/user_profile.html:16
+msgid "No badges earned yet"
+msgstr "Aún no has ganado ninguna insignia."
+
+#: templates/indigo_social/user_profile.html:26
+msgid "Award a new badge to this user:"
+msgstr "Otorgar una nueva insignia a este usuario:"
+
+#: templates/indigo_social/user_profile.html:33
+#: templates/indigo_social/user_profile.html:48
+msgid "Are you sure?"
+msgstr "¿Está seguro?"
+
+#: templates/indigo_social/user_profile.html:33
+msgid "Award badge"
+msgstr "Insignia de premio"
+
+#: templates/indigo_social/user_profile.html:48
+msgid "Remove badge"
+msgstr "Quitar insignia"
+
+#: templates/indigo_social/user_profile.html:55
+msgid "Recent activity"
+msgstr "Actividad reciente"
+
+#: templates/indigo_social/user_profile.html:60
+msgid "More activity"
+msgstr "Más actividad"
+
+#: templates/main.html:14
+msgid "Profile"
+msgstr "Perfil"
+
+#: templates/main.html:15
+msgid "Account"
+msgstr "Cuenta"
+
+#: templates/main.html:19
+msgid "Site settings"
+msgstr "Configuración del sitio"
+
+#: templates/main.html:23
+msgid "Log out"
+msgstr "Finalizar la sesión"
+
+#: templates/main.html:27
+msgid "Log in"
+msgstr "Acceso"
+
+#: views.py:135
+#, python-format
+msgid "%(badge)s badge awarded to %(user)s"
+msgstr "%(badge)s insignia otorgada a %(user)s"
+
+#: views.py:137
+#, python-format
+msgid "%(badge)s badge couldn't be awarded to %(user)s"
+msgstr "%(badge)s insignia no pudo ser otorgada a %(user)s"
+
+#: views.py:154
+#, python-format
+msgid "%(badge)s badge removed from %(user)s"
+msgstr "%(badge)s insignia eliminada de %(user)s"
+

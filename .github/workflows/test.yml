@@ -28,7 +28,7 @@ jobs:
           --health-retries 5
 
     steps:
-    - uses: actions/checkout@v7
+    - uses: actions/checkout@v6
 
     - name: Cache APT packages
       uses: awalsh128/cache-apt-pkgs-action@v1

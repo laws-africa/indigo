@@ -1,4 +1,4 @@
-FROM ubuntu:22.04
+FROM ubuntu:24.04
 
 # NOTE: This is an example Dockerfile for getting Indigo running in a simple way.
 #       In production, you will probably want to use this as a template and make
@@ -7,8 +7,10 @@ FROM ubuntu:22.04
 #       For example, you probably want to use gunicorn to host the Django app,
 #       rather than the built-in Django server.
 
+ENV PYTHONUNBUFFERED=1
+ENV DEBIAN_FRONTEND=noninteractive
+
 # Install some necessary dependencies.
-ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y wget git \
   # python
   python3 python3-pip libpq-dev python-is-python3 \
@@ -25,9 +27,14 @@ RUN wget -q -O fop.tgz 'http://www.apache.org/dyn/closer.cgi?filename=/xmlgraphi
 
 ENV PATH=/usr/local/share/fop-2.4/fop:$PATH
 
-# node
-RUN curl -sL https://deb.nodesource.com/setup_18.x | bash -
-RUN apt-get install -y nodejs
+# NodeJS 24.x
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates \
+    curl \
+    gnupg \
+    && curl -fsSL https://deb.nodesource.com/setup_24.x | bash - \
+    && apt-get install -y nodejs
+
 # install sass for compiling assets before deploying
 RUN npm i -g sass
 

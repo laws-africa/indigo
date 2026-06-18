@@ -28,7 +28,7 @@ jobs:
           --health-retries 5
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
 
     - name: Cache APT packages
       uses: awalsh128/cache-apt-pkgs-action@v1
@@ -58,9 +58,9 @@ jobs:
         pip install .[test]
 
     - name: Set up Node
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v6
       with:
-        node-version: '18'
+        node-version: '24'
 
     - name: Install node dependencies
       run: |

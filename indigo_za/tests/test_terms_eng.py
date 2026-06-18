@@ -1,4 +1,3 @@
-from nose.tools import *  # noqa
 from rest_framework.test import APITestCase
 from lxml import etree
 

@@ -25,6 +25,15 @@ class PDFExporterTestCase(TestCase):
         self.document = Document(title="test", language=self.eng, work=self.work)
         self.xsl_fo_path = os.path.join(os.path.dirname(__file__), '..', 'static', 'xsl', 'fo', 'fo_akn.xsl')
 
+    def canonical_xml(self, xml):
+        parser = etree.XMLParser(remove_blank_text=True)
+        root = etree.fromstring(xml.encode('utf-8'), parser=parser)
+        canonical = etree.tostring(root, method='c14n')
+        return etree.tostring(etree.fromstring(canonical), pretty_print=True, encoding='unicode')
+
+    def assertXmlEqual(self, expected, actual):
+        self.assertMultiLineEqual(self.canonical_xml(expected), self.canonical_xml(actual))
+
     def run_and_compare(self, name, update=False):
         input_path = os.path.join(os.path.dirname(__file__), 'pdf_fixtures', f'{name}_in.xml')
         output_path = os.path.join(os.path.dirname(__file__), 'pdf_fixtures', f'{name}_out.xml')
@@ -56,7 +65,7 @@ class PDFExporterTestCase(TestCase):
         with open(output_path, 'r') as f:
             expected = f.read()
 
-        self.assertMultiLineEqual(expected, pretty_xml_out)
+        self.assertXmlEqual(expected, pretty_xml_out)
 
     def adjust_xml(self, name, adjustment, update=False, subdirectory=None):
         path_base = os.path.join(os.path.dirname(__file__), f'pdf_fixtures/{subdirectory}' if subdirectory else 'pdf_fixtures')
@@ -79,7 +88,7 @@ class PDFExporterTestCase(TestCase):
         with open(output_path, 'r') as f:
             expected = f.read()
 
-        self.assertMultiLineEqual(expected, xml_out)
+        self.assertXmlEqual(expected, xml_out)
 
     def test_basic(self):
         self.run_and_compare('basic')

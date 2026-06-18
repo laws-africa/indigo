@@ -1,4 +1,3 @@
-from nose.tools import *  # noqa
 from django.test import TestCase
 from datetime import date, datetime
 
@@ -32,24 +31,24 @@ class DocumentTestCase(TestCase):
         d.work = self.work
         d.content = document_fixture('γνωρίζω')
 
-        assert_equal(d.frbr_uri, '/akn/za/act/1900/1')
-        assert_equal(d.country, 'za')
-        assert_equal(d.doc.publication_date, date(2005, 7, 24))
+        self.assertEqual(d.frbr_uri, '/akn/za/act/1900/1')
+        self.assertEqual(d.country, 'za')
+        self.assertEqual(d.doc.publication_date, date(2005, 7, 24))
 
     def test_expression_date(self):
         d = Document(work=self.work)
         d.content = document_fixture('test')
         d.expression_date = date(2014, 1, 1)
-        assert_equal(d.expression_date, date(2014, 1, 1))
+        self.assertEqual(d.expression_date, date(2014, 1, 1))
 
     def test_empty_expression_date(self):
         d = Document(work=self.work)
         d.content = document_fixture('test')
         d.expression_date = ''
-        assert_equal(d.expression_date, '')
+        self.assertEqual(d.expression_date, '')
 
         d.expression_date = None
-        assert_equal(d.expression_date, None)
+        self.assertEqual(d.expression_date, None)
 
     def test_inherit_from_work(self):
         user = User.objects.get(pk=1)
@@ -58,8 +57,8 @@ class DocumentTestCase(TestCase):
         d.save()
 
         d = Document.objects.get(pk=d.id)
-        assert_equal(w.frbr_uri, d.frbr_uri)
-        assert_equal(w.title, d.title)
+        self.assertEqual(w.frbr_uri, d.frbr_uri)
+        self.assertEqual(w.title, d.title)
 
     def test_repeal_from_work(self):
         rep = Work.objects.get(id=2)
@@ -71,9 +70,9 @@ class DocumentTestCase(TestCase):
         w.save()
 
         d = Document.objects.get(id=1)
-        assert_equal(d.repeal.repealing_uri, rep.frbr_uri)
-        assert_equal(d.repeal.repealing_title, rep.title)
-        assert_equal(d.repeal.date, rep.publication_date)
+        self.assertEqual(d.repeal.repealing_uri, rep.frbr_uri)
+        self.assertEqual(d.repeal.repealing_title, rep.title)
+        self.assertEqual(d.repeal.date, rep.publication_date)
 
     def test_amendments_from_work(self):
         amending = Work.objects.get(id=1)
@@ -90,15 +89,15 @@ class DocumentTestCase(TestCase):
 
         doc = Document.objects.get(id=2)
         # only the pre-existing amendment event
-        assert_equal(len(doc.amendment_events()), 1)
+        self.assertEqual(len(doc.amendment_events()), 1)
 
         doc = Document.objects.get(id=3)
         events = list(doc.amendment_events())
         # one new in addition to the two previous ones
-        assert_equal(len(events), 3)
-        assert_equal(events[1].amending_uri, amending.frbr_uri)
-        assert_equal(events[1].amending_title, amending.title)
-        assert_equal(events[1].date, d)
+        self.assertEqual(len(events), 3)
+        self.assertEqual(events[1].amending_uri, amending.frbr_uri)
+        self.assertEqual(events[1].amending_title, amending.title)
+        self.assertEqual(events[1].date, d)
 
     def test_is_latest(self):
         d = Document(work=self.work)

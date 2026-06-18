@@ -296,7 +296,7 @@ class DocumentAPITest(APITestCase):
         response = self.client.get('/api/documents/1.html?standalone=1')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.accepted_media_type, 'text/html')
-        assert_not_in('<akomaNtoso', response.content.decode('utf-8'))
+        self.assertNotIn('<akomaNtoso', response.content.decode('utf-8'))
         self.assertIn('<body  class="standalone"', response.content.decode('utf-8'))
         self.assertIn('class="colophon"', response.content.decode('utf-8'))
         self.assertIn('class="toc"', response.content.decode('utf-8'))
@@ -305,10 +305,10 @@ class DocumentAPITest(APITestCase):
         response = self.client.get('/api/documents/1.html')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.accepted_media_type, 'text/html')
-        assert_not_in('<akomaNtoso', response.content.decode('utf-8'))
-        assert_not_in('<body  class="standalone"', response.content.decode('utf-8'))
-        assert_not_in('class="colophon"', response.content.decode('utf-8'))
-        assert_not_in('class="toc"', response.content.decode('utf-8'))
+        self.assertNotIn('<akomaNtoso', response.content.decode('utf-8'))
+        self.assertNotIn('<body  class="standalone"', response.content.decode('utf-8'))
+        self.assertNotIn('class="colophon"', response.content.decode('utf-8'))
+        self.assertNotIn('class="toc"', response.content.decode('utf-8'))
         self.assertIn('<div ', response.content.decode('utf-8'))
 
     def test_published_html_l10n(self):
@@ -317,7 +317,7 @@ class DocumentAPITest(APITestCase):
 
         response = self.client.get('/api/documents/1.html')
         self.assertEqual(response.accepted_media_type, 'text/html')
-        assert_not_in('<akomaNtoso', response.content.decode('utf-8'))
+        self.assertNotIn('<akomaNtoso', response.content.decode('utf-8'))
         self.assertIn('<div', response.content.decode('utf-8'))
         self.assertIn('Wet 10 van 2014', response.content.decode('utf-8'))
 

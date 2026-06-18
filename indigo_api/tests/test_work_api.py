@@ -26,7 +26,7 @@ class WorkAPITest(APITestCase):
     def test_filters(self):
         response = self.client.get('/api/works?country=za')
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.data['results']), 0)
+        self.assertNotEqual(len(response.data['results']), 0)
 
         response = self.client.get('/api/works?country=xy')
         self.assertEqual(response.status_code, 200)

@@ -49,7 +49,7 @@ RUN npm ci --no-audit --ignore-scripts --omit=dev
 RUN pip install --upgrade pip
 
 # These are production-only dependencies
-RUN pip install psycopg2==2.9.9
+RUN pip install psycopg==3.2.12
 
 # Copy the code
 COPY . /app

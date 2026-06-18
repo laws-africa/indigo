@@ -10,6 +10,9 @@ Changelog
   compiled by webpack. New javascript functionality will go into the webpack-compiled javascript, while legacy code
   will remain in the old indigo_app/static/javascript/indigo directory until it can be migrated.
 * Support extraction of amendment instructions and step-by-step application of amendments to a document.
+* Python 3.12
+* Node 24
+* Ubuntu 24:04 in example Dockerfile
 
 19.1.0 (2025-12-01)
 -------------------

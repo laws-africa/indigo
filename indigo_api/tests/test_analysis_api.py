@@ -1,4 +1,3 @@
-from nose.tools import *  # noqa
 from rest_framework.test import APITestCase
 
 from django.contrib.auth.models import User, Permission
@@ -13,12 +12,12 @@ class AnalysisTestCase(APITestCase):
 
     def setUp(self):
         self.client.default_format = 'json'
-        assert_true(self.client.login(username='email@example.com', password='password'))
+        self.assertTrue(self.client.login(username='email@example.com', password='password'))
 
     def test_link_terms_no_input(self):
         response = self.client.post('/api/documents/1/analysis/link-terms', {
         })
-        assert_equal(response.status_code, 400)
+        self.assertEqual(response.status_code, 400)
 
     def test_link_terms(self):
         response = self.client.post('/api/documents/1/analysis/link-terms', {
@@ -61,13 +60,13 @@ class AnalysisTestCase(APITestCase):
             'language': 'eng',
             'provision_eid': ""
         })
-        assert_equal(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
 
         content = response.data['xml']
 
-        assert_true(content.startswith('<akomaNtoso'))
-        assert_in('<def ', content)
-        assert_in('<TLCTerm ', content)
+        self.assertTrue(content.startswith('<akomaNtoso'))
+        self.assertIn('<def ', content)
+        self.assertIn('<TLCTerm ', content)
 
     def test_link_terms_portion(self):
         response = self.client.post('/api/documents/1/analysis/link-terms', {
@@ -110,11 +109,11 @@ class AnalysisTestCase(APITestCase):
             'language': 'eng',
             'provision_eid': "sec_1"
         })
-        assert_equal(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
 
         content = response.data['xml']
 
-        assert_true(content.startswith('<portion '))
+        self.assertTrue(content.startswith('<portion '))
         # definitions aren't found, only linked, in provision mode
 
     def test_link_terms_no_perms(self):

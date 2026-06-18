@@ -2,5 +2,5 @@
 
 <xsl:stylesheet version="2.0"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-  <xsl:import href="__INDIGO_API_XSL_DIR__/main-fo.xsl"/>
+  <xsl:import href="/Users/greg/coding/laws.africa/indigo/indigo_api/static/xsl/fo/main-fo.xsl"/>
 </xsl:stylesheet>

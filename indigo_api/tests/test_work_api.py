@@ -1,4 +1,3 @@
-from nose.tools import assert_equal, assert_not_equal
 from rest_framework.test import APITestCase
 from django.test.utils import override_settings
 
@@ -26,9 +25,9 @@ class WorkAPITest(APITestCase):
 
     def test_filters(self):
         response = self.client.get('/api/works?country=za')
-        assert_equal(response.status_code, 200)
-        assert_not_equal(len(response.data['results']), 0)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.data['results']), 0)
 
         response = self.client.get('/api/works?country=xy')
-        assert_equal(response.status_code, 200)
-        assert_equal(response.data['results'], [])
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['results'], [])

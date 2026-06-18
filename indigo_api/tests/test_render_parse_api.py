@@ -1,7 +1,6 @@
 from cobalt import datestring
 from lxml import etree
 import datetime
-from nose.tools import *  # noqa
 from rest_framework.test import APITestCase
 from rest_framework.renderers import JSONRenderer
 
@@ -27,7 +26,7 @@ class RenderParseAPITest(APITestCase):
                 'language': 'eng',
             },
         }, format='json')
-        assert_equal(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
 
     def test_render_with_empty_publication(self):
         response = self.client.post('/api/documents/1/render/coverpage', {
@@ -39,7 +38,7 @@ class RenderParseAPITest(APITestCase):
                 'language': 'eng',
             },
         }, format='json')
-        assert_equal(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
 
     def test_render_json_to_html(self):
         response = self.client.post('/api/documents/1/render/coverpage', {
@@ -49,13 +48,13 @@ class RenderParseAPITest(APITestCase):
                 'language': 'eng',
             },
         })
-        assert_equal(response.status_code, 200)
-        assert_in('<div class="coverpage">', response.data['output'])
-        assert_in('Act 10 of 2014', response.data['output'])
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('<div class="coverpage">', response.data['output'])
+        self.assertIn('Act 10 of 2014', response.data['output'])
 
     def test_render_json_to_html_round_trip(self):
         response = self.client.get('/api/documents/4.json')
-        assert_equal(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
 
         data = response.data
         data['content'] = document_fixture(text='hello')
@@ -63,9 +62,9 @@ class RenderParseAPITest(APITestCase):
         response = self.client.post('/api/documents/4/render/coverpage', {
             'document': data,
         })
-        assert_equal(response.status_code, 200)
-        assert_in('<div class="coverpage">', response.data['output'])
-        assert_in('Repealed Act', response.data['output'])
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('<div class="coverpage">', response.data['output'])
+        self.assertIn('Repealed Act', response.data['output'])
 
     def test_render_json_to_html_with_unicode(self):
         response = self.client.post('/api/documents/1/render/coverpage', {
@@ -75,9 +74,9 @@ class RenderParseAPITest(APITestCase):
                 'language': 'eng',
             },
         })
-        assert_equal(response.status_code, 200)
-        assert_in('<div class="coverpage">', response.data['output'])
-        assert_in('Act 10 of 2014', response.data['output'])
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('<div class="coverpage">', response.data['output'])
+        self.assertIn('Act 10 of 2014', response.data['output'])
 
     def test_parse_text_fragment(self):
         response = self.client.post('/api/documents/1/parse', {

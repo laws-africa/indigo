@@ -102,6 +102,7 @@ MIDDLEWARE = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'indigo_app.middleware.VaryOnHxHeadersMiddleware',
     'django.middleware.locale.LocaleMiddleware',
+    'indigo_app.middleware.LogContextMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -125,6 +126,7 @@ SESSION_COOKIE_SECURE = not DEBUG
 INDIGO_PDFTOTEXT = 'pdftotext'
 # TODO move all Indigo config options in here
 INDIGO = {
+    'APP_NAME': 'Indigo',
     # Should we send notification emails in the background?
     # Requires a separate task runner for django-background-tasks,
     # see https://django-background-tasks.readthedocs.io/en/latest/
@@ -480,11 +482,15 @@ LOGGING = {
             'format': '%(asctime)s %(levelname)s %(name)s %(process)d %(thread)d %(message)s'
         }
     },
+    'filters': {
+        'context': {'()': 'indigo_app.logging.LoggingContextFilter'},
+    },
     'handlers': {
         'console': {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
-            'formatter': 'simple'
+            'formatter': 'simple',
+            'filters': ['context'],
         },
         'mail_admins': {
             'level': 'ERROR',

@@ -2,8 +2,10 @@ import os
 import socket
 from datetime import timedelta
 import logging
+from uuid import uuid4
 
 import sentry_sdk
+from django.conf import settings
 from django.db import transaction
 from sentry_sdk.tracing import TRANSACTION_SOURCE_TASK
 from background_task import background
@@ -14,6 +16,7 @@ from django.db.utils import OperationalError
 from django.dispatch import receiver
 
 from indigo_api.models import Document, DocumentActivity
+from indigo_app.logging import log_context, clear_log_context
 
 # get specific task logger
 log = logging.getLogger('indigo.tasks')
@@ -44,16 +47,37 @@ class PatchedDBTaskRunner(DBTaskRunner):
             logger.warning("Failed to retrieve tasks. Database unreachable.")
 
     def run_task(self, tasks, task):
-        # wrap the task in a sentry transaction
-        with sentry_sdk.start_transaction(
-                op="queue.task", source=TRANSACTION_SOURCE_TASK, name=task.task_name
-        ) as transaction:
-            transaction.set_status("ok")
-            super().run_task(tasks, task)
+        clear_log_context()
+        try:
+            # wrap the task in a sentry transaction
+            with sentry_sdk.start_transaction(
+                    op="queue.task", source=TRANSACTION_SOURCE_TASK, name=task.task_name
+            ) as transaction:
+                transaction.set_status("ok")
+                with log_context(
+                        task_run_id=task_run_id(task), task_name=task.task_name
+                ):
+                    super().run_task(tasks, task)
+        finally:
+            clear_log_context()
 
 
 # use the patched runner
 tasks._runner = PatchedDBTaskRunner()
+
+
+def _task_str(self):
+    return f"Task<#{self.pk} {self.task_name} params={self.task_params}>"
+
+
+# override Task.__str__ so it's more description
+Task.__str__ = _task_str
+
+
+# this is a logging fingerprint for a task run
+def task_run_id(task):
+    nonce = uuid4().hex[:6]
+    return f"task:{settings.INDIGO['APP_NAME'].lower()}:{task.pk}:{task.task_name}:{nonce}"
 
 
 @receiver(task_error)

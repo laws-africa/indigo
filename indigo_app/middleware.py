@@ -4,6 +4,8 @@ import json
 from django.utils.cache import patch_vary_headers
 from django.utils.deprecation import MiddlewareMixin
 
+from indigo_app.logging import clear_log_context
+
 
 class HtmxMessagesMiddleware:
     """ Adds a message to the Django messages framework if the request is an htmx request.
@@ -56,3 +58,17 @@ class VaryOnHxHeadersMiddleware(MiddlewareMixin):
     def process_response(self, request, response):
         patch_vary_headers(response, ["Hx-Request", "Hx-Target"])
         return response
+
+
+class LogContextMiddleware:
+    """Clear log context at request boundaries to avoid leaking thread-local values."""
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        clear_log_context()
+        try:
+            return self.get_response(request)
+        finally:
+            clear_log_context()

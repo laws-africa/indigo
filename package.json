@@ -34,7 +34,7 @@
     "htmx.org": "^2.0.1",
     "i18next": "^23.11.3",
     "i18next-http-backend": "^2.5.1",
-    "i18next-parser": "^8.13.0",
+    "i18next-parser": "^9.3.0",
     "indigo-web": "^8.1.2",
     "lodash": "^4.17.21",
     "luxon": "^3.4.4",

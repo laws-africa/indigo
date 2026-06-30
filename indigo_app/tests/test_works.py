@@ -1,5 +1,6 @@
 import datetime
 from urllib.parse import unquote
+from unittest.mock import Mock, patch
 
 import reversion
 from django.contrib.auth.models import User
@@ -9,7 +10,7 @@ from webtest import Upload
 
 from indigo_api.models import Work, Commencement, Amendment, ArbitraryExpressionDate, Document
 from indigo_app.tests.utils import TEST_STORAGES
-from indigo_app.views.works import WorkViewBase
+from indigo_app.views.works import WorkFormAmendmentsView, WorkViewBase
 
 
 @override_settings(STORAGES=TEST_STORAGES)
@@ -90,6 +91,27 @@ class WorksTest(testcases.TestCase):
             'amendments_made-0-id': '',
         })
         self.assertEqual(response.status_code, 200)
+
+    def test_form_amendments_view_with_incomplete_cleaned_data(self):
+        view = WorkFormAmendmentsView()
+        formset = Mock()
+        incomplete_form = Mock()
+        incomplete_form.cleaned_data = {'DELETE': False}
+        formset.is_valid.return_value = True
+        formset.__iter__ = Mock(return_value=iter([incomplete_form]))
+
+        request = self.client.post('/works/akn/za/act/2010/1/form/amendments')
+        work = Work.objects.get(frbr_uri='/akn/za/act/2010/1')
+
+        with patch('indigo_app.views.works.WorkViewBase.get_context_data', return_value={}), \
+                patch('indigo_app.views.works.AmendmentsBaseFormSet', side_effect=[formset, Mock()]):
+            view.setup(request.wsgi_request, frbr_uri=work.frbr_uri)
+            view.object = work
+            context = view.get_context_data()
+
+        self.assertIn('formset', context)
+        self.assertEqual(context['prefix'], None)
+
 
     def test_import_view(self):
         response = self.client.get('/works/akn/za/act/2014/10/import/')

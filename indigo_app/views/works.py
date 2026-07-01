@@ -1418,23 +1418,30 @@ class WorkFormAmendmentsView(WorkViewBase, TemplateView):
         initial = []
         if formset.is_valid():
             for form in formset:
-                # skip empty extra forms and deleted unsaved forms
-                if not form.cleaned_data:
+                cleaned = form.cleaned_data
+                # skip empty or incomplete forms, and deleted unsaved forms
+                if not cleaned:
                     continue
-                delete = form.cleaned_data.get('DELETE')
+                if not {"amended_work", "amending_work", "date", "id", "DELETE"} <= cleaned.keys():
+                    continue
+                delete = cleaned.get('DELETE')
                 if delete:
-                    if not form.cleaned_data.get('id'):
+                    if not cleaned.get('id'):
                         continue
                 initial.append({
-                    "amended_work": form.cleaned_data["amended_work"],
-                    "amending_work": form.cleaned_data["amending_work"],
-                    "date": form.cleaned_data["date"],
-                    "id": form.cleaned_data["id"],
-                    "DELETE": form.cleaned_data["DELETE"],
+                    "amended_work": cleaned["amended_work"],
+                    "amending_work": cleaned["amending_work"],
+                    "date": cleaned["date"],
+                    "id": cleaned["id"],
+                    "DELETE": cleaned["DELETE"],
                 })
             if amendment_work_id:
-                amending_works = {form.cleaned_data.get("amending_work") for form in formset if form.cleaned_data}
-                amended_works = {form.cleaned_data.get("amended_work") for form in formset if form.cleaned_data}
+                valid_forms = [
+                    form.cleaned_data for form in formset
+                    if {"amended_work", "amending_work"} <= form.cleaned_data.keys()
+                ]
+                amending_works = {form["amending_work"] for form in valid_forms}
+                amended_works = {form["amended_work"] for form in valid_forms}
                 work = Work.objects.filter(pk=amendment_work_id).first()
                 if work:
                     if prefix == "amended_by":

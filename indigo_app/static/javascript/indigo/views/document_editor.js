@@ -408,7 +408,7 @@
       if (this.aknTextEditor.editing && this.aknTextEditor.xmlElement !== this.xmlElement) {
         const eid = this.aknTextEditor.xmlElement.getAttribute('eId');
         if (eid) {
-          const el = html.querySelector('[id="' + eid + '"]');
+          const el = html.querySelector('[id="' + CSS.escape(eid) + '"]');
           if (el) {
             el.classList.add('quick-editing');
           }

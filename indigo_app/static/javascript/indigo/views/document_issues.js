@@ -55,13 +55,20 @@
 
       render: function() {
         var self = this,
-            displayed = {};
+            displayed = {},
+            elementsById = {};
 
         // remove existing nodes
         for (const node of this.nodes) {
           node.remove();
         }
         this.nodes = [];
+
+        // index elements by id, rather than looking anchor ids up with a crafted selector string, so that
+        // ids containing characters that aren't valid in a CSS/jQuery selector don't blow up the lookup
+        this.$akn.find('[id]').each(function() {
+          (elementsById[this.id] = elementsById[this.id] || []).push(this);
+        });
 
         this.model.forEach(function(issue) {
           // Only attach a particular issue to a node once. This is required for linters that, for example, identify
@@ -76,7 +83,7 @@
           displayed[ident] = true;
 
           // this assumes that the issue id is scoped (ie. to a schedule, etc.)
-          targets = self.$akn.find('[id="' + anchor_id + '"]');
+          targets = elementsById[anchor_id] || [];
 
           for (var i = 0; i < targets.length; i++) {
             var target = targets[i];

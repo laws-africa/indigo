@@ -1,7 +1,6 @@
 import json
 
 from asgiref.sync import sync_to_async
-from django.conf import settings
 from django.contrib import messages
 from django.db.models import Q
 from django.http import Http404
@@ -11,7 +10,6 @@ from django.utils.translation import gettext as _
 from django.views.generic import DetailView
 from lxml import etree
 
-import bluebell
 import cobalt
 from bluebell.xml import XmlGenerator
 from indigo.plugins import plugins
@@ -88,12 +86,6 @@ class DocumentDetailView(DocumentDetailViewBase):
             'title': r.title
         } for r in DocumentViewSet.renderer_classes if hasattr(r, 'icon')]
         context['download_formats'].sort(key=lambda f: f['title'])
-
-        if settings.INDIGO['USE_PYODIDE']:
-            context['pyodide_packages_json'] = json.dumps([
-                f'cobalt=={cobalt.__version__}',
-                f'bluebell-akn=={bluebell.__version__}',
-            ])
 
         context['related_tasks'] = list(self.get_related_tasks())
 

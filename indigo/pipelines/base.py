@@ -2,12 +2,12 @@ import os.path
 import re
 from copy import deepcopy
 
-from lxml import etree, html
+from lxml import etree
 import cssutils
 
 from cobalt.akn import AKN_NAMESPACES, DEFAULT_VERSION, get_maker
 from bluebell.akn import ParseError
-from bluebell.parser import AkomaNtosoParser
+from bluebell.parser import parse_to_xml_bytes
 from docpipe.html import ParseHtml
 from docpipe.pipeline import Stage
 from docpipe.xmlutils import unwrap_element
@@ -64,21 +64,21 @@ class ParseBluebellText(Stage):
         frbr_uri.work_component = 'main'
         root = context.fragment or frbr_uri.doctype
 
-        parser = AkomaNtosoParser(frbr_uri, context.fragment_id_prefix or '')
         try:
-            xml = parser.parse_to_xml(context.text, root)
+            xml_bytes = parse_to_xml_bytes(context.text, root, frbr_uri, context.fragment_id_prefix or '')
         except ParseError as e:
             raise ValueError(e)
 
         if context.fragment:
             # fragment must be wrapped in AKN tags
-            xml = etree.tostring(xml, encoding='unicode')
             # TODO: use a partial document from Cobalt?
             ns = AKN_NAMESPACES[DEFAULT_VERSION]
+            xml = xml_bytes.decode('utf-8')
             xml = f'<akomaNtoso xmlns="{ns}">{xml}</akomaNtoso>'
-            xml = etree.fromstring(xml.encode('utf-8'))
+            xml_bytes = xml.encode('utf-8')
 
-        context.xml = xml
+        # turn into XML tree
+        context.xml = etree.fromstring(xml_bytes)
 
 
 class WrapAnnotations(Stage):

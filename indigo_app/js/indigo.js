@@ -1,5 +1,6 @@
 import { components, vueComponents } from './components';
 import * as bluebellMonaco from '@lawsafrica/bluebell-monaco';
+import './bluebell';
 import '@lawsafrica/law-widgets/dist/components/la-akoma-ntoso';
 import '@lawsafrica/law-widgets/dist/components/la-gutter';
 import '@lawsafrica/law-widgets/dist/components/la-gutter-item';

@@ -105,5 +105,4 @@ const monacoConfig = {
   }
 };
 
-
 module.exports = [legacyConfig, appConfig, monacoConfig];

@@ -174,9 +174,6 @@ INDIGO = {
         'refs-act-numbers', 'refs-act-numbers-2', 'refs-act-numbers-no-year',
         'refs-act-names', 'refs-subtype-numbers', 'refs-aliases', 'internal-refs'
     ],
-
-    # should we use pyodide to parse documents on the client?
-    'USE_PYODIDE': True,
 }
 
 # Database

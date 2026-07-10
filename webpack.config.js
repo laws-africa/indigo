@@ -65,6 +65,8 @@ const appConfig = {
   output: {
     filename: 'indigo-app.js',
     path: path.resolve(__dirname, 'indigo_app/static/javascript'),
+    publicPath: '/static/javascript/',
+    assetModuleFilename: '[name].[contenthash][ext]',
     chunkFormat: false
   },
   plugins: [

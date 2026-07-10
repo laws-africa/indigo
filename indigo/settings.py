@@ -312,9 +312,11 @@ else:
 
 # supplement whitenoise's mimetypes
 WHITENOISE_MIMETYPES = {
+    '.wasm': 'application/wasm',
     '.xsl': 'application/xslt+xml',
     '.xslt': 'application/xslt+xml',
 }
+WHITENOISE_IMMUTABLE_FILE_TEST = r'^.+\.[0-9a-f]{12,}\..+$'
 
 
 # django-pipeline for javascript

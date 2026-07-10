@@ -1,4 +1,5 @@
 import initBluebellWasm, { parseToXml, version } from '@lawsafrica/bluebell-wasm/bluebell_wasm.js';
+import bluebellWasmUrl from '@lawsafrica/bluebell-wasm/bluebell_wasm_bg.wasm';
 
 if (!window.Indigo) window.Indigo = {};
 const Indigo = window.Indigo;
@@ -12,7 +13,7 @@ const AKN_NS = 'http://docs.oasis-open.org/legaldocml/ns/akn/3.0';
 class BluebellParser {
   static setupWasm () {
     if (!BluebellParser.wasmSetup) {
-      BluebellParser.wasmSetup = initBluebellWasm();
+      BluebellParser.wasmSetup = initBluebellWasm({ module_or_path: bluebellWasmUrl });
     }
     return BluebellParser.wasmSetup;
   }

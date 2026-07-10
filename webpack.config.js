@@ -59,6 +59,10 @@ const appConfig = {
       {
         test: /\.scss$/,
         use: ['vue-style-loader', 'css-loader', 'sass-loader']
+      },
+      {
+        test: /\.wasm$/,
+        type: 'asset/resource'
       }
     ]
   },

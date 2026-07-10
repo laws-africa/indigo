@@ -174,9 +174,6 @@ INDIGO = {
         'refs-act-numbers', 'refs-act-numbers-2', 'refs-act-numbers-no-year',
         'refs-act-names', 'refs-subtype-numbers', 'refs-aliases', 'internal-refs'
     ],
-
-    # should we use pyodide to parse documents on the client?
-    'USE_PYODIDE': True,
 }
 
 # Database
@@ -315,9 +312,11 @@ else:
 
 # supplement whitenoise's mimetypes
 WHITENOISE_MIMETYPES = {
+    '.wasm': 'application/wasm',
     '.xsl': 'application/xslt+xml',
     '.xslt': 'application/xslt+xml',
 }
+WHITENOISE_IMMUTABLE_FILE_TEST = r'^.+\.[0-9a-f]{12,}\..+$'
 
 
 # django-pipeline for javascript

@@ -6,6 +6,7 @@ from django.test import TestCase
 from lxml import etree
 
 from cobalt.hierarchical import Act
+from indigo.xmlutils import canonical_xml as canonicalize_xml
 from indigo_api.exporters import PDFExporter
 from indigo_api.models import Document, Work, Language
 from indigo_api.pdf import run_fop
@@ -26,10 +27,7 @@ class PDFExporterTestCase(TestCase):
         self.xsl_fo_path = os.path.join(os.path.dirname(__file__), '..', 'static', 'xsl', 'fo', 'fo_akn.xsl')
 
     def canonical_xml(self, xml):
-        parser = etree.XMLParser(remove_blank_text=True)
-        root = etree.fromstring(xml.encode('utf-8'), parser=parser)
-        canonical = etree.tostring(root, method='c14n')
-        return etree.tostring(etree.fromstring(canonical), pretty_print=True, encoding='unicode')
+        return canonicalize_xml(xml, pretty_print=True)
 
     def assertXmlEqual(self, expected, actual):
         self.assertMultiLineEqual(self.canonical_xml(expected), self.canonical_xml(actual))

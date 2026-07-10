@@ -16,6 +16,7 @@ def general(request):
         'GOOGLE_ANALYTICS_ID': settings.GOOGLE_ANALYTICS_ID,
         'RESOLVER_URL': settings.RESOLVER_URL,
         'INDIGO_ORGANISATION': settings.INDIGO_ORGANISATION,
+        'INDIGO_URL': settings.INDIGO_URL,
         'USER_JSON': serialise_user(request),
         'MAINTENANCE_MODE': settings.INDIGO['MAINTENANCE_MODE'],
         'SENTRY_DSN': settings.SENTRY_DSN,

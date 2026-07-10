@@ -93,8 +93,8 @@ class AknTextEditor {
     this.previousText = this.unparse();
 
     // only default liveUpdates to true if the document isn't too long
-    // a 100k document takes about 0.5s to parse, which is our upper limit
-    this.setLiveUpdates(this.previousText.length < 100000);
+    // a 500k document takes about 0.5s to parse, which is our upper limit
+    this.setLiveUpdates(this.previousText.length < 500000);
 
     this.monacoEditor.setValue(this.previousText);
     const top = {column: 1, lineNumber: 1};

@@ -59,12 +59,18 @@ const appConfig = {
       {
         test: /\.scss$/,
         use: ['vue-style-loader', 'css-loader', 'sass-loader']
+      },
+      {
+        test: /\.wasm$/,
+        type: 'asset/resource'
       }
     ]
   },
   output: {
     filename: 'indigo-app.js',
     path: path.resolve(__dirname, 'indigo_app/static/javascript'),
+    publicPath: '/static/javascript/',
+    assetModuleFilename: '[name].[contenthash][ext]',
     chunkFormat: false
   },
   plugins: [
@@ -104,6 +110,5 @@ const monacoConfig = {
     chunkFormat: false
   }
 };
-
 
 module.exports = [legacyConfig, appConfig, monacoConfig];

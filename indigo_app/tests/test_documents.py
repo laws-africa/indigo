@@ -3,6 +3,7 @@ import tempfile
 import datetime
 
 from django.test import testcases, override_settings
+from lxml import etree
 
 from indigo_api.importers.pdfs import pdf_count_pages
 from indigo_api.models import Work
@@ -101,12 +102,18 @@ class DocumentViewsTest(testcases.TestCase):
         # check the doc
         doc = work.expressions().filter(expression_date=datetime.date(2001, 1, 1)).first()
         self.assertEqual(doc.draft, True)
-        self.assertIn('<preface><p eId="preface__p_1">a text file with</p>'
-                      '<p eId="preface__p_2">badly formed</p>'
-                      '<p eId="preface__p_3">HTML</p></preface>'
-                      '<body><hcontainer name="hcontainer" eId="hcontainer_1">'
-                      '<content><p eId="hcontainer_1__p_1"/></content></hcontainer></body>',
-                      doc.content, msg='missing imported html')
+        xml = etree.fromstring(doc.content.encode('utf-8'))
+        ns = {'a': 'http://docs.oasis-open.org/legaldocml/ns/akn/3.0'}
+        self.assertEqual(
+            xml.xpath('a:act/a:preface/a:p/text()', namespaces=ns),
+            ['a text file with', 'badly formed', 'HTML'],
+            msg='missing imported html')
+        hcontainer = xml.xpath('a:act/a:body/a:hcontainer[@name="hcontainer" and @eId="hcontainer_1"]', namespaces=ns)
+        self.assertEqual(len(hcontainer), 1, msg='missing imported html')
+        self.assertEqual(
+            hcontainer[0].xpath('a:content/a:p/@eId', namespaces=ns),
+            ['hcontainer_1__p_1'],
+            msg='missing imported html')
         self.assertEqual(len(doc.attachments.all()), 1)
 
     def test_create_from_pdf_with_page_nums(self):

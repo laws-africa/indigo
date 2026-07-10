@@ -1,10 +1,42 @@
 from collections import defaultdict
 
+from lxml import etree
 import lxml.html
 import re
 from itertools import chain
 
 from cobalt import FrbrUri
+
+
+def default_bluebell_source():
+    """Return the parser source metadata for this Indigo instance."""
+    from django.conf import settings
+
+    return {
+        'show_as': settings.INDIGO_ORGANISATION,
+        'eid': re.sub(r'[^a-zA-Z0-9]', '-', settings.INDIGO_ORGANISATION),
+        'href': settings.INDIGO_URL,
+    }
+
+
+def canonical_xml(xml, pretty_print=False):
+    """Canonicalize an XML string for semantic comparisons.
+
+    This normalizes insignificant whitespace and attribute ordering.
+    """
+    parser = etree.XMLParser(remove_blank_text=True)
+    root = etree.fromstring(xml.encode('utf-8'), parser=parser)
+    canonical = etree.tostring(root, method='c14n')
+
+    if pretty_print:
+        return etree.tostring(etree.fromstring(canonical), pretty_print=True, encoding='unicode')
+
+    return canonical.decode('utf-8')
+
+
+def canonical_xml_fragment(xml, pretty_print=False):
+    """Canonicalize an XML/HTML fragment by wrapping it in a root element."""
+    return canonical_xml(f'<root>{xml}</root>', pretty_print=pretty_print)
 
 
 def fragments_fromstring(html):

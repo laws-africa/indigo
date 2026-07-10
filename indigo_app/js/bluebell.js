@@ -18,9 +18,19 @@ class BluebellParser {
     return BluebellParser.wasmSetup;
   }
 
-  constructor (url, headers) {
+  static sourceFromIndigo () {
+    const showAs = Indigo.indigoOrganisation || '';
+    return {
+      showAs,
+      eid: showAs.replace(/[^a-zA-Z0-9]/g, '-'),
+      href: Indigo.indigoUrl || ''
+    };
+  }
+
+  constructor (url, headers, source) {
     this.url = url;
     this.headers = headers;
+    this.source = source || BluebellParser.sourceFromIndigo();
     this.wasm = null;
   }
 
@@ -58,7 +68,7 @@ class BluebellParser {
     const start = performance.now();
 
     try {
-      const xml = this.wasm.parseToXml(text, root, frbrUri, eidPrefix || '');
+      const xml = this.wasm.parseToXml(text, root, frbrUri, eidPrefix || '', this.source);
       const elapsed = performance.now() - start;
       const n = text.length;
       console.log(`bluebell-wasm parse of ${n} bytes completed in ${elapsed.toFixed(2)}ms`, { root, fragment: !!fragment });

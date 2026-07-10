@@ -11,7 +11,7 @@ from bluebell.parser import parse_to_xml_bytes
 from docpipe.html import ParseHtml
 from docpipe.pipeline import Stage
 from docpipe.xmlutils import unwrap_element
-from indigo.xmlutils import parse_html_str
+from indigo.xmlutils import default_bluebell_source, parse_html_str
 
 
 def chomp_left(elem, count):
@@ -65,7 +65,13 @@ class ParseBluebellText(Stage):
         root = context.fragment or frbr_uri.doctype
 
         try:
-            xml_bytes = parse_to_xml_bytes(context.text, root, frbr_uri, context.fragment_id_prefix or '')
+            xml_bytes = parse_to_xml_bytes(
+                context.text,
+                root,
+                frbr_uri,
+                eid_prefix=context.fragment_id_prefix or '',
+                source=default_bluebell_source(),
+            )
         except ParseError as e:
             raise ValueError(e)
 

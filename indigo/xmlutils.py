@@ -8,6 +8,17 @@ from itertools import chain
 from cobalt import FrbrUri
 
 
+def default_bluebell_source():
+    """Return the parser source metadata for this Indigo instance."""
+    from django.conf import settings
+
+    return {
+        'show_as': settings.INDIGO_ORGANISATION,
+        'eid': re.sub(r'[^a-zA-Z0-9]', '-', settings.INDIGO_ORGANISATION),
+        'href': settings.INDIGO_URL,
+    }
+
+
 def canonical_xml(xml, pretty_print=False):
     """Canonicalize an XML string for semantic comparisons.
 

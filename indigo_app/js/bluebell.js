@@ -2,6 +2,7 @@ import initBluebellWasm, { parseToXml, version } from '@lawsafrica/bluebell-wasm
 
 if (!window.Indigo) window.Indigo = {};
 const Indigo = window.Indigo;
+const AKN_NS = 'http://docs.oasis-open.org/legaldocml/ns/akn/3.0';
 
 /**
  * Parses bluebell text into Akoma Ntoso XML.
@@ -38,11 +39,13 @@ class BluebellParser {
   async parse (text, frbrUri, fragment, eidPrefix) {
     try {
       await this.setup();
-      if (this.wasm) {
-        return this.parseWithWasm(text, frbrUri, fragment, eidPrefix);
-      }
     } catch (e) {
-      console.error('Error parsing with bluebell-wasm, will fall back to server:', e);
+      console.error('Error setting up bluebell-wasm, will fall back to server:', e);
+      return await this.parseWithServer(text, frbrUri, fragment, eidPrefix);
+    }
+
+    if (this.wasm) {
+      return this.parseWithWasm(text, frbrUri, fragment, eidPrefix);
     }
 
     return await this.parseWithServer(text, frbrUri, fragment, eidPrefix);
@@ -50,8 +53,28 @@ class BluebellParser {
 
   parseWithWasm (text, frbrUri, fragment, eidPrefix) {
     console.log('Parsing with bluebell-wasm');
-    const xml = this.wasm.parseToXml(text, fragment || this.getRoot(frbrUri), frbrUri, eidPrefix || '');
-    return fragment ? this.wrapFragment(xml) : xml;
+    const root = fragment || this.getRoot(frbrUri);
+    const start = performance.now();
+
+    try {
+      const xml = this.wasm.parseToXml(text, root, frbrUri, eidPrefix || '');
+      const elapsed = performance.now() - start;
+      const n = text.length;
+      console.log(`bluebell-wasm parse of ${n} bytes completed in ${elapsed.toFixed(2)}ms`, { root, fragment: !!fragment });
+      return fragment ? this.wrapFragment(xml) : xml;
+    } catch (e) {
+      const elapsed = performance.now() - start;
+      console.warn(`bluebell-wasm parse failed in ${elapsed.toFixed(2)}ms`, e);
+      throw this.errorMessage(e);
+    }
+  }
+
+  errorMessage (error) {
+    if (error && error.message) {
+      return error.message;
+    }
+
+    return String(error);
   }
 
   getRoot (frbrUri) {

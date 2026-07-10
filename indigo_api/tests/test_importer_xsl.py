@@ -3,6 +3,7 @@ import unittest.util
 
 from django.test import TestCase
 
+from indigo.xmlutils import canonical_xml_fragment
 from indigo_api.models import Document, Language, Work
 from indigo_api.importers.base import Importer
 
@@ -32,7 +33,7 @@ class XslTest(TestCase):
             open(os.path.join(os.path.dirname(__file__), f'importer_fixtures/{prefix}.html'), 'w').write(actual)
         expected = open(os.path.join(os.path.dirname(__file__), f'importer_fixtures/{prefix}.html')).read()
 
-        self.assertMultiLineEqual(expected, actual)
+        self.assertMultiLineEqual(canonical_xml_fragment(expected), canonical_xml_fragment(actual))
 
     def test_footnotes(self):
         self.run_file_test("footnotes")

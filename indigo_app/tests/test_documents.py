@@ -6,7 +6,7 @@ from django.test import testcases, override_settings
 from lxml import etree
 
 from indigo_api.importers.pdfs import pdf_count_pages
-from indigo_api.models import Work
+from indigo_api.models import Work, Country, Document
 from indigo_app.tests.utils import TEST_STORAGES
 
 
@@ -16,6 +16,26 @@ class DocumentViewsTest(testcases.TestCase):
 
     def setUp(self):
         self.assertTrue(self.client.login(username='email@example.com', password='password'))
+        source_document = Document.objects.get(pk=10)
+        other_work = Work.objects.create(
+            title='Restricted Namibia Act',
+            country=Country.objects.get(country_id='NA'),
+            frbr_uri='/akn/na/act/2026/1',
+            doctype='act',
+            date='2026',
+            number='1',
+        )
+        self.restricted_document = Document.objects.create(
+            title='Restricted Namibia draft',
+            frbr_uri='/akn/na/act/2026/1',
+            work=other_work,
+            expression_date=datetime.date(2026, 1, 1),
+            language=source_document.language,
+            draft=True,
+            document_xml=source_document.document_xml,
+            created_by_user=source_document.created_by_user,
+            updated_by_user=source_document.updated_by_user,
+        )
 
     def test_published_document(self):
         response = self.client.get('/documents/1/')
@@ -24,6 +44,15 @@ class DocumentViewsTest(testcases.TestCase):
     def test_draft_document(self):
         response = self.client.get('/documents/10/')
         self.assertEqual(response.status_code, 200)
+
+    def test_document_popup_cache_varies_by_cookie(self):
+        response = self.client.get('/documents/10/popup')
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('Cookie', response['Vary'])
+
+    def test_cannot_view_document_from_another_country(self):
+        response = self.client.get(f'/documents/{self.restricted_document.id}/')
+        self.assertEqual(response.status_code, 404)
 
     def test_create_from_docx(self):
         work = Work.objects.get_for_frbr_uri('/akn/za/act/2014/10')

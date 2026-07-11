@@ -35,24 +35,24 @@ class DocumentPermissions(BasePermission):
     """
     Document-level permissions.
 
-    1. read-only changes require view permissions on the document
-    2. mutating changes require view and country permissions on the document, and and non-draft (published) documents
+    1. all access requires view and country permissions on the document
+    2. mutating changes to non-draft (published) documents
        require publication permissions.
     """
+    def has_view_permission(self, request, obj):
+        return request.user.has_perm('indigo_api.view_document') and \
+            request.user.editor.has_country_permission(obj.work.country)
+
     def has_object_permission(self, request, view, obj):
-        # all methods require view access
-        if not request.user.has_perm('indigo_api.view_document'):
+        if not self.has_view_permission(request, obj):
             return False
 
-        # read-only methods only require view access
+        # read-only methods don't require publication permissions
         if request.method in SAFE_METHODS:
             return True
 
         # only some users can save/edit non-drafts
         okay = obj.draft or request.user.has_perm('indigo_api.publish_document')
-
-        # check country perms
-        okay = okay and request.user.editor.has_country_permission(obj.work.country)
 
         return okay
 
@@ -125,6 +125,15 @@ class RelatedDocumentPermissions(BasePermission):
         if DocumentPermissions().has_object_permission(request, view, document):
             # mutating changes to related resources require document change perms
             return request.method in SAFE_METHODS or request.user.has_perm('indigo_api.change_document')
+
+
+class DocumentReadPermissions(BasePermission):
+    """Ensure a user can read the document addressed by a nested view."""
+    def has_permission(self, request, view):
+        return DocumentPermissions().has_view_permission(request, view.document)
+
+    def has_object_permission(self, request, view, obj):
+        return self.has_permission(request, view)
 
 
 class RevisionPermissions(RelatedDocumentPermissions):

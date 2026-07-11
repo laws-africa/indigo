@@ -5,6 +5,7 @@ Changelog
 20.0.0 (???)
 ------------
 
+* SECURITY: Restrict document and document-related resource access to an editor's permitted countries in multi-country deployments. Reported by Santosh Kumar Puppala - https://github.com/Santoshkumarpuppala
 * Remove the need for ATOMIC_REQUESTS to allow better use of transaction-level database connection pooling.
 * Move the main javascript app entry-point from indigo_app/static/javascript/indigo into indog_app/js/main.js which is
   compiled by webpack. New javascript functionality will go into the webpack-compiled javascript, while legacy code

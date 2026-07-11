@@ -39,13 +39,12 @@ class DocumentPermissions(BasePermission):
     2. mutating changes to non-draft (published) documents
        require publication permissions.
     """
-    def has_object_permission(self, request, view, obj):
-        # all methods require view access
-        if not request.user.has_perm('indigo_api.view_document'):
-            return False
+    def has_view_permission(self, request, obj):
+        return request.user.has_perm('indigo_api.view_document') and \
+            request.user.editor.has_country_permission(obj.work.country)
 
-        # users may only access documents from countries they are permitted to work with
-        if not request.user.editor.has_country_permission(obj.work.country):
+    def has_object_permission(self, request, view, obj):
+        if not self.has_view_permission(request, obj):
             return False
 
         # read-only methods don't require publication permissions
@@ -126,6 +125,15 @@ class RelatedDocumentPermissions(BasePermission):
         if DocumentPermissions().has_object_permission(request, view, document):
             # mutating changes to related resources require document change perms
             return request.method in SAFE_METHODS or request.user.has_perm('indigo_api.change_document')
+
+
+class DocumentReadPermissions(BasePermission):
+    """Ensure a user can read the document addressed by a nested view."""
+    def has_permission(self, request, view):
+        return DocumentPermissions().has_view_permission(request, view.document)
+
+    def has_object_permission(self, request, view, obj):
+        return self.has_permission(request, view)
 
 
 class RevisionPermissions(RelatedDocumentPermissions):

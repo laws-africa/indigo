@@ -36,7 +36,7 @@ from indigo_api.data_migrations import DefinitionsIntoBlockContainers
 from indigo_api.exporters import HTMLExporter
 from indigo_app.views.base import AsyncDispatchMixin, AbstractAuthedIndigoView
 from .misc import DEFAULT_PERMS
-from ..authz import DocumentPermissions, AnnotationPermissions, ModelPermissions, RelatedDocumentPermissions, \
+from ..authz import DocumentPermissions, AnnotationPermissions, DocumentReadPermissions, ModelPermissions, RelatedDocumentPermissions, \
     RevisionPermissions
 from ..models import Document, Annotation, DocumentActivity, Task
 from ..renderers import AkomaNtosoRenderer, PDFRenderer, EPUBRenderer, HTMLRenderer, ZIPRenderer
@@ -166,7 +166,7 @@ class AnnotationViewSet(AtomicWriteViewSetMixin, DocumentResourceView, viewsets.
         .select_related('created_by_user', 'task', 'task__updated_by_user', 'task__created_by_user',
                         'task__assigned_to', 'task__country', 'task__locality', 'task__work')
     serializer_class = AnnotationSerializer
-    permission_classes = DEFAULT_PERMS + (ModelPermissions, RelatedDocumentPermissions, AnnotationPermissions)
+    permission_classes = DEFAULT_PERMS + (ModelPermissions, DocumentReadPermissions, AnnotationPermissions)
 
     def filter_queryset(self, queryset):
         return super().filter_queryset(queryset).filter(document=self.document)

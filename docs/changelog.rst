@@ -5,12 +5,7 @@ Changelog
 19.1.1 (2026-07-11)
 -------------------
 
-* SECURITY: Restrict document and document-related resource access to an editor's permitted countries in multi-country deployments.
-
-19.1.1 (???)
-------------
-
-* SECURITY: Restrict document and document-related resource access to an editor's permitted countries in multi-country deployments.
+* SECURITY: Restrict document and document-related resource access to an editor's permitted countries in multi-country deployments. Reported by Santosh Kumar Puppala - https://github.com/Santoshkumarpuppala
 
 19.1.0 (2025-12-01)
 -------------------

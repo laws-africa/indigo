@@ -30,6 +30,9 @@ class DocumentDetailViewBase(AbstractAuthedIndigoView, DetailView):
     pk_url_kwarg = 'doc_id'
     permission_required = ('indigo_api.view_document',)
 
+    def get_queryset(self):
+        return super().get_queryset().permitted_to(self.request.user)
+
 
 class DocumentDetailView(DocumentDetailViewBase):
     queryset = Document.objects.undeleted()

@@ -97,6 +97,9 @@ class DocumentViewSet(AtomicWriteViewSetMixin,
     filter_backends = (DjangoFilterBackend,)
     filter_fields = DOCUMENT_FILTER_FIELDS
 
+    def get_queryset(self):
+        return super().get_queryset().permitted_to(self.request.user)
+
     def perform_destroy(self, instance):
         if not instance.draft:
             raise MethodNotAllowed('DELETE', _('DELETE not allowed for published documents, mark as a draft first.'))
@@ -163,7 +166,7 @@ class AnnotationViewSet(AtomicWriteViewSetMixin, DocumentResourceView, viewsets.
         .select_related('created_by_user', 'task', 'task__updated_by_user', 'task__created_by_user',
                         'task__assigned_to', 'task__country', 'task__locality', 'task__work')
     serializer_class = AnnotationSerializer
-    permission_classes = DEFAULT_PERMS + (ModelPermissions, AnnotationPermissions)
+    permission_classes = DEFAULT_PERMS + (ModelPermissions, RelatedDocumentPermissions, AnnotationPermissions)
 
     def filter_queryset(self, queryset):
         return super().filter_queryset(queryset).filter(document=self.document)

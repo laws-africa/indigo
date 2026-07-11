@@ -35,8 +35,8 @@ class DocumentPermissions(BasePermission):
     """
     Document-level permissions.
 
-    1. read-only changes require view permissions on the document
-    2. mutating changes require view and country permissions on the document, and and non-draft (published) documents
+    1. all access requires view and country permissions on the document
+    2. mutating changes to non-draft (published) documents
        require publication permissions.
     """
     def has_object_permission(self, request, view, obj):
@@ -44,15 +44,16 @@ class DocumentPermissions(BasePermission):
         if not request.user.has_perm('indigo_api.view_document'):
             return False
 
-        # read-only methods only require view access
+        # users may only access documents from countries they are permitted to work with
+        if not request.user.editor.has_country_permission(obj.work.country):
+            return False
+
+        # read-only methods don't require publication permissions
         if request.method in SAFE_METHODS:
             return True
 
         # only some users can save/edit non-drafts
         okay = obj.draft or request.user.has_perm('indigo_api.publish_document')
-
-        # check country perms
-        okay = okay and request.user.editor.has_country_permission(obj.work.country)
 
         return okay
 

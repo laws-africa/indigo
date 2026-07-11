@@ -9,7 +9,7 @@ from django.core.files.base import ContentFile
 
 from indigo_api.tests.fixtures import *  # noqa
 from indigo_api.exporters import PDFExporter
-from indigo_api.models import Work, Attachment
+from indigo_api.models import Work, Attachment, Country, Document
 from indigo_app.tests.utils import TEST_STORAGES
 
 
@@ -19,6 +19,44 @@ class DocumentAPITest(APITestCase):
 
     def setUp(self):
         self.client.login(username='email@example.com', password='password')
+        source_document = Document.objects.get(pk=10)
+        other_work = Work.objects.create(
+            title='Restricted Namibia Act',
+            country=Country.objects.get(country_id='NA'),
+            frbr_uri='/akn/na/act/2026/1',
+            doctype='act',
+            date='2026',
+            number='1',
+        )
+        self.restricted_document = Document.objects.create(
+            title='Restricted Namibia draft',
+            frbr_uri='/akn/na/act/2026/1',
+            work=other_work,
+            expression_date=datetime.date(2026, 1, 1),
+            language=source_document.language,
+            draft=True,
+            document_xml=source_document.document_xml,
+            created_by_user=source_document.created_by_user,
+            updated_by_user=source_document.updated_by_user,
+        )
+
+    def test_cannot_read_documents_from_another_country(self):
+        document_id = self.restricted_document.id
+
+        for url in [
+            f'/api/documents/{document_id}',
+            f'/api/documents/{document_id}/content',
+            f'/api/documents/{document_id}.xml',
+        ]:
+            response = self.client.get(url)
+            self.assertEqual(response.status_code, 404, url)
+
+        response = self.client.get('/api/documents')
+        self.assertNotIn(document_id, [document['id'] for document in response.data['results']])
+
+        # Document-linked resources must enforce the same country scope.
+        response = self.client.get(f'/api/documents/{document_id}/annotations')
+        self.assertEqual(response.status_code, 403)
 
     def test_update_title_overrides_content_xml(self):
         response = self.client.patch('/api/documents/1', {
@@ -88,6 +126,8 @@ class DocumentAPITest(APITestCase):
 
         response = self.client.get('/api/documents/%s/revisions/%s/diff' % (id, revision_id))
         assert_equal(response.status_code, 200)
+        self.assertIn('private', response['Cache-Control'])
+        self.assertNotIn('public', response['Cache-Control'])
 
     def test_update_content_and_properties(self):
         response = self.client.patch('/api/documents/1', {

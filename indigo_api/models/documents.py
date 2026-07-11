@@ -42,6 +42,11 @@ class DocumentQuerySet(models.QuerySet):
     def undeleted(self):
         return self.filter(deleted=False)
 
+    def permitted_to(self, user):
+        if user.is_superuser:
+            return self
+        return self.filter(work__country__in=user.editor.permitted_countries.all())
+
     def published(self):
         return self.filter(draft=False)
 

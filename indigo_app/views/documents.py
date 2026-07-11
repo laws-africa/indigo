@@ -28,6 +28,9 @@ class DocumentDetailView(AbstractAuthedIndigoView, DetailView):
     template_name = 'indigo_api/document/show.html'
     permission_required = ('indigo_api.view_document',)
 
+    def get_queryset(self):
+        return super().get_queryset().undeleted().permitted_to(self.request.user)
+
     def get_object(self, queryset=None):
         doc = super().get_object(queryset)
         if doc.deleted:

@@ -2,8 +2,10 @@
 Changelog
 =========
 
-19.2.0 (???)
-------------
+19.1.1 (2026-07-11)
+-------------------
+
+* SECURITY: Restrict document and document-related resource access to an editor's permitted countries in multi-country deployments.
 
 19.1.1 (???)
 ------------

@@ -174,4 +174,9 @@ class AnnotationAPITest(APITestCase):
         ))
 
         response = self.client.post('/api/documents/10/annotations', data)
+        assert_equal(response.status_code, 403)
+
+        user.editor.permitted_countries.add(Document.objects.get(pk=10).work.country)
+
+        response = self.client.post('/api/documents/10/annotations', data)
         assert_equal(response.status_code, 201)

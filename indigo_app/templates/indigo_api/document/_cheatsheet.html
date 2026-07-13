@@ -395,6 +395,37 @@ ITEMS
               </div>
             {% endblock %}
 
+            {% block cheat-proviso %}
+            <div class="card">
+              <a href="#cheat-proviso" data-bs-toggle="collapse" class="card-header">{% trans "Starting a Proviso" %}</a>
+              <div id="cheat-proviso" class="collapse" data-parent="#cheat-accordion">
+                <div class="card-body">
+                  <p>
+                    {% blocktrans trimmed %}
+                    Start a Proviso with <code>PROVISO</code> and a number, followed by <code> - </code> and the title. The number and title are both optional.
+                    {% endblocktrans %}
+                  </p>
+
+                  <div class="row">
+                    <div class="col">
+                <pre class="editor-snippet">PROVISO 1
+
+    The content of Proviso 1.</pre>
+                    </div>
+                    <div class="col">
+                      <la-akoma-ntoso class="akoma-ntoso-snippet">
+                        <section class="akn-proviso">
+                          <span class="akn-num">1</span>
+                          <span class="akn-content"><span class="akn-p">The content of Proviso 1.</span></span>
+                        </section>
+                      </la-akoma-ntoso>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% endblock %}
+
             {% block cheat-special %}
               <div class="card">
                 <a href="#cheat-special" data-bs-toggle="collapse" class="card-header">{% trans "Insert a special character" %}</a>

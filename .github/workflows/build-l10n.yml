@@ -3,7 +3,7 @@ name: Build l10n
 on:
   push:
     branches:
-      - l10n_master
+      - l10n_main
 
 concurrency:
   group: ${{ github.action }}-${{ github.ref }}

@@ -3,7 +3,7 @@ name: Build
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   build:
@@ -14,7 +14,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
         with:
-          # use a token that has admin perms to bypass direct commits to master
+          # use a token that has admin perms to bypass direct commits to main
           token: ${{ secrets.LA_ACTIONS_TOKEN }}
 
       - uses: actions/setup-node@v6

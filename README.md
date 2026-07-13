@@ -1,8 +1,8 @@
 # Indigo
 
-![Build status](https://github.com/laws-africa/indigo/workflows/Test/badge.svg) [![Coverage Status](https://coveralls.io/repos/github/laws-africa/indigo/badge.svg?branch=master)](https://coveralls.io/github/laws-africa/indigo?branch=master)
+![Build status](https://github.com/laws-africa/indigo/workflows/Test/badge.svg) [![Coverage Status](https://coveralls.io/repos/github/laws-africa/indigo/badge.svg?branch=main)](https://coveralls.io/github/laws-africa/indigo?branch=main)
 
-![Indigo logo](https://raw.githubusercontent.com/Code4SA/indigo/master/docs/logo.png "Indigo logo")
+![Indigo logo](https://raw.githubusercontent.com/laws-africa/indigo/main/docs/logo.png "Indigo logo")
 
 Indigo is Laws.Africa's legislation database for managing, consolidating and publishing
 legislation in the [Akoma Ntoso](https://www.oasis-open.org/standard/akn-v1-0/) format.
@@ -32,9 +32,9 @@ npm run extract-translations
 ```
 
 And then commit the changes. CrowdIn will pick up any changed strings and make them available for translation. Once they are translated, it will
-open a pull request to merge the changes into master.
+open a pull request to merge the changes into main.
 
-Once merged into master, you must [tell Django to compile the .po files to .mo files](https://docs.djangoproject.com/en/2.2/topics/i18n/translation/#compiling-message-files):
+Once merged into main, you must [tell Django to compile the .po files to .mo files](https://docs.djangoproject.com/en/2.2/topics/i18n/translation/#compiling-message-files):
 
 ```bash
 python manage.py compilemessages

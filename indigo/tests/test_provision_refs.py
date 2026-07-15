@@ -7,7 +7,7 @@ from lxml import etree
 from cobalt import AkomaNtosoDocument, FrbrUri
 from docpipe.matchers import ExtractedCitation
 
-from indigo.analysis.refs.provisions import ProvisionRefsResolver, ProvisionRef, ProvisionRefsMatcher, parse_provision_refs, MainProvisionRef
+from indigo.analysis.refs.provisions import ProvisionRefsResolver, ProvisionRef, ProvisionRefsMatcher, ProvisionRefsFinderENG, parse_provision_refs, MainProvisionRef
 from indigo.xmlutils import parse_html_str
 from indigo_api.tests.fixtures import document_fixture, component_fixture
 
@@ -1960,3 +1960,25 @@ class ProvisionRefsMatcherTestCase(TestCase):
         self.assertEqual([
             ExtractedCitation("Act No. 1 of 2009", 30, 38, "/akn/za/act/2009/1", 0, 'of Act No. ', '.' ),
         ], self.finder.citations)
+
+    def test_markup_text_does_not_bind_earlier_of_reference_to_later_provision_citation(self):
+        self.frbr_uri = FrbrUri.parse("/akn/tz/act/1984/13/eng@2019-11-30")
+        finder = ProvisionRefsFinderENG()
+        finder.this_target = (
+            "/akn/tz/act/1984/13/eng@2019-11-30",
+            AkomaNtosoDocument(document_fixture(
+                xml='<section eId="part_V__sec_57"><num>57.</num><subsection eId="part_V__sec_57__subsec_1"><num>(1)</num></subsection></section><section eId="part_V__sec_60"><num>60.</num><subsection eId="part_V__sec_60__subsec_2"><num>(2)</num></subsection><subsection eId="part_V__sec_60__subsec_4"><num>(4)</num></subsection></section>'
+            )).root
+        )
+        finder.target_root_cache = {}
+
+        text = "paragraph 4(1) of the First Schedule; sections 57(1) and 60(2)"
+        finder.setup(self.frbr_uri, text=text)
+        finder.citations = []
+        finder.extract_paged_text_matches()
+        self.assertEqual([
+            ExtractedCitation("57(1)", 47, 52, "/akn/tz/act/1984/13/eng@2019-11-30/~part_V__sec_57__subsec_1", 0,
+                              " the First Schedule; sections ", " and 60(2)"),
+            ExtractedCitation("60(2)", 57, 62, "/akn/tz/act/1984/13/eng@2019-11-30/~part_V__sec_60__subsec_2", 0,
+                              " Schedule; sections 57(1) and ", ""),
+        ], finder.citations)

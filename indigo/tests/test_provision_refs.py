@@ -1962,10 +1962,16 @@ class ProvisionRefsMatcherTestCase(TestCase):
         ], self.finder.citations)
 
     def test_markup_text_does_not_bind_earlier_of_reference_to_later_provision_citation(self):
-        self.frbr_uri = FrbrUri.parse("/akn/tz/act/1984/13/eng@2019-11-30")
+        self._assert_text_does_not_bind_to_later_provision("/akn/tz/act/1984/13/eng@2019-11-30")
+
+    def test_markup_text_does_not_bind_earlier_of_reference_to_later_provision_citation_for_work_uri(self):
+        self._assert_text_does_not_bind_to_later_provision("/akn/tz/act/1984/13")
+
+    def _assert_text_does_not_bind_to_later_provision(self, frbr_uri):
+        self.frbr_uri = FrbrUri.parse(frbr_uri)
         finder = ProvisionRefsFinderENG()
         finder.this_target = (
-            "/akn/tz/act/1984/13/eng@2019-11-30",
+            frbr_uri,
             AkomaNtosoDocument(document_fixture(
                 xml='<section eId="part_V__sec_57"><num>57.</num><subsection eId="part_V__sec_57__subsec_1"><num>(1)</num></subsection></section><section eId="part_V__sec_60"><num>60.</num><subsection eId="part_V__sec_60__subsec_2"><num>(2)</num></subsection><subsection eId="part_V__sec_60__subsec_4"><num>(4)</num></subsection></section>'
             )).root
@@ -1976,9 +1982,10 @@ class ProvisionRefsMatcherTestCase(TestCase):
         finder.setup(self.frbr_uri, text=text)
         finder.citations = []
         finder.extract_paged_text_matches()
+        section_base = frbr_uri
         self.assertEqual([
-            ExtractedCitation("57(1)", 47, 52, "/akn/tz/act/1984/13/eng@2019-11-30/~part_V__sec_57__subsec_1", 0,
+            ExtractedCitation("57(1)", 47, 52, f"{section_base}/~part_V__sec_57__subsec_1", 0,
                               " the First Schedule; sections ", " and 60(2)"),
-            ExtractedCitation("60(2)", 57, 62, "/akn/tz/act/1984/13/eng@2019-11-30/~part_V__sec_60__subsec_2", 0,
+            ExtractedCitation("60(2)", 57, 62, f"{section_base}/~part_V__sec_60__subsec_2", 0,
                               " Schedule; sections 57(1) and ", ""),
         ], finder.citations)

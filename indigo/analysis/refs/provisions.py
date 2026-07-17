@@ -797,7 +797,7 @@ class ProvisionRefsMatcher(CitationMatcher):
                     # Normalise to the base expression/work URI before using it as the root for nested references.
                     uri = FrbrUri.parse(frbr_uri)
                     uri.portion = None
-                    base_uri = uri.expression_uri() if uri.language else uri.work_uri(False)
+                    base_uri = uri.expression_uri() if uri.expression_date else uri.work_uri(False)
                     self.target_root_cache[frbr_uri] = (base_uri, self.find_document_root(uri))
                 except ValueError:
                     # bad FRBR URI

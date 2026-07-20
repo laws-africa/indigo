@@ -36,6 +36,27 @@ class PlacesTest(testcases.TestCase):
         response = self.client.get('/places/za/works')
         self.assertEqual(response.status_code, 200)
 
+    def test_place_works_htmx_pushes_short_filter_url(self):
+        response = self.client.post(
+            '/places/za/works',
+            {'frbr_uris': '/akn/za/act/2000/1'},
+            HTTP_HX_REQUEST='true',
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('HX-Push-Url', response)
+
+    def test_place_works_htmx_does_not_push_long_filter_url(self):
+        frbr_uri = '/akn/za/act/2000/1'
+        response = self.client.post(
+            '/places/za/works',
+            {'frbr_uris': ' '.join([frbr_uri] * 100)},
+            HTTP_HX_REQUEST='true',
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn('HX-Push-Url', response)
+
     def test_all_place_works(self):
         response = self.client.get('/places/all/works')
         self.assertEqual(response.status_code, 200)

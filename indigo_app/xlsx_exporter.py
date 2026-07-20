@@ -12,7 +12,7 @@ class XlsxExporter:
     works_sheet_columns = ['FRBR URI', 'Place', 'Title', 'Subtype', 'Year',
                            'Number', 'Publication Date', 'Publication Number',
                            'Assent Date', 'Commenced', 'Main Commencement Date',
-                           'Repealed Date', 'Parent Work', 'Stub']
+                           'Repealed Date', 'Parent Work', 'Stub', 'Principal']
 
     def __init__(self, country, locality):
         country = country
@@ -250,6 +250,7 @@ class XlsxExporter:
         works_sheet.write(row, 12, work.repealed_date, date_format)
         works_sheet.write(row, 13, work.parent_work.frbr_uri if work.parent_work else None)
         works_sheet.write(row, 14, work.stub)
+        works_sheet.write(row, 15, work.principal)
 
     def write_relationships(self, workbook, queryset):
         date_format = workbook.add_format({'num_format': 'yyyy-mm-dd'})

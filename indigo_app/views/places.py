@@ -32,6 +32,11 @@ from .base import AbstractAuthedIndigoView, PlaceViewBase, PlaceWorksViewBase
 
 log = logging.getLogger(__name__)
 
+# Keep comfortably below the common 4 KiB proxy response-header buffer. The
+# actual URL is percent-encoded, so measure its encoded byte length rather
+# than the number of Python characters.
+MAX_HTMX_PUSH_URL_BYTES = 2048
+
 
 @dataclass
 class OverviewDataEntry:
@@ -599,7 +604,12 @@ class PlaceWorksView(PlaceWorksViewBase, ListView):
         if self.request.htmx:
             # encode request.POST as a URL string
             url = f"{self.request.path}?{self.form.data_as_url()}"
-            resp = push_url(resp, url)
+            # A large FRBR URI filter can exceed a reverse proxy's response
+            # header buffer when returned in HX-Push-Url. The request itself
+            # remains a POST and the filtered list is still swapped in; it
+            # simply isn't added to browser history.
+            if len(url.encode('utf-8')) <= MAX_HTMX_PUSH_URL_BYTES:
+                resp = push_url(resp, url)
         return resp
 
     def get_template_names(self):

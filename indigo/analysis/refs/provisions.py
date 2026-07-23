@@ -743,6 +743,13 @@ class ProvisionRefsMatcher(CitationMatcher):
             # find the first citation after the end of this match, but don't cross the end of a sentence or look too far.
             for c in citations:
                 if c.start > match.end():
+                    # Plain-text "of X" lookups should bind to a cited document/work, not to a later provision-level
+                    # citation such as "section 57(1)", which would incorrectly become the target root.
+                    try:
+                        if c.href and FrbrUri.parse(c.href).portion:
+                            continue
+                    except ValueError:
+                        continue
                     # don't cross the end of a sentence or look too far ahead
                     if not ('. ' in match.string[match.end():c.start] or c.start - match.end() > self.max_ref_to_target):
                         frbr_uri = c.href
@@ -787,9 +794,11 @@ class ProvisionRefsMatcher(CitationMatcher):
                             self.target_root_cache[frbr_uri] = (None, elements[0])
             else:
                 try:
-                    # we normalise the FRBR URI to the work level
+                    # Normalise to the base expression/work URI before using it as the root for nested references.
                     uri = FrbrUri.parse(frbr_uri)
-                    self.target_root_cache[frbr_uri] = (frbr_uri, self.find_document_root(uri))
+                    uri.portion = None
+                    base_uri = uri.expression_uri() if uri.expression_date else uri.work_uri(False)
+                    self.target_root_cache[frbr_uri] = (base_uri, self.find_document_root(uri))
                 except ValueError:
                     # bad FRBR URI
                     pass

@@ -15,6 +15,10 @@
     </div>
   {% endif %}
 
+  <hr>
+  {% include 'templated_email/_task_detail_block.html' %}
+  <hr>
+
   <p>{% blocktrans trimmed with name=recipient.first_name %}Nice work, {{ name }}!{% endblocktrans %}</p>
 
   {% include 'templated_email/_footer.html' %}

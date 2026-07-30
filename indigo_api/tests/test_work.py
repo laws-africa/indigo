@@ -4,7 +4,16 @@ from django.contrib.auth.models import User
 from django.test import TestCase
 from django.core.exceptions import ValidationError
 
-from indigo_api.models import Document, Work, Country, Amendment, ArbitraryExpressionDate, Commencement
+from indigo_api.models import (
+    Amendment,
+    ArbitraryExpressionDate,
+    Commencement,
+    Country,
+    Document,
+    PublicationDocument,
+    Work,
+)
+from indigo_api.serializers import PublicationDocumentSerializer
 
 
 class WorkTestCase(TestCase):
@@ -48,6 +57,23 @@ class WorkTestCase(TestCase):
         with self.assertRaises(ValidationError) as cm:
             work.clean()
         self.assertIn('country', cm.exception.message_dict)
+
+    def test_publication_document_start_page_validation(self):
+        field = PublicationDocument._meta.get_field("start_page")
+
+        self.assertIsNone(field.clean(None, None))
+        self.assertEqual(1, field.clean(1, None))
+        self.assertEqual(36, field.clean(36, None))
+
+        for value in (0, -1):
+            with self.subTest(value=value), self.assertRaises(ValidationError):
+                field.clean(value, None)
+
+    def test_publication_document_serializer_includes_start_page(self):
+        publication_document = self.work.publication_document
+        publication_document.start_page = 36
+
+        self.assertEqual(36, PublicationDocumentSerializer(publication_document).data["start_page"])
 
     def test_possible_expression_dates_basic(self):
         self.work.publication_date = datetime.date(2018, 2, 23)

@@ -66,7 +66,7 @@ class PublicationDocumentSerializer(PublicationDocumentSerializerBase):
     class Meta:
         model = PublicationDocument
         # Don't include the trusted_url field (but do include whether the URL is trusted as a boolean)
-        fields = ('url', 'filename', 'mime_type', 'size', 'has_trusted_url')
+        fields = ('url', 'filename', 'mime_type', 'size', 'has_trusted_url', 'start_page')
 
     @extend_schema_field(OpenApiTypes.URI)
     def get_url(self, instance):

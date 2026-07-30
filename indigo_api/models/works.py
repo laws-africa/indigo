@@ -8,6 +8,7 @@ from django.db.models.signals import m2m_changed
 from django.db import models, IntegrityError, transaction
 from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
+from django.core.validators import MinValueValidator
 from django.contrib.auth.models import User
 from django.dispatch import receiver
 from django.urls import reverse
@@ -891,6 +892,13 @@ class PublicationDocument(models.Model):
     size = models.IntegerField(_("file size"), null=True)
     filename = models.CharField(_("file name"), max_length=255)
     mime_type = models.CharField(_("file MIME type"), max_length=255)
+    start_page = models.PositiveIntegerField(
+        _("start page"),
+        null=True,
+        blank=True,
+        validators=[MinValueValidator(1)],
+        help_text=_("The page in the publication document where this work starts."),
+    )
     created_at = models.DateTimeField(_("created at"), auto_now_add=True)
     updated_at = models.DateTimeField(_("updated at"), auto_now=True)
 

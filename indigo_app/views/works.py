@@ -1233,6 +1233,12 @@ class WorkFormPublicationDocumentView(PlaceViewBase, TemplateView):
         publication_document_trusted_url = forms.URLField(required=False, widget=forms.HiddenInput())
         publication_document_size = forms.IntegerField(required=False, widget=forms.HiddenInput())
         publication_document_mime_type = forms.CharField(required=False, widget=forms.HiddenInput())
+        publication_document_start_page = forms.IntegerField(
+            label=_("Start page"),
+            required=False,
+            min_value=1,
+            help_text=_("The page in the publication document where this work starts."),
+        )
         delete_publication_document = forms.CharField(required=False, widget=forms.HiddenInput())
         prefix = 'work'
 
@@ -1242,6 +1248,7 @@ class WorkFormPublicationDocumentView(PlaceViewBase, TemplateView):
                 'publication_document_trusted_url',
                 'publication_document_size',
                 'publication_document_mime_type',
+                'publication_document_start_page',
                 'delete_publication_document',
                 'publication_document_file',
             )
@@ -1261,20 +1268,26 @@ class WorkFormPublicationDocumentView(PlaceViewBase, TemplateView):
             if work:
                 context["work"] = work
         initial = {}
+        if context.get("work") and hasattr(context["work"], "publication_document"):
+            initial["publication_document_start_page"] = context["work"].publication_document.start_page
+        posted_start_page = self.request.POST.get("work-publication_document_start_page")
+        if posted_start_page is not None:
+            initial["publication_document_start_page"] = posted_start_page
         if form_id:
             FindPubDocFormset = formset_factory(FindPubDocForm)
             formset = FindPubDocFormset(prefix="pubdoc", data=self.request.POST)
             if formset.is_valid():
                 selected_form = formset.forms[int(form_id)]
-                initial = {
+                initial.update({
                     'publication_document_trusted_url': selected_form.cleaned_data['trusted_url'],
                     'publication_document_size': selected_form.cleaned_data['size'],
                     'publication_document_mime_type': selected_form.cleaned_data['mimetype'],
                     'delete_publication_document': 'on',
-                }
+                })
 
         if self.request.method == 'DELETE':
             initial['delete_publication_document'] = 'on'
+            initial['publication_document_start_page'] = None
 
         context["form"] = self.Form(initial=initial)
         return context

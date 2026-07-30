@@ -42,6 +42,26 @@
 </div>
 
 <div class="mb-3 row">
+  <label class="col-2 col-form-label" for="{{ form.publication_document_start_page.id_for_label }}">
+    {{ form.publication_document_start_page.label }}
+  </label>
+  <div class="col-4">
+    <input type="number"
+           class="form-control{% if form.publication_document_start_page.errors %} is-invalid{% endif %}"
+           id="{{ form.publication_document_start_page.id_for_label }}"
+           name="{{ form.publication_document_start_page.html_name }}"
+           value="{{ form.publication_document_start_page.value|default_if_none:'' }}"
+           min="1">
+    {% for error in form.publication_document_start_page.errors %}
+      <div class="invalid-feedback">{{ error }}</div>
+    {% endfor %}
+    {% if form.publication_document_start_page.help_text %}
+      <div class="form-text">{{ form.publication_document_start_page.help_text }}</div>
+    {% endif %}
+  </div>
+</div>
+
+<div class="mb-3 row">
   <label class="col-2">{% trans "Upload publication document" %}:</label>
   <div class="col">
     <input

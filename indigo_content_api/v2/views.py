@@ -5,7 +5,7 @@ from rest_framework import mixins, viewsets, renderers
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.permissions import IsAuthenticated, BasePermission
 from rest_framework.response import Response
-from django_filters.rest_framework import DjangoFilterBackend
+from django_filters import rest_framework as filters
 from django.db.models import Q
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from drf_spectacular.types import OpenApiTypes
@@ -37,6 +37,24 @@ class ContentAPIBase(object):
     """
     authentication_classes = (SessionAuthentication, BearerAuthentication, TokenAuthentication)
     permission_classes = (IsAuthenticated, PublishedDocumentPermission)
+
+
+class PublishedDocumentFilterSet(filters.FilterSet):
+    """Filters shared by Content API work-expression listing endpoints."""
+
+    commenced = filters.BooleanFilter(field_name="work__commenced")
+    principal = filters.BooleanFilter(field_name="work__principal")
+    repealed = filters.BooleanFilter(label="Repealed", method="filter_repealed")
+
+    class Meta:
+        model = Document
+        fields = {
+            "updated_at": ["exact", "gte", "lte"],
+            "created_at": ["exact", "gte", "lte"],
+        }
+
+    def filter_repealed(self, queryset, name, value):
+        return queryset.filter(work__repealed_date__isnull=not value)
 
 
 class PlaceAPIBase(ContentAPIBase):
@@ -167,11 +185,8 @@ class PublishedDocumentDetailView(DocumentViewMixin,
     # these determine what content negotiation takes place
     renderer_classes = (renderers.JSONRenderer, PDFRenderer, EPUBRenderer, AkomaNtosoRenderer, HTMLRenderer, ZIPRenderer)
 
-    filter_backends = [DjangoFilterBackend]
-    filterset_fields = {
-        "updated_at": ["exact", "gte", "lte"],
-        "created_at": ["exact", "gte", "lte"],
-    }
+    filter_backends = [filters.DjangoFilterBackend]
+    filterset_class = PublishedDocumentFilterSet
 
     def perform_content_negotiation(self, request, force=False):
         # force content negotiation to succeed, because sometimes the suffix format

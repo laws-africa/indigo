@@ -4,12 +4,30 @@ from django.http import Http404
 from rest_framework.mixins import ListModelMixin
 from rest_framework.viewsets import GenericViewSet
 from rest_framework import mixins, viewsets
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import OpenApiParameter, extend_schema
 
 from indigo_api.models import TaxonomyTopic, Work, Country
 from indigo_content_api.v2.views import PublishedDocumentDetailView as PublishedDocumentDetailViewV2, ContentAPIBase
 
 from .serializers import PublishedDocumentSerializerV3
 from ..v2.serializers import PlaceSerializer
+
+
+WORK_EXPRESSION_BOOLEAN_FILTER_PARAMETERS = [
+    OpenApiParameter(
+        'commenced', OpenApiTypes.BOOL, OpenApiParameter.QUERY,
+        description='Filter by whether the work has commenced.',
+    ),
+    OpenApiParameter(
+        'repealed', OpenApiTypes.BOOL, OpenApiParameter.QUERY,
+        description='Filter by whether the work has been repealed.',
+    ),
+    OpenApiParameter(
+        'principal', OpenApiTypes.BOOL, OpenApiParameter.QUERY,
+        description='Filter by whether the work is principal legislation.',
+    ),
+]
 
 
 class PublishedDocumentDetailViewV3(PublishedDocumentDetailViewV2):
@@ -29,10 +47,11 @@ class PlaceViewSet(ContentAPIBase, mixins.ListModelMixin, mixins.RetrieveModelMi
         return locality or country
 
 
+@extend_schema(parameters=WORK_EXPRESSION_BOOLEAN_FILTER_PARAMETERS)
 class PlaceWorkExpressionsView(ContentAPIBase, ListModelMixin, GenericViewSet):
     """ List of work expressions for a place. """
     filter_backends = PublishedDocumentDetailViewV3.filter_backends
-    filterset_fields = PublishedDocumentDetailViewV3.filterset_fields
+    filterset_class = PublishedDocumentDetailViewV3.filterset_class
     country = None
     locality = None
 
@@ -58,10 +77,11 @@ class PlaceWorkExpressionsView(ContentAPIBase, ListModelMixin, GenericViewSet):
         return super().filter_queryset(queryset)
 
 
+@extend_schema(parameters=WORK_EXPRESSION_BOOLEAN_FILTER_PARAMETERS)
 class WorkExpressionsViewSet(ContentAPIBase, ListModelMixin, GenericViewSet):
     """ List of work expressions across all places. """
     filter_backends = PublishedDocumentDetailViewV3.filter_backends
-    filterset_fields = PublishedDocumentDetailViewV3.filterset_fields
+    filterset_class = PublishedDocumentDetailViewV3.filterset_class
 
     def get_serializer_class(self):
         return PublishedDocumentDetailViewV3.serializer_class
@@ -70,10 +90,11 @@ class WorkExpressionsViewSet(ContentAPIBase, ListModelMixin, GenericViewSet):
         return PublishedDocumentDetailViewV3.queryset
 
 
+@extend_schema(parameters=WORK_EXPRESSION_BOOLEAN_FILTER_PARAMETERS)
 class TaxonomyTopicWorkExpressionsView(ContentAPIBase, ListModelMixin, GenericViewSet):
     """ List of work expressions for a taxonomy topic."""
     filter_backends = PublishedDocumentDetailViewV3.filter_backends
-    filterset_fields = PublishedDocumentDetailViewV3.filterset_fields
+    filterset_class = PublishedDocumentDetailViewV3.filterset_class
     taxonomy_topic = None
 
     def get_serializer_class(self):

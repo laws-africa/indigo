@@ -76,6 +76,46 @@ class ContentAPIV3TestMixin(ContentAPIV2TestMixin):
         self.assertEqual('application/json', response.accepted_media_type)
         self.assertGreaterEqual(len(response.data['results']), 1)
 
+    def test_work_expression_boolean_filters(self):
+        for name, value, response_field, expected in [
+            ('commenced', 'true', 'commenced', True),
+            ('commenced', 'false', 'commenced', False),
+            ('principal', 'true', 'principal', True),
+            ('principal', 'false', 'principal', False),
+            ('repealed', 'true', 'repeal', True),
+            ('repealed', 'false', 'repeal', False),
+        ]:
+            with self.subTest(name=name, value=value):
+                response = self.client.get(
+                    self.api_path + '/work-expressions.json', {name: value}
+                )
+                self.assertEqual(200, response.status_code)
+                self.assertGreaterEqual(len(response.data['results']), 1)
+                for expression in response.data['results']:
+                    actual = bool(expression[response_field]) if response_field == 'repeal' else expression[response_field]
+                    self.assertEqual(expected, actual)
+
+    def test_place_work_expression_boolean_filters(self):
+        response = self.client.get(
+            self.api_path + '/places/za/work-expressions.json', {'repealed': 'true'}
+        )
+        self.assertEqual(200, response.status_code)
+        self.assertGreaterEqual(len(response.data['results']), 1)
+        for expression in response.data['results']:
+            self.assertTrue(expression['repeal'])
+
+    def test_work_expression_boolean_filters_are_in_schema(self):
+        response = self.client.get(self.api_path + '/schema')
+        self.assertEqual(200, response.status_code)
+        for path, path_item in response.data['paths'].items():
+            if path.endswith('/work-expressions'):
+                with self.subTest(path=path):
+                    parameters = path_item['get']['parameters']
+                    parameter_names = {parameter['name'] for parameter in parameters}
+                    self.assertTrue(
+                        {'commenced', 'repealed', 'principal'}.issubset(parameter_names)
+                    )
+
 
 @override_settings(STORAGES=TEST_STORAGES)
 class ContentAPIV3Test(ContentAPIV3TestMixin, APITestCase):

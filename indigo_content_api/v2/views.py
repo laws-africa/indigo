@@ -44,7 +44,7 @@ class PublishedDocumentFilterSet(filters.FilterSet):
 
     commenced = filters.BooleanFilter(field_name="work__commenced")
     principal = filters.BooleanFilter(field_name="work__principal")
-    repealed = filters.BooleanFilter(method="filter_repealed")
+    repealed = filters.BooleanFilter(label="Repealed", method="filter_repealed")
 
     class Meta:
         model = Document

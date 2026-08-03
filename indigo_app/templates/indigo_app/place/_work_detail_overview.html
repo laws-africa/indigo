@@ -18,6 +18,11 @@
               <a href="{% url 'work_publication_document' frbr_uri=work.frbr_uri filename=work.publication_document.filename %}"
                  target="_blank" rel="noopener">{{ work.publication_document.filename }}</a>
               <span class="text-muted">({{ work.publication_document.size|filesizeformat }})</span>
+              {% if work.publication_document.start_page %}
+                <span class="text-muted">
+                  {% blocktrans trimmed with start_page=work.publication_document.start_page %}starting on page {{ start_page }}{% endblocktrans %}
+                </span>
+              {% endif %}
             </div>
           {% endif %}
         </dd>

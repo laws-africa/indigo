@@ -32,6 +32,45 @@ class WorksTest(testcases.TestCase):
         response = self.client.get('/works/akn/za-cpt/act/2005/1/')
         self.assertEqual(response.status_code, 200)
 
+    def test_publication_document_start_page_on_detail_page(self):
+        work = Work.objects.get(frbr_uri='/akn/za/act/2014/10')
+
+        response = self.client.get('/works/akn/za/act/2014/10/')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, work.publication_document.filename)
+        self.assertNotContains(response, "starting on page")
+
+        work.publication_document.start_page = 36
+        work.publication_document.save(update_fields=["start_page"])
+
+        response = self.client.get('/works/akn/za/act/2014/10/')
+
+        self.assertContains(response, "starting on page 36")
+
+    def test_attach_publication_document_preserves_start_page(self):
+        response = self.client.post(
+            "/places/za/work/form/attach-publication?form=0&frbr_uri=/akn/za/act/2014/10",
+            {
+                "work-publication_document_start_page": "36",
+                "pubdoc-TOTAL_FORMS": "1",
+                "pubdoc-INITIAL_FORMS": "0",
+                "pubdoc-MIN_NUM_FORMS": "0",
+                "pubdoc-MAX_NUM_FORMS": "1000",
+                "pubdoc-0-name": "Gazette",
+                "pubdoc-0-trusted_url": "https://example.com/gazette.pdf",
+                "pubdoc-0-size": "1234",
+                "pubdoc-0-mimetype": "application/pdf",
+            },
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(
+            response,
+            'name="work-publication_document_start_page"',
+        )
+        self.assertContains(response, 'value="36"')
+
     def test_related_page(self):
         response = self.client.get('/works/akn/za/act/2014/10/related/')
         self.assertEqual(response.status_code, 200)
@@ -425,8 +464,21 @@ class WorksWebTest(WebTest):
         form['work-frbr_number'] = '5'
         form['work-publication_date'] = '2019-02-01'
         form['work-publication_document_file'] = Upload('pub.pdf', b'data', 'application/pdf')
+        form['work-publication_document_start_page'] = 36
         response = form.submit()
         self.assertRedirects(response, '/works/akn/za/act/2019/5/', fetch_redirect_response=False)
+        self.assertEqual(36, Work.objects.get(frbr_uri='/akn/za/act/2019/5').publication_document.start_page)
+
+    def test_update_publication_document_start_page(self):
+        work = Work.objects.get(frbr_uri='/akn/za/act/2014/10')
+        form = self.app.get('/works%s/edit/' % work.frbr_uri).forms['edit-work-form']
+        form['work-publication_document_start_page'] = 36
+
+        response = form.submit()
+
+        self.assertRedirects(response, '/works%s/' % work.frbr_uri, fetch_redirect_response=False)
+        work.publication_document.refresh_from_db()
+        self.assertEqual(36, work.publication_document.start_page)
 
     def test_publication_date_updates_documents(self):
         """ Changing the work's publication date should also updated documents

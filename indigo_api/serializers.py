@@ -184,7 +184,7 @@ class PublicationDocumentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PublicationDocument
-        fields = ('url', 'filename', 'mime_type', 'size', 'trusted_url')
+        fields = ('url', 'filename', 'mime_type', 'size', 'trusted_url', 'start_page')
         read_only_fields = fields
 
     def get_url(self, instance):

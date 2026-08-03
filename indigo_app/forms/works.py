@@ -33,6 +33,7 @@ class WorkForm(forms.ModelForm):
             'title', 'frbr_uri', 'assent_date', 'parent_work', 'commenced',
             'repealed_by', 'repealed_date', 'repealed_verb', 'repealed_note', 'publication_name', 'publication_number', 'publication_date',
             'publication_document_trusted_url', 'publication_document_size', 'publication_document_mime_type',
+            'publication_document_start_page',
             'stub', 'principal', 'taxonomy_topics', 'as_at_date_override', 'consolidation_note_override', 'country', 'locality',
             'disclaimer',
         )
@@ -58,6 +59,12 @@ class WorkForm(forms.ModelForm):
     publication_document_trusted_url = forms.URLField(required=False)
     publication_document_size = forms.IntegerField(required=False)
     publication_document_mime_type = forms.CharField(required=False)
+    publication_document_start_page = forms.IntegerField(
+        label=_("Start page"),
+        required=False,
+        min_value=1,
+        help_text=_("The page in the publication document where this work starts."),
+    )
 
     repealed_verb = forms.ChoiceField(required=False, choices=Work.REPEALED_VERB_CHOICES)
 
@@ -86,6 +93,10 @@ class WorkForm(forms.ModelForm):
             self.fields['frbr_date'].initial = self.instance.date
             self.fields['frbr_number'].initial = self.instance.number
             self.fields['frbr_actor'].initial = self.instance.actor
+            try:
+                self.fields['publication_document_start_page'].initial = self.instance.publication_document.start_page
+            except PublicationDocument.DoesNotExist:
+                pass
 
         self.fields['frbr_doctype'].choices = [
             (y, x)
@@ -319,6 +330,7 @@ class WorkForm(forms.ModelForm):
     def save_publication_document(self):
         pub_doc_file = self.cleaned_data['publication_document_file']
         pub_doc_url = self.cleaned_data['publication_document_trusted_url']
+        start_page = self.cleaned_data['publication_document_start_page']
 
         try:
             existing = self.instance.publication_document
@@ -340,6 +352,7 @@ class WorkForm(forms.ModelForm):
             pub_doc.file = pub_doc_file
             pub_doc.size = pub_doc_file.size
             pub_doc.mime_type = pub_doc_file.content_type
+            pub_doc.start_page = start_page
             pub_doc.save()
 
         elif pub_doc_url:
@@ -352,7 +365,12 @@ class WorkForm(forms.ModelForm):
             pub_doc.trusted_url = pub_doc_url
             pub_doc.size = self.cleaned_data['publication_document_size']
             pub_doc.mime_type = self.cleaned_data['publication_document_mime_type']
+            pub_doc.start_page = start_page
             pub_doc.save()
+
+        elif existing and existing.start_page != start_page:
+            existing.start_page = start_page
+            existing.save()
 
     @cached_property
     def taxonomy_toc(self):

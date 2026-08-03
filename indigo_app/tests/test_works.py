@@ -32,6 +32,22 @@ class WorksTest(testcases.TestCase):
         response = self.client.get('/works/akn/za-cpt/act/2005/1/')
         self.assertEqual(response.status_code, 200)
 
+    def test_publication_document_start_page_on_detail_page(self):
+        work = Work.objects.get(frbr_uri='/akn/za/act/2014/10')
+
+        response = self.client.get('/works/akn/za/act/2014/10/')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, work.publication_document.filename)
+        self.assertNotContains(response, "starting on page")
+
+        work.publication_document.start_page = 36
+        work.publication_document.save(update_fields=["start_page"])
+
+        response = self.client.get('/works/akn/za/act/2014/10/')
+
+        self.assertContains(response, "starting on page 36")
+
     def test_attach_publication_document_preserves_start_page(self):
         response = self.client.post(
             "/places/za/work/form/attach-publication?form=0&frbr_uri=/akn/za/act/2014/10",

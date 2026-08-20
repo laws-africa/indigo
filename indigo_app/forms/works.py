@@ -877,9 +877,9 @@ class NegatableModelMultipleChoiceField(forms.ModelMultipleChoiceField):
 
 
 class WorkFilterForm(forms.Form, FormAsUrlMixin):
-    q = forms.CharField()
+    q = forms.CharField(label="Filter by title")
 
-    place = forms.MultipleChoiceField()
+    place = forms.MultipleChoiceField(label="Place code")
 
     assent_date_start = forms.DateField(input_formats=['%Y-%m-%d'])
     assent_date_end = forms.DateField(input_formats=['%Y-%m-%d'])

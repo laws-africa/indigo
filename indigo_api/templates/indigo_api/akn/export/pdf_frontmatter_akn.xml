@@ -43,7 +43,7 @@
         {% for notice in notices %}
           <notice>
             <n>{% trans "Note:" %}</n>
-            <p>{{ notice|safe }}</p>
+            <p>{{ notice }}</p>
           </notice>
         {% endfor %}
       </div>

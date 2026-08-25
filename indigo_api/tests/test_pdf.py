@@ -1,7 +1,11 @@
+import datetime
 import os
 import tempfile
+from types import SimpleNamespace
+from unittest.mock import patch
 
 from django.conf import settings
+from django.template.loader import render_to_string
 from django.test import TestCase
 from lxml import etree
 
@@ -31,6 +35,79 @@ class PDFExporterTestCase(TestCase):
 
     def assertXmlEqual(self, expected, actual):
         self.assertMultiLineEqual(self.canonical_xml(expected), self.canonical_xml(actual))
+
+    def render_frontmatter(self, notices):
+        self.document.expression_date = '2025-10-03'
+        frontmatter = render_to_string(
+            'indigo_api/akn/export/pdf_frontmatter_akn.xml',
+            {
+                'document': self.document,
+                'ns': 'http://docs.oasis-open.org/legaldocml/ns/akn/3.0',
+                'toc': [],
+                'include_country': True,
+                'place_string': 'South Africa',
+                'notices': notices,
+            },
+        )
+        return etree.fromstring(frontmatter.encode('utf-8'))
+
+    def test_frontmatter_escapes_repeal_notice_values(self):
+        repealing_work = Work.objects.create(
+            title='Engineering & Infrastructure <Limited>',
+            frbr_uri='/akn/za/act/2025/1',
+            country=self.work.country,
+            doctype='act',
+            date='2025',
+            number='1',
+        )
+        self.work.commenced = True
+        self.work.repealed_by = repealing_work
+        self.work.repealed_date = datetime.date(2026, 12, 10)
+        self.work.repealed_verb = Work.REPEALED
+        self.work.repealed_note = 'Applies to R&D <projects>'
+
+        with patch.object(repealing_work, 'numbered_title', return_value=None), \
+                patch.object(self.work, 'amendments_after_date', return_value=[]), \
+                patch.object(self.document, 'is_latest_expression', return_value=True):
+            notices = self.exporter.get_notices(self.document)
+
+        frontmatter = self.render_frontmatter(notices)
+        ref = frontmatter.find('.//{*}notice/{*}p/{*}ref')
+        self.assertEqual('Engineering & Infrastructure <Limited>', ref.text)
+        self.assertEqual('/akn/za/act/2025/1', ref.get('href'))
+        notice_text = ''.join(frontmatter.find('.//{*}notice/{*}p').itertext())
+        self.assertIn('Applies to R&D <projects>.', notice_text)
+
+    def test_frontmatter_escapes_outstanding_amendment_titles(self):
+        amending_work = SimpleNamespace(
+            title='Research & Development <Amendment>',
+            numbered_title=lambda: None,
+        )
+        amendment = SimpleNamespace(amending_work=amending_work)
+        self.work.commenced = True
+
+        with patch.object(self.work, 'amendments_after_date', return_value=[amendment]), \
+                patch.object(self.document, 'is_latest_expression', return_value=True):
+            notices = self.exporter.get_notices(self.document)
+
+        frontmatter = self.render_frontmatter(notices)
+        notice = frontmatter.find('.//{*}notice/{*}p')
+        self.assertEqual(1, len(notice.findall('{*}b')))
+        self.assertEqual(1, len(notice.findall('{*}br')))
+        self.assertIn('Research & Development <Amendment>.', ''.join(notice.itertext()))
+
+    def test_frontmatter_preserves_notice_markup_and_escapes_values(self):
+        self.work.commenced = False
+
+        with patch.object(self.work, 'friendly_type', return_value='Act & regulation'), \
+                patch.object(self.work, 'amendments_after_date', return_value=[]), \
+                patch.object(self.document, 'is_latest_expression', return_value=True):
+            notices = self.exporter.get_notices(self.document)
+
+        frontmatter = self.render_frontmatter(notices)
+        notice = frontmatter.find('.//{*}notice/{*}p')
+        self.assertEqual('This Act & regulation has', notice.text.strip())
+        self.assertEqual('not yet come into force', notice.find('{*}b').text)
 
     def run_and_compare(self, name, update=False):
         input_path = os.path.join(os.path.dirname(__file__), 'pdf_fixtures', f'{name}_in.xml')

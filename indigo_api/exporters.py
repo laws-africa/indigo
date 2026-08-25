@@ -10,6 +10,8 @@ import tempfile
 from django.conf import settings
 from django.contrib.staticfiles.finders import find as find_static
 from django.template.loader import render_to_string, get_template
+from django.utils.html import conditional_escape, format_html, format_html_join
+from django.utils.safestring import mark_safe
 from django.utils.translation import override, gettext_lazy as _
 from ebooklib import epub
 from languages_plus.models import Language
@@ -27,6 +29,13 @@ from indigo_api.pdf import run_fop
 from indigo_api.utils import filename_candidates, find_best_template, find_best_static
 
 log = logging.getLogger(__name__)
+
+
+def format_html_percent(format_string, **kwargs):
+    """Safely interpolate values into a trusted, percent-style HTML translation."""
+    return mark_safe(format_string % {
+        key: conditional_escape(value) for key, value in kwargs.items()
+    })
 
 
 class HTMLExporter:
@@ -312,20 +321,30 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
                 title = work.repealed_by.title
                 numbered_title = work.repealed_by.numbered_title()
                 title += f' ({numbered_title})' if numbered_title else ''
-                notice = _('%(friendly_type)s <b>%(repealed_verb)s</b> on %(date)s by <ref href="%(url)s">%(title)s</ref>.') % {
-                    'friendly_type': work.friendly_type(), 'repealed_verb': _(work.repealed_verb),
-                    'date': work.repealed_date, 'title': title, 'url': work.repealed_by.frbr_uri}
+                notice = format_html_percent(
+                    _('%(friendly_type)s <b>%(repealed_verb)s</b> on %(date)s by '
+                      '<ref href="%(url)s">%(title)s</ref>.'),
+                    friendly_type=work.friendly_type(), repealed_verb=_(work.repealed_verb),
+                    date=work.repealed_date, title=title, url=work.repealed_by.frbr_uri,
+                )
             else:
-                notice = _('%(friendly_type)s <b>%(repealed_verb)s</b> on %(date)s.') % {
-                    'friendly_type': work.friendly_type(), 'repealed_verb': _(work.repealed_verb),
-                    'date': work.repealed_date}
+                notice = format_html_percent(
+                    _('%(friendly_type)s <b>%(repealed_verb)s</b> on %(date)s.'),
+                    friendly_type=work.friendly_type(), repealed_verb=_(work.repealed_verb),
+                    date=work.repealed_date,
+                )
             if work.repealed_note:
-                notice += f' {work.repealed_note}' + '.' if not work.repealed_note.endswith('.') else ''
+                notice = format_html('{} {}', notice, work.repealed_note)
+                if not work.repealed_note.endswith('.'):
+                    notice = format_html('{}.', notice)
             notices.append(notice)
 
         # commencement
         if not work.commenced:
-            notices.append(_('This %(friendly_type)s has <b>not yet come into force</b>.') % {'friendly_type': work.friendly_type()})
+            notices.append(format_html_percent(
+                _('This %(friendly_type)s has <b>not yet come into force</b>.'),
+                friendly_type=work.friendly_type(),
+            ))
         # no notice for an unknown commencement date (commenced is True but there are no commencements)
         elif work.commencements.exists():
             latest_commencement_date = work.latest_commencement_date()
@@ -339,13 +358,22 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
         # not the latest expression / amendments outstanding
         later_amendments = work.amendments_after_date(document.expression_date)
         if not document.is_latest_expression():
-            notices.append(_('This is not the latest available version of this %(friendly_type)s. '
-                             '<ref href="%(url)s">View it online</ref>.') % {'friendly_type': work.friendly_type(), 'url': work.frbr_uri})
+            notices.append(format_html_percent(
+                _('This is not the latest available version of this %(friendly_type)s. '
+                  '<ref href="%(url)s">View it online</ref>.'),
+                friendly_type=work.friendly_type(), url=work.frbr_uri,
+            ))
         # no notice for outstanding amendments if this also isn't the latest expression
         elif later_amendments:
-            numbered_titles = ', '.join(a.amending_work.numbered_title() or a.amending_work.title for a in later_amendments)
-            notices.append(_('There are <b>outstanding amendments</b> that have not yet been applied:<br/>'
-                             '%(numbered_titles)s.') % {'numbered_titles': numbered_titles})
+            numbered_titles = format_html_join(
+                ', ', '{}',
+                ((a.amending_work.numbered_title() or a.amending_work.title,) for a in later_amendments),
+            )
+            notices.append(format_html_percent(
+                _('There are <b>outstanding amendments</b> that have not yet been applied:<br/>'
+                  '%(numbered_titles)s.'),
+                numbered_titles=numbered_titles,
+            ))
 
         return notices
 

@@ -707,6 +707,18 @@ class ProvisionRefsMatcher(CitationMatcher):
             if el.tag == self.marker_tag and el.get('href'):
                 return self.resolve_target_uri(node, el.get('href'))
             elif self.ns and el.tag == "{%s}%s" % (self.ns, "term") and el.get('refersTo'):
+                # Inline markup splits "section 2 of this Act" across two text nodes, so the initial parse only
+                # sees "section 2 of " and treats the target as a generic "of" target. Reparse with the visible
+                # term text and preserve the grammar's language-aware special handling of "this".
+                parsed_text = match.string[match.start():match.start() + parse_result.end]
+                try:
+                    term_parse_result = self.parse_refs(parsed_text + ''.join(el.itertext()))
+                except ParseError:
+                    term_parse_result = None
+                if term_parse_result and term_parse_result.target == "this":
+                    if self.this_target:
+                        return self.this_target
+                    return None, node
                 return self.resolve_target_uri(node, el.get('refersTo'))
 
         return None, None

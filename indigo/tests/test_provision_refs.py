@@ -337,6 +337,7 @@ class ProvisionRefsMatcherTestCase(TestCase):
                 <p>As <i>given</i> in (we're now in a tail) section 26, 30 and 31.</p>
                 <p>under sections 26,30 or 31 of this Act, blah.</p>
                 <p>As given in sections 26, 30, and 31 of this Act, blah.</p>
+                <p>As given in sections 26 and 31 of <term refersTo="#term-this_Act">this Act</term>, blah.</p>
                 <p>As given in section V and VII.</p>
               </content>
             </section>
@@ -410,6 +411,7 @@ class ProvisionRefsMatcherTestCase(TestCase):
                 <p>As <i>given</i> in (we're now in a tail) section <ref href="#sec_26">26</ref>, 30 and <ref href="#sec_31">31</ref>.</p>
                 <p>under sections <ref href="#sec_26">26</ref>,30 or <ref href="#sec_31">31</ref> of this Act, blah.</p>
                 <p>As given in sections <ref href="#sec_26">26</ref>, 30, and <ref href="#sec_31">31</ref> of this Act, blah.</p>
+                <p>As given in sections <ref href="#sec_26">26</ref> and <ref href="#sec_31">31</ref> of <term refersTo="#term-this_Act">this Act</term>, blah.</p>
                 <p>As given in section <ref href="#sec_V">V</ref> and <ref href="#sec_VII">VII</ref>.</p>
               </content>
             </section>

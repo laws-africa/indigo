@@ -98,7 +98,12 @@ class DocumentViewSet(AtomicWriteViewSetMixin,
     filter_fields = DOCUMENT_FILTER_FIELDS
 
     def get_queryset(self):
-        return super().get_queryset().permitted_to(self.request.user)
+        queryset = super().get_queryset().permitted_to(self.request.user)
+        if self.request.method in ('PUT', 'PATCH'):
+            # AtomicWriteViewSetMixin wraps updates in a transaction. Lock the
+            # row so concurrent saves cannot both pass the version check.
+            queryset = queryset.select_for_update()
+        return queryset
 
     def perform_destroy(self, instance):
         if not instance.draft:

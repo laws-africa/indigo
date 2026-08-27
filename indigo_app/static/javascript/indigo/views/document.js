@@ -291,7 +291,19 @@
         if (this.sourceEditorView.aknTextEditor.reloadOnSave) {
           window.location.reload();
         }
-      } catch {
+      } catch (xhr) {
+        if (xhr && xhr.status === 409) {
+          const detail = xhr.responseJSON && xhr.responseJSON.detail;
+          const updatedAt = xhr.responseJSON && xhr.responseJSON.current_updated_at;
+          const updatedAtDetail = updatedAt
+            ? `<p>${$t('Last saved:')} ${new Date(updatedAt).toLocaleString()}</p>`
+            : null;
+          Indigo.errorView.show(
+            detail || $t('This document has changed since you opened it. Your changes have not been saved.'),
+            updatedAtDetail
+          );
+        }
+
         this.$saveBtn
           .prop('disabled', false)
           .find('.fa')

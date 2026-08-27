@@ -280,11 +280,17 @@
       // serialise the xml from the live DOM
       this.document.attributes.content = this.wrapInAkn(this.toXml());
       this.document.attributes.provision_eid = Indigo.Preloads.provisionEid;
+      // send our updated_at for optimistic concurrency checks
+      this.document.attributes.expected_updated_at = this.document.get('updated_at');
       const result = this.document.save();
       // don't re-parse the content in the response to the save() call
       delete this.document.attributes.content;
-      this.document.setClean();
-      this.trigger('sync');
+      delete this.document.attributes.provision_eid;
+      delete this.document.attributes.expected_updated_at;
+
+      // Only mark the content as saved once the server has accepted it. In
+      // particular, keep it dirty when optimistic concurrency returns a 409.
+      result.done(() => this.trigger('sync'));
 
       return result;
     },

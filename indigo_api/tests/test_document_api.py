@@ -94,6 +94,54 @@ class DocumentAPITest(APITestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn('<p>in γνωρίζω body</p>', response.data['content'])
 
+    def test_update_with_matching_expected_updated_at(self):
+        document = self.client.get('/api/documents/1').data
+
+        response = self.client.patch('/api/documents/1', {
+            'expected_updated_at': document['updated_at'],
+            'title': 'Updated safely',
+        })
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['title'], 'Updated safely')
+        self.assertNotEqual(response.data['updated_at'], document['updated_at'])
+
+    def test_stale_update_does_not_overwrite_document(self):
+        original = self.client.get('/api/documents/1').data
+        first_response = self.client.patch('/api/documents/1', {
+            'expected_updated_at': original['updated_at'],
+            'title': 'First editor won',
+        })
+        self.assertEqual(first_response.status_code, 200)
+        revisions_after_first_save = self.client.get('/api/documents/1/revisions').data
+
+        stale_response = self.client.patch('/api/documents/1', {
+            'expected_updated_at': original['updated_at'],
+            'title': 'Stale editor overwrote it',
+            'content': document_fixture('stale content'),
+        })
+
+        self.assertEqual(stale_response.status_code, 409)
+        self.assertEqual(stale_response.data['code'], 'document_changed')
+        self.assertEqual(stale_response.data['expected_updated_at'], original['updated_at'])
+        self.assertEqual(
+            stale_response.data['current_updated_at'],
+            first_response.data['updated_at'],
+        )
+        self.assertEqual(
+            stale_response.data['updated_by_user']['id'],
+            first_response.data['updated_by_user']['id'],
+        )
+
+        current = self.client.get('/api/documents/1').data
+        self.assertEqual(current['title'], 'First editor won')
+        content = self.client.get('/api/documents/1/content').data['content']
+        self.assertNotIn('stale content', content)
+        self.assertEqual(
+            self.client.get('/api/documents/1/revisions').data,
+            revisions_after_first_save,
+        )
+
     def test_revert_a_revision(self):
         id = 1
         response = self.client.patch('/api/documents/%s' % id, {'content': document_fixture('hello in there')})

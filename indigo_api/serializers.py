@@ -7,10 +7,11 @@ from actstream.signals import action
 from allauth.account.utils import user_display
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.utils.translation import gettext as _
 from lxml import etree
 from lxml.etree import LxmlError
 from rest_framework import serializers
-from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import APIException, ValidationError
 from rest_framework.reverse import reverse
 from typing import List
 
@@ -210,6 +211,40 @@ class UserSerializer(serializers.ModelSerializer):
         return user_display(user)
 
 
+class DocumentChanged(APIException):
+    status_code = 409
+    default_code = 'document_changed'
+
+    def __init__(self, document, expected_updated_at):
+        current_updated_at = serializers.DateTimeField().to_representation(document.updated_at)
+        expected_updated_at = serializers.DateTimeField().to_representation(expected_updated_at)
+        updated_by_user = document.updated_by_user
+        updated_by_name = user_display(updated_by_user) if updated_by_user else None
+
+        if updated_by_name:
+            detail = _(
+                'This document was changed by %(user)s after you opened it. '
+                'Your changes have not been saved.'
+            ) % {'user': updated_by_name}
+        else:
+            detail = _(
+                'This document was changed after you opened it. '
+                'Your changes have not been saved.'
+            )
+
+        payload = {
+            'code': self.default_code,
+            'detail': detail,
+            'expected_updated_at': expected_updated_at,
+            'current_updated_at': current_updated_at,
+            'updated_by_user': UserSerializer(updated_by_user).data if updated_by_user else None,
+        }
+        super().__init__(detail, self.default_code)
+        # APIException recursively converts values to ErrorDetail strings. Keep
+        # this conflict response as structured JSON (notably the numeric user id).
+        self.detail = payload
+
+
 class VersionSerializer(serializers.ModelSerializer):
     date = serializers.DateTimeField(source='revision.date_created')
     comment = serializers.CharField(source='revision.comment')
@@ -222,8 +257,8 @@ class VersionSerializer(serializers.ModelSerializer):
 
 
 class DocumentSerializer(serializers.HyperlinkedModelSerializer):
+    # A write-only field for setting the entire XML content of the document. """
     content = serializers.CharField(required=False, write_only=True)
-    """ A write-only field for setting the entire XML content of the document. """
 
     frbr_uri = serializers.CharField(read_only=True, help_text="FRBR URI that uniquely identifies this work.")
 
@@ -268,12 +303,15 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
     updated_by_user = UserSerializer(read_only=True)
     created_by_user = UserSerializer(read_only=True)
 
+    # the "updated_at" field that the client has, for optimistic concurrency checks
+    expected_updated_at = serializers.DateTimeField(required=False, write_only=True)
+
     class Meta:
         model = Document
         fields = (
             # readonly, url is part of the rest framework
             'id', 'url',
-            'content', 'title', 'draft',
+            'content', 'expected_updated_at', 'title', 'draft',
             'created_at', 'updated_at', 'updated_by_user', 'created_by_user',
 
             # frbr_uri components
@@ -317,6 +355,10 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
         ]
 
     def validate(self, attrs):
+        expected_updated_at = attrs.pop('expected_updated_at', None)
+        if expected_updated_at and expected_updated_at != self.instance.updated_at:
+            raise DocumentChanged(self.instance, expected_updated_at)
+
         if attrs.get('content'):
             # validate the content
             try:

@@ -72,3 +72,25 @@ class LogContextMiddleware:
             return self.get_response(request)
         finally:
             clear_log_context()
+
+
+class UnloadPermissionsPolicyMiddleware:
+    """Temporarily opt back into Chrome's deprecated ``unload`` event.
+
+    The document activity lock currently releases its per-tab activity in an
+    unload handler. Keep that mechanism working while it is replaced with a
+    lease and save-time optimistic concurrency checks.
+    """
+    directive = "unload=(self)"
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        response = self.get_response(request)
+        policy = response.get("Permissions-Policy", "")
+        directives = [item.strip() for item in policy.split(",") if item.strip()]
+        directives = [item for item in directives if not item.startswith("unload=")]
+        directives.append(self.directive)
+        response["Permissions-Policy"] = ", ".join(directives)
+        return response

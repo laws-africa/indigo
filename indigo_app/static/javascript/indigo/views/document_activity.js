@@ -24,7 +24,7 @@
 
       if (this.document.get('id')) {
         this.loop();
-        $(window).on('unload', _.bind(this.windowUnloaded, this));
+        window.addEventListener('pagehide', () => this.pageHidden());
       }
     },
 
@@ -114,7 +114,7 @@
     },
 
     getFinishedSessions: function(document_id) {
-      // look for finished sessions recorded by other tabs with their dying gasps (see windowUnloaded)
+      // look for finished sessions recorded by other tabs with their dying gasps (see pageHidden)
       var finished = {};
 
       for (var i = 0; i < localStorage.length; i++) {
@@ -140,7 +140,7 @@
       return finished;
     },
 
-    windowUnloaded: function() {
+    pageHidden: function() {
       if (!Indigo.user.id) return;
 
       // store a note that this session is finished, in case we can't send this message before the window closes
@@ -150,15 +150,18 @@
         'nonce': this.nonce,
       }));
 
-      $.ajax({
-        type: 'delete',
-        url: this.document.url() + '/activity',
-        data: {nonce: this.nonce},
-        global: false,
-        async: false,
-      }).then(function() {
-        localStorage.removeItem(key);
-      });
+      window.fetch(this.document.url() + '/activity', {
+        method: 'DELETE',
+        credentials: 'same-origin',
+        keepalive: true,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+          'X-CSRFToken': Indigo.csrfToken,
+        },
+        body: new URLSearchParams({nonce: this.nonce}).toString(),
+      }).then(function(response) {
+        if (response.ok) localStorage.removeItem(key);
+      }).catch(function() {});
     },
   });
 

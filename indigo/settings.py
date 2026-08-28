@@ -113,7 +113,6 @@ MIDDLEWARE = (
     'allauth.account.middleware.AccountMiddleware',
     'django_htmx.middleware.HtmxMiddleware',
     'indigo_app.middleware.HtmxMessagesMiddleware',
-    'indigo_app.middleware.UnloadPermissionsPolicyMiddleware',
 )
 
 ROOT_URLCONF = 'indigo.urls'

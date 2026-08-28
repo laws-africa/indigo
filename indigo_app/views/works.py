@@ -421,7 +421,7 @@ class WorkCommencementDetailView(AbstractAuthedIndigoView, DetailView):
         work = commencement.commenced_work
         commencement.delete()
         work.updated_by_user = self.request.user
-        work.save()
+        work.save(update_fields=['updated_by_user', 'updated_at'])
         return redirect(reverse('work_commencements', kwargs={'frbr_uri': work.frbr_uri}))
 
     def get_context_data(self, **kwargs):

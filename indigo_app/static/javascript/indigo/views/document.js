@@ -284,7 +284,6 @@
 
     saveAndPublish: function(e) {
       e.preventDefault();
-      if (!this.editLease.held) return;
       if (Indigo.user.hasPerm('indigo_api.publish_document') && confirm($t('Publish this document to users?'))) {
         this.document.set('draft', false);
         this.save();
@@ -293,7 +292,6 @@
 
     saveAndUnpublish: function(e) {
       e.preventDefault();
-      if (!this.editLease.held) return;
       if (Indigo.user.hasPerm('indigo_api.publish_document') && confirm($t('Hide this document from users?'))) {
         this.document.set('draft', true);
         this.save();
@@ -361,9 +359,6 @@
       this.$saveBtn.prop('disabled', !canSave);
       if (this.$leaseStatus.text() !== status) this.$leaseStatus.text(status);
       this.$leaseStatus.toggleClass('d-none', !status);
-      $('.save-and-publish, .save-and-unpublish')
-        .toggleClass('edit-lease-disabled', !leaseReady)
-        .attr('aria-disabled', leaseReady ? null : 'true');
     },
 
     delete: function() {

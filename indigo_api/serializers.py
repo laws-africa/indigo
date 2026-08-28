@@ -218,6 +218,11 @@ class DocumentEditLeaseRequestSerializer(serializers.Serializer):
     token = serializers.UUIDField(required=False)
 
 
+class DocumentEditLeaseReleaseSerializer(serializers.Serializer):
+    client_id = serializers.UUIDField()
+    token = serializers.UUIDField()
+
+
 class DocumentEditLeaseSerializer(serializers.ModelSerializer):
     holder = UserSerializer(source='user', read_only=True)
     renew_after_seconds = serializers.IntegerField(source='RENEW_AFTER_SECS', read_only=True)

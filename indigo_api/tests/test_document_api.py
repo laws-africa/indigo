@@ -168,6 +168,35 @@ class DocumentAPITest(APITestCase):
         self.assertEqual(renewed.status_code, 200)
         self.assertEqual(renewed.data['token'], response.data['token'])
 
+    def test_release_edit_lease(self):
+        response, _ = self.acquire_edit_lease()
+
+        released = self.client.post('/api/documents/10/edit-lease/release', {
+            'client_id': response.data['client_id'],
+            'token': response.data['token'],
+        })
+
+        self.assertEqual(released.status_code, 204)
+        self.assertFalse(DocumentEditLease.objects.filter(document_id=10).exists())
+
+        # Repeated releases are harmless.
+        released = self.client.post('/api/documents/10/edit-lease/release', {
+            'client_id': response.data['client_id'],
+            'token': response.data['token'],
+        })
+        self.assertEqual(released.status_code, 204)
+
+    def test_release_does_not_delete_another_clients_lease(self):
+        response, _ = self.acquire_edit_lease()
+
+        released = self.client.post('/api/documents/10/edit-lease/release', {
+            'client_id': str(uuid.uuid4()),
+            'token': response.data['token'],
+        })
+
+        self.assertEqual(released.status_code, 204)
+        self.assertTrue(DocumentEditLease.objects.filter(document_id=10).exists())
+
     def test_document_activity_identifies_edit_lease_holder(self):
         user = User.objects.get(username='email@example.com')
         user.user_permissions.add(*Permission.objects.filter(

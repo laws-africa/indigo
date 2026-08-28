@@ -208,6 +208,7 @@
       document.addEventListener('visibilitychange', () => {
         if (this.held && document.visibilityState === 'visible') this.acquire(true);
       });
+      window.addEventListener('pagehide', () => this.release({keepalive: true}));
     },
 
     newId: function() {
@@ -319,6 +320,58 @@
     saveFinished: function() {
       this.saving = false;
       if (this.held) this.scheduleRenewal(this.get('renew_after_seconds'));
+    },
+
+    release: function(options) {
+      options = options || {};
+      if (!this.held || !this.token || this.saving) return;
+
+      const token = this.token;
+      const clientId = this.clientId;
+      const data = {
+        token: token,
+        client_id: clientId,
+      };
+      const released = () => {
+        // Do not clear a lease that may have been reacquired in the meantime.
+        if (this.token !== token || this.clientId !== clientId) return;
+        this.held = false;
+        window.clearTimeout(this.renewTimer);
+        window.clearTimeout(this.acquireRetryTimer);
+        this.clearStoredLease();
+        this.setState('viewing');
+      };
+
+      if (options.keepalive) {
+        // pagehide gives fetch only a brief opportunity to finish. Clear the
+        // local claim immediately; expiry remains the server-side fallback.
+        released();
+        window.fetch(this.url() + '/release', {
+          method: 'POST',
+          credentials: 'same-origin',
+          keepalive: true,
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+            'X-CSRFToken': Indigo.csrfToken,
+          },
+          body: new URLSearchParams(data).toString(),
+        }).catch(function() {});
+        return;
+      }
+
+      // While the page is alive, retain the local lease unless the server
+      // confirms release so a transient failure cannot lock this client out.
+      const request = $.ajax({
+        type: 'post',
+        url: this.url() + '/release',
+        data: data,
+        global: false,
+      });
+      request.done(released);
+      request.fail(() => {
+        if (this.held) this.scheduleRenewal(this.get('renew_after_seconds'));
+      });
+      return request;
     },
 
     handleFailure: function(xhr) {

@@ -45,7 +45,7 @@ from ..models import Document, Annotation, DocumentActivity, DocumentEditLease, 
 from ..renderers import AkomaNtosoRenderer, PDFRenderer, EPUBRenderer, HTMLRenderer, ZIPRenderer
 from ..serializers import DocumentSerializer, RenderSerializer, ParseSerializer, DocumentAPISerializer, \
     VersionSerializer, AnnotationSerializer, DocumentActivitySerializer, DocumentEditLeaseRequestSerializer, \
-    DocumentEditLeaseSerializer, TaskSerializer
+    DocumentEditLeaseReleaseSerializer, DocumentEditLeaseSerializer, TaskSerializer
 from ..utils import filename_candidates, find_best_static, adiff_html_str
 
 log = logging.getLogger(__name__)
@@ -362,7 +362,7 @@ class DocumentActivityViewSet(AtomicWriteViewSetMixin,
 
 
 class DocumentEditLeaseView(DocumentResourceView, APIView):
-    """Acquire, renew, and release a document editing lease."""
+    """Acquire and renew a document editing lease."""
     permission_classes = DEFAULT_PERMS + (RelatedDocumentPermissions,)
 
     @transaction.atomic
@@ -400,6 +400,30 @@ class DocumentEditLeaseView(DocumentResourceView, APIView):
         lease.renew(now)
         lease.save()
         return Response(DocumentEditLeaseSerializer(lease).data)
+
+
+class DocumentEditLeaseReleaseView(DocumentResourceView, APIView):
+    """Best-effort release of a document editing lease."""
+    permission_classes = DEFAULT_PERMS + (RelatedDocumentPermissions,)
+
+    @transaction.atomic
+    def post(self, request, document_id):
+        serializer = DocumentEditLeaseReleaseSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.validated_data
+
+        # Lock the document to serialize release with acquisition and saving.
+        document = Document.objects.select_for_update().get(pk=self.document.pk)
+        DocumentEditLease.objects.filter(
+            document=document,
+            user=request.user,
+            token=data['token'],
+            client_id=data['client_id'],
+        ).delete()
+        # Releasing is deliberately idempotent. A stale or duplicate request
+        # must never release a newer client's lease.
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 class ParseView(DocumentResourceView, APIView):
     """ Parse text into Akoma Ntoso, returning Akoma Ntoso XML.

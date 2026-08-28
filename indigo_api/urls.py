@@ -22,6 +22,7 @@ urlpatterns = [
     path('documents/<int:document_id>/activity', documents.DocumentActivityViewSet.as_view({
         'get': 'list', 'post': 'create', 'delete': 'destroy'}), name='document-activity'),
     path('documents/<int:document_id>/edit-lease', documents.DocumentEditLeaseView.as_view(), name='document-edit-lease'),
+    path('documents/<int:document_id>/edit-lease/release', documents.DocumentEditLeaseReleaseView.as_view(), name='document-edit-lease-release'),
     path('documents/<int:document_id>/diff', documents.DocumentDiffView.as_view(), name='document-diff'),
     path('documents/<int:document_id>/parse', documents.ParseView.as_view(), name='document-parse'),
     path('documents/<int:document_id>/render/coverpage', documents.RenderCoverpageView.as_view(), name='document-render-coverpage'),

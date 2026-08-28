@@ -150,6 +150,11 @@
       this.document.work = new Indigo.Work(Indigo.Preloads.work);
       this.document.issues = new Backbone.Collection();
       this.editLease = new Indigo.DocumentEditLease({document: this.document});
+      window.addEventListener('pageshow', (event) => {
+        if (event.persisted && this.isDirty() && this.editLease.state === 'viewing') {
+          this.editLease.acquire();
+        }
+      });
 
       this.document.on('sync', this.setClean, this);
       this.document.on('change', this.setDirty, this);
@@ -291,6 +296,7 @@
     save: async function() {
       if (!this.sourceEditorView.confirmAndDiscardChanges()) return;
       if (!await this.editLease.prepareToSave()) return;
+      let saved = false;
 
       this.$saveBtn
         .prop('disabled', true)
@@ -302,6 +308,7 @@
         // this saves the content and the document properties together
         await Indigo.deferredToAsync(this.documentContent.save());
         await Indigo.deferredToAsync(this.attachmentsView.save());
+        saved = true;
 
         // TODO: a better way of reloading the page (will redirect to provision chooser for now)
         if (this.sourceEditorView.aknTextEditor.reloadOnSave) {
@@ -317,6 +324,7 @@
           .addClass('fa-save');
       } finally {
         this.editLease.saveFinished();
+        if (saved) this.editLease.release();
         this.updateSaveControls();
       }
     },

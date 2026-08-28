@@ -1,14 +1,18 @@
 import tempfile
 from unittest.mock import patch
 import datetime
+import uuid
 
 from rest_framework.test import APITestCase
+from rest_framework import serializers
+from django.contrib.auth.models import Permission, User
 from django.test.utils import override_settings
 from django.core.files.base import ContentFile
+from django.utils import timezone
 
 from indigo_api.tests.fixtures import *  # noqa
 from indigo_api.exporters import PDFExporter
-from indigo_api.models import Work, Attachment, Country, Document
+from indigo_api.models import Work, Attachment, Country, Document, DocumentEditLease
 from indigo_app.tests.utils import TEST_STORAGES
 
 
@@ -141,6 +145,119 @@ class DocumentAPITest(APITestCase):
             self.client.get('/api/documents/1/revisions').data,
             revisions_after_first_save,
         )
+
+    def acquire_edit_lease(self, document_id=10, **overrides):
+        document = self.client.get(f'/api/documents/{document_id}').data
+        data = {
+            'expected_updated_at': document['updated_at'],
+            'client_id': str(uuid.uuid4()),
+        }
+        data.update(overrides)
+        return self.client.post(f'/api/documents/{document_id}/edit-lease', data), document
+
+    def test_acquire_and_renew_edit_lease(self):
+        response, document = self.acquire_edit_lease()
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['document_updated_at'], document['updated_at'])
+
+        renewed = self.client.post('/api/documents/10/edit-lease', {
+            'expected_updated_at': document['updated_at'],
+            'client_id': response.data['client_id'],
+            'token': response.data['token'],
+        })
+        self.assertEqual(renewed.status_code, 200)
+        self.assertEqual(renewed.data['token'], response.data['token'])
+
+    def test_document_activity_identifies_edit_lease_holder(self):
+        user = User.objects.get(username='email@example.com')
+        user.user_permissions.add(*Permission.objects.filter(
+            codename__in=('add_documentactivity', 'view_documentactivity'),
+        ))
+        activity_url = '/api/documents/10/activity'
+        response = self.client.post(activity_url, {'nonce': 'lease-test'})
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(response.data['results'][0]['has_edit_lease'])
+
+        lease, _ = self.acquire_edit_lease(10)
+        self.assertEqual(lease.status_code, 200)
+        response = self.client.post(activity_url, {'nonce': 'lease-test'})
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.data['results'][0]['has_edit_lease'])
+
+    def test_second_client_cannot_acquire_active_lease(self):
+        first, document = self.acquire_edit_lease()
+        self.assertEqual(first.status_code, 200)
+
+        second, _ = self.acquire_edit_lease(
+            expected_updated_at=document['updated_at'],
+            client_id=str(uuid.uuid4()),
+        )
+        self.assertEqual(second.status_code, 409)
+        self.assertEqual(second.data['code'], 'document_locked')
+        self.assertEqual(second.data['holder']['id'], first.data['holder']['id'])
+
+    def test_stale_client_cannot_acquire_or_reacquire_lease(self):
+        lease_response, document = self.acquire_edit_lease()
+        lease = DocumentEditLease.objects.get(document_id=10)
+        lease.expires_at = timezone.now() - datetime.timedelta(seconds=1)
+        lease.save(update_fields=('expires_at',))
+
+        self.client.patch('/api/documents/10', {'title': 'Changed elsewhere'})
+        stale = self.client.post('/api/documents/10/edit-lease', {
+            'expected_updated_at': document['updated_at'],
+            'client_id': lease_response.data['client_id'],
+            'token': lease_response.data['token'],
+        })
+        self.assertEqual(stale.status_code, 409)
+        self.assertEqual(stale.data['code'], 'document_changed')
+
+    def test_current_client_can_reacquire_expired_lease(self):
+        lease_response, document = self.acquire_edit_lease()
+        lease = DocumentEditLease.objects.get(document_id=10)
+        lease.expires_at = timezone.now() - datetime.timedelta(seconds=1)
+        lease.save(update_fields=('expires_at',))
+
+        reacquired = self.client.post('/api/documents/10/edit-lease', {
+            'expected_updated_at': document['updated_at'],
+            'client_id': lease_response.data['client_id'],
+            'token': lease_response.data['token'],
+        })
+        self.assertEqual(reacquired.status_code, 200)
+        self.assertEqual(reacquired.data['token'], lease_response.data['token'])
+        self.assertGreater(DocumentEditLease.objects.get(document_id=10).expires_at, timezone.now())
+
+    def test_save_with_lease_advances_lease_version(self):
+        lease_response, document = self.acquire_edit_lease()
+
+        saved = self.client.patch('/api/documents/10', {
+            'expected_updated_at': document['updated_at'],
+            'edit_lease_token': lease_response.data['token'],
+            'title': 'Saved under lease',
+        })
+        self.assertEqual(saved.status_code, 200)
+
+        lease = DocumentEditLease.objects.get(document_id=10)
+        self.assertEqual(lease.document_updated_at, Document.objects.get(pk=10).updated_at)
+        self.assertEqual(
+            serializers.DateTimeField().to_representation(lease.document_updated_at),
+            saved.data['updated_at'],
+        )
+
+    def test_save_with_expired_lease_is_rejected(self):
+        lease_response, document = self.acquire_edit_lease()
+        lease = DocumentEditLease.objects.get(document_id=10)
+        lease.expires_at = timezone.now() - datetime.timedelta(seconds=1)
+        lease.save(update_fields=('expires_at',))
+
+        response = self.client.patch('/api/documents/10', {
+            'expected_updated_at': document['updated_at'],
+            'edit_lease_token': lease_response.data['token'],
+            'title': 'Must not save',
+        })
+        self.assertEqual(response.status_code, 409)
+        self.assertEqual(response.data['code'], 'edit_lease_lost')
+        self.assertNotEqual(Document.objects.get(pk=10).title, 'Must not save')
 
     def test_revert_a_revision(self):
         id = 1
@@ -351,6 +468,46 @@ class DocumentAPITest(APITestCase):
         response = self.client.put(data['url'], {'filename': '/with/slashes.txt'})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data['filename'], 'withslashes.txt')
+
+    def test_attachment_mutation_with_edit_lease(self):
+        document = self.client.get('/api/documents/10').data
+        lease, _ = self.acquire_edit_lease(10)
+        tmp_file = tempfile.NamedTemporaryFile(suffix='.txt')
+        tmp_file.write(b'leased attachment')
+        tmp_file.seek(0)
+
+        response = self.client.post(
+            '/api/documents/10/attachments',
+            {'file': tmp_file, 'filename': 'leased.txt'},
+            format='multipart',
+            HTTP_X_EDIT_LEASE_TOKEN=lease.data['token'],
+            HTTP_X_EXPECTED_UPDATED_AT=document['updated_at'],
+        )
+
+        self.assertEqual(response.status_code, 201)
+        self.assertTrue(Attachment.objects.filter(document_id=10, filename='leased.txt').exists())
+
+    def test_attachment_mutation_rejects_expired_edit_lease(self):
+        document = self.client.get('/api/documents/10').data
+        lease, _ = self.acquire_edit_lease(10)
+        DocumentEditLease.objects.filter(document_id=10).update(
+            expires_at=timezone.now() - datetime.timedelta(seconds=1),
+        )
+        tmp_file = tempfile.NamedTemporaryFile(suffix='.txt')
+        tmp_file.write(b'should not be saved')
+        tmp_file.seek(0)
+
+        response = self.client.post(
+            '/api/documents/10/attachments',
+            {'file': tmp_file, 'filename': 'rejected.txt'},
+            format='multipart',
+            HTTP_X_EDIT_LEASE_TOKEN=lease.data['token'],
+            HTTP_X_EXPECTED_UPDATED_AT=document['updated_at'],
+        )
+
+        self.assertEqual(response.status_code, 409)
+        self.assertEqual(response.data['code'], 'edit_lease_lost')
+        self.assertFalse(Attachment.objects.filter(document_id=10, filename='rejected.txt').exists())
 
     @patch.object(PDFExporter, 'render', return_value='pdf-content')
     def test_document_pdf(self, mock):

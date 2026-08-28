@@ -3,8 +3,9 @@
   {% verbatim %}
   <ul>
     {{#each activity}}
-    <li class="{{#if is_asleep }}is-asleep{{/if}} user-{{ user.colour }}" title="{{ user.display_name }} is also editing">
+    <li class="{{#if is_asleep }}is-asleep{{/if}} user-{{ user.colour }}" title="{{ user.display_name }} also has this document open">
       <i class="fas fa-user"></i> {{ user.display_name }}
+      {{#if has_edit_lease}}<i class="fas fa-pencil-alt ms-1" title="Saving access"></i>{{/if}}
     </li>
     {{/each}}
   </ul>

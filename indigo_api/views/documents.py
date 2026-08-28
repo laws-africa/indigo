@@ -2,12 +2,14 @@ import copy
 import datetime
 import json
 import logging
+import uuid
 
 from actstream import action
 from asgiref.sync import sync_to_async
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
+from django.db.models import Exists, OuterRef
 from django.http import Http404, JsonResponse
 from django.shortcuts import redirect
 from django.templatetags.static import static
@@ -38,10 +40,12 @@ from indigo_app.views.base import AsyncDispatchMixin, AbstractAuthedIndigoView
 from .misc import DEFAULT_PERMS
 from ..authz import DocumentPermissions, AnnotationPermissions, DocumentReadPermissions, ModelPermissions, RelatedDocumentPermissions, \
     RevisionPermissions
-from ..models import Document, Annotation, DocumentActivity, Task
+from ..exceptions import DocumentChanged, DocumentLocked, EditLeaseLost
+from ..models import Document, Annotation, DocumentActivity, DocumentEditLease, Task
 from ..renderers import AkomaNtosoRenderer, PDFRenderer, EPUBRenderer, HTMLRenderer, ZIPRenderer
 from ..serializers import DocumentSerializer, RenderSerializer, ParseSerializer, DocumentAPISerializer, \
-    VersionSerializer, AnnotationSerializer, DocumentActivitySerializer, TaskSerializer
+    VersionSerializer, AnnotationSerializer, DocumentActivitySerializer, DocumentEditLeaseRequestSerializer, \
+    DocumentEditLeaseSerializer, TaskSerializer
 from ..utils import filename_candidates, find_best_static, adiff_html_str
 
 log = logging.getLogger(__name__)
@@ -318,16 +322,19 @@ class DocumentActivityViewSet(AtomicWriteViewSetMixin,
                               mixins.ListModelMixin,
                               mixins.CreateModelMixin,
                               viewsets.GenericViewSet):
-    """ API endpoint to see who's working in a document.
-
-    Because this "locks" a document, only users who have permission to edit the document
-    can create an activity object.
-    """
+    """API endpoint showing who currently has a document open."""
     serializer_class = DocumentActivitySerializer
     permission_classes = DEFAULT_PERMS + (ModelPermissions, RelatedDocumentPermissions)
 
     def get_queryset(self):
-        return self.document.activities.prefetch_related('user').all()
+        active_lease = DocumentEditLease.objects.filter(
+            document_id=OuterRef('document_id'),
+            user_id=OuterRef('user_id'),
+            expires_at__gt=timezone.now(),
+        )
+        return self.document.activities.select_related('user').annotate(
+            has_edit_lease=Exists(active_lease),
+        )
 
     def filter_queryset(self, queryset):
         # only return entries that aren't stale
@@ -353,6 +360,46 @@ class DocumentActivityViewSet(AtomicWriteViewSetMixin,
             activity.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+
+class DocumentEditLeaseView(DocumentResourceView, APIView):
+    """Acquire, renew, and release a document editing lease."""
+    permission_classes = DEFAULT_PERMS + (RelatedDocumentPermissions,)
+
+    @transaction.atomic
+    def post(self, request, document_id):
+        serializer = DocumentEditLeaseRequestSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.validated_data
+        now = timezone.now()
+
+        document = Document.objects.select_for_update().get(pk=self.document.pk)
+        if data['expected_updated_at'] != document.updated_at:
+            raise DocumentChanged(document, data['expected_updated_at'])
+
+        lease = DocumentEditLease.objects.select_related('user').filter(document=document).first()
+        token = data.get('token')
+
+        if lease and not lease.is_expired:
+            if not token or lease.token != token or lease.user_id != request.user.id:
+                raise DocumentLocked(lease)
+            if lease.client_id != data['client_id'] or lease.document_updated_at != data['expected_updated_at']:
+                raise EditLeaseLost()
+        elif lease and token and lease.token == token and lease.user_id == request.user.id:
+            # Reacquire an expired lease only when it is still this client's row.
+            lease.client_id = data['client_id']
+            lease.document_updated_at = document.updated_at
+            lease.acquired_at = now
+        else:
+            lease = lease or DocumentEditLease(document=document)
+            lease.user = request.user
+            lease.token = uuid.uuid4()
+            lease.client_id = data['client_id']
+            lease.document_updated_at = document.updated_at
+            lease.acquired_at = now
+
+        lease.renew(now)
+        lease.save()
+        return Response(DocumentEditLeaseSerializer(lease).data)
 
 class ParseView(DocumentResourceView, APIView):
     """ Parse text into Akoma Ntoso, returning Akoma Ntoso XML.

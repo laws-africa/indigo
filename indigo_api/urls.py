@@ -21,6 +21,7 @@ urlpatterns = [
     re_path(r'documents/(?P<document_id>[0-9]+)/media/(?P<filename>.*)$', attachments.AttachmentMediaView.as_view(), name='document-media'),
     path('documents/<int:document_id>/activity', documents.DocumentActivityViewSet.as_view({
         'get': 'list', 'post': 'create', 'delete': 'destroy'}), name='document-activity'),
+    path('documents/<int:document_id>/edit-lease', documents.DocumentEditLeaseView.as_view(), name='document-edit-lease'),
     path('documents/<int:document_id>/diff', documents.DocumentDiffView.as_view(), name='document-diff'),
     path('documents/<int:document_id>/parse', documents.ParseView.as_view(), name='document-parse'),
     path('documents/<int:document_id>/render/coverpage', documents.RenderCoverpageView.as_view(), name='document-render-coverpage'),

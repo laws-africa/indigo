@@ -1,16 +1,20 @@
 from django.http import HttpResponse
 from django.shortcuts import get_list_or_404
 
-from rest_framework import viewsets
+from django.db import transaction
+from django.utils import timezone
+from rest_framework import serializers, viewsets
 from rest_framework.views import APIView
 from rest_framework.generics import get_object_or_404
 from rest_framework.decorators import action
 
-from ..models import Document, Attachment, Work, PublicationDocument
+from ..models import Document, DocumentEditLease, Attachment, Work, PublicationDocument
+from ..exceptions import DocumentChanged, EditLeaseLost
 from ..serializers import AttachmentSerializer
 from ..authz import ModelPermissions, RelatedDocumentPermissions
 from .documents import DocumentResourceView
 from .misc import DEFAULT_PERMS
+from indigo.view_mixins import AtomicWriteViewSetMixin
 from docpipe.soffice import soffice_convert
 import os
 
@@ -56,7 +60,7 @@ def download_attachment(attachment):
     return response
 
 
-class AttachmentViewSet(DocumentResourceView, viewsets.ModelViewSet):
+class AttachmentViewSet(AtomicWriteViewSetMixin, DocumentResourceView, viewsets.ModelViewSet):
     queryset = Attachment.objects
     serializer_class = AttachmentSerializer
     permission_classes = DEFAULT_PERMS + (ModelPermissions, RelatedDocumentPermissions)
@@ -75,6 +79,45 @@ class AttachmentViewSet(DocumentResourceView, viewsets.ModelViewSet):
 
     def filter_queryset(self, queryset):
         return queryset.filter(document=self.document).all()
+
+    def check_edit_lease(self):
+        token = self.request.headers.get('X-Edit-Lease-Token')
+        expected_updated_at = self.request.headers.get('X-Expected-Updated-At')
+        # Preserve compatibility for non-editor API clients. The Indigo editor
+        # always supplies both headers for attachment mutations.
+        if not token and not expected_updated_at:
+            return
+        if not token or not expected_updated_at:
+            raise serializers.ValidationError('Both edit lease headers are required.')
+
+        token = serializers.UUIDField().run_validation(token)
+        expected_updated_at = serializers.DateTimeField().run_validation(expected_updated_at)
+        document = Document.objects.select_for_update().get(pk=self.document.pk)
+        if expected_updated_at != document.updated_at:
+            raise DocumentChanged(document, expected_updated_at)
+        try:
+            lease = DocumentEditLease.objects.get(
+                document=document,
+                user=self.request.user,
+                token=token,
+                expires_at__gt=timezone.now(),
+                document_updated_at=expected_updated_at,
+            )
+        except DocumentEditLease.DoesNotExist:
+            raise EditLeaseLost()
+        return lease
+
+    def perform_create(self, serializer):
+        self.check_edit_lease()
+        return super().perform_create(serializer)
+
+    def perform_update(self, serializer):
+        self.check_edit_lease()
+        return super().perform_update(serializer)
+
+    def perform_destroy(self, instance):
+        self.check_edit_lease()
+        return super().perform_destroy(instance)
 
 
 class AttachmentMediaView(DocumentResourceView, APIView):

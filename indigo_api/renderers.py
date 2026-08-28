@@ -7,6 +7,7 @@ import logging
 from django.core.cache import caches
 from django.conf import settings
 from django.http import Http404
+from django.utils.http import content_disposition_header
 from rest_framework.renderers import BaseRenderer, StaticHTMLRenderer
 from rest_framework_xml.renderers import XMLRenderer
 
@@ -69,7 +70,7 @@ class AkomaNtosoRenderer(XMLRenderer):
 
         view = renderer_context['view']
         filename = generate_filename(data, view, self.format)
-        renderer_context['response']['Content-Disposition'] = 'attachment; filename=%s' % filename
+        renderer_context['response']['Content-Disposition'] = content_disposition_header(True, filename)
 
         if not hasattr(view, 'component') or (view.component == 'main' and not view.portion):
             return data.document_xml
@@ -153,7 +154,7 @@ class PDFRenderer(BaseRenderer):
                 return pdf
 
         filename = self.get_filename(data, view)
-        renderer_context['response']['Content-Disposition'] = 'inline; filename=%s' % filename
+        renderer_context['response']['Content-Disposition'] = content_disposition_header(False, filename)
         request = renderer_context['request']
         exporter = self.get_exporter()
         exporter.resolver = resolver_url(request, request.GET.get('resolver'))
@@ -223,7 +224,7 @@ class EPUBRenderer(ExporterMixin, PDFRenderer):
         request = renderer_context['request']
 
         filename = self.get_filename(data, view)
-        renderer_context['response']['Content-Disposition'] = 'inline; filename=%s' % filename
+        renderer_context['response']['Content-Disposition'] = content_disposition_header(False, filename)
         exporter = self.get_exporter()
         exporter.resolver = resolver_url(request, request.GET.get('resolver'))
 
@@ -276,7 +277,7 @@ class ZIPRenderer(BaseRenderer):
 
         view = renderer_context['view']
         filename = generate_filename(data, view, self.format)
-        renderer_context['response']['Content-Disposition'] = 'attachment; filename=%s' % filename
+        renderer_context['response']['Content-Disposition'] = content_disposition_header(True, filename)
 
         with tempfile.NamedTemporaryFile(suffix='.zip') as f:
             self.build_zipfile(data, f.name)

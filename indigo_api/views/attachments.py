@@ -1,5 +1,6 @@
 from django.http import HttpResponse
 from django.shortcuts import get_list_or_404
+from django.utils.http import content_disposition_header
 
 from rest_framework import viewsets
 from rest_framework.views import APIView
@@ -25,7 +26,7 @@ DOC_MIMETYPES = [
 
 def view_attachment(attachment):
     response = HttpResponse(attachment.file.read(), content_type=attachment.mime_type)
-    response['Content-Disposition'] = 'inline; filename=%s' % attachment.filename
+    response['Content-Disposition'] = content_disposition_header(False, attachment.filename)
     response['Content-Length'] = str(attachment.size)
     return response
 
@@ -45,14 +46,14 @@ def view_attachment_as_pdf(attachment):
     pdf = soffice_convert(attachment.file, suffix, 'pdf')[0]
     file_bytes = pdf.read()
     response = HttpResponse(file_bytes, content_type="application/pdf")
-    response['Content-Disposition'] = 'inline; filename=%s' % attachment.filename
+    response['Content-Disposition'] = content_disposition_header(False, attachment.filename)
     response['Content-Length'] = str(len(file_bytes))
     return response
 
 
 def download_attachment(attachment):
     response = view_attachment(attachment)
-    response['Content-Disposition'] = 'attachment; filename=%s' % attachment.filename
+    response['Content-Disposition'] = content_disposition_header(True, attachment.filename)
     return response
 
 

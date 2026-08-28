@@ -315,7 +315,7 @@ class DocumentAPITest(APITestCase):
         response = self.client.get('/api/documents/1.xml')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.accepted_media_type, 'application/xml')
-        self.assertEqual(response['Content-Disposition'], 'attachment; filename=2014-10.xml')
+        self.assertEqual(response['Content-Disposition'], 'attachment; filename="2014-10.xml"')
         self.assertTrue(response.content.decode('utf-8').startswith('<akomaNtoso'))
 
     def test_document_epub(self):

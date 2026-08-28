@@ -3,6 +3,7 @@ import io
 import xlsxwriter
 
 from django.http import HttpResponse
+from django.utils.http import content_disposition_header
 
 from indigo.plugins import plugins
 from indigo_api.models import Amendment
@@ -219,7 +220,7 @@ class XlsxExporter:
         response = HttpResponse(
             output, content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
         )
-        response['Content-Disposition'] = 'attachment; filename="%s"' % filename
+        response['Content-Disposition'] = content_disposition_header(True, filename)
         return response
 
     def write_works(self, workbook, queryset):

@@ -330,6 +330,7 @@ class DocumentActivityViewSet(AtomicWriteViewSetMixin,
         active_lease = DocumentEditLease.objects.filter(
             document_id=OuterRef('document_id'),
             user_id=OuterRef('user_id'),
+            activity_nonce=OuterRef('nonce'),
             expires_at__gt=timezone.now(),
         )
         return self.document.activities.select_related('user').annotate(
@@ -397,6 +398,8 @@ class DocumentEditLeaseView(DocumentResourceView, APIView):
             lease.document_updated_at = document.updated_at
             lease.acquired_at = now
 
+        if 'activity_nonce' in data:
+            lease.activity_nonce = data['activity_nonce']
         lease.renew(now)
         lease.save()
         return Response(DocumentEditLeaseSerializer(lease).data)

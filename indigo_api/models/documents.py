@@ -921,6 +921,8 @@ class DocumentEditLease(models.Model):
     token = models.UUIDField(_("token"), default=uuid.uuid4, unique=True, editable=False)
     # unique client-side ID for de-duplication of sessions for the same user
     client_id = models.UUIDField(_("client id"))
+    # page-specific presence identifier whose activity badge represents this lease
+    activity_nonce = models.CharField(_("activity nonce"), max_length=10, blank=True, null=True)
     # links in with optimistic concurrency control to ensure the lease is for the latest version of the document
     document_updated_at = models.DateTimeField(_("document updated at"))
     acquired_at = models.DateTimeField(_("acquired at"), auto_now_add=True)

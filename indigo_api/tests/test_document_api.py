@@ -151,6 +151,7 @@ class DocumentAPITest(APITestCase):
         data = {
             'expected_updated_at': document['updated_at'],
             'client_id': str(uuid.uuid4()),
+            'activity_nonce': str(uuid.uuid4())[:10],
         }
         data.update(overrides)
         return self.client.post(f'/api/documents/{document_id}/edit-lease', data), document
@@ -159,14 +160,20 @@ class DocumentAPITest(APITestCase):
         response, document = self.acquire_edit_lease()
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data['document_updated_at'], document['updated_at'])
+        self.assertEqual(
+            response.data['activity_nonce'],
+            DocumentEditLease.objects.get(document_id=10).activity_nonce,
+        )
 
         renewed = self.client.post('/api/documents/10/edit-lease', {
             'expected_updated_at': document['updated_at'],
             'client_id': response.data['client_id'],
+            'activity_nonce': 'new-page',
             'token': response.data['token'],
         })
         self.assertEqual(renewed.status_code, 200)
         self.assertEqual(renewed.data['token'], response.data['token'])
+        self.assertEqual(renewed.data['activity_nonce'], 'new-page')
 
     def test_release_edit_lease(self):
         response, _ = self.acquire_edit_lease()
@@ -206,13 +213,16 @@ class DocumentAPITest(APITestCase):
         response = self.client.post(activity_url, {'nonce': 'lease-test'})
         self.assertEqual(response.status_code, 200)
         self.assertFalse(response.data['results'][0]['has_edit_lease'])
+        self.client.post(activity_url, {'nonce': 'other-tab'})
 
-        lease, _ = self.acquire_edit_lease(10)
+        lease, _ = self.acquire_edit_lease(10, activity_nonce='lease-test')
         self.assertEqual(lease.status_code, 200)
         response = self.client.post(activity_url, {'nonce': 'lease-test'})
 
         self.assertEqual(response.status_code, 200)
-        self.assertTrue(response.data['results'][0]['has_edit_lease'])
+        activities = {activity['nonce']: activity for activity in response.data['results']}
+        self.assertTrue(activities['lease-test']['has_edit_lease'])
+        self.assertFalse(activities['other-tab']['has_edit_lease'])
 
     def test_second_client_cannot_acquire_active_lease(self):
         first, document = self.acquire_edit_lease()

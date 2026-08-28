@@ -15,6 +15,7 @@
       this.template = Handlebars.compile($(this.template).html());
 
       this.document = options.document;
+      this.nonce = options.nonce;
       this.collection = new Backbone.Collection([], {
         model: Indigo.DocumentActivity,
         comparator: 'created_at',
@@ -165,6 +166,7 @@
   Indigo.DocumentEditLease = Backbone.Model.extend({
     initialize: function(options) {
       this.document = options.document;
+      this.activityNonce = options.activityNonce;
       this.document.editLease = this;
       this.held = false;
       this.pending = null;
@@ -258,6 +260,7 @@
         expected_updated_at: this.document.get('updated_at'),
         client_id: this.clientId,
       };
+      if (this.activityNonce) data.activity_nonce = this.activityNonce;
       if (this.token) data.token = this.token;
 
       this.setState(this.held ? 'renewing' : 'acquiring');

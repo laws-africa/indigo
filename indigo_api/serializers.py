@@ -215,6 +215,7 @@ class UserSerializer(serializers.ModelSerializer):
 class DocumentEditLeaseRequestSerializer(serializers.Serializer):
     expected_updated_at = serializers.DateTimeField()
     client_id = serializers.UUIDField()
+    activity_nonce = serializers.CharField(max_length=10, required=False)
     token = serializers.UUIDField(required=False)
 
 
@@ -230,7 +231,7 @@ class DocumentEditLeaseSerializer(serializers.ModelSerializer):
     class Meta:
         model = DocumentEditLease
         fields = (
-            'token', 'client_id', 'document_updated_at', 'holder',
+            'token', 'client_id', 'activity_nonce', 'document_updated_at', 'holder',
             'acquired_at', 'renewed_at', 'expires_at', 'renew_after_seconds',
         )
         read_only_fields = fields

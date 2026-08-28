@@ -149,7 +149,11 @@
       this.document = new Indigo.Document(Indigo.Preloads.document);
       this.document.work = new Indigo.Work(Indigo.Preloads.work);
       this.document.issues = new Backbone.Collection();
-      this.editLease = new Indigo.DocumentEditLease({document: this.document});
+      const activityNonce = Math.floor(Math.random() * (1000000 - 1000) + 1000).toString();
+      this.editLease = new Indigo.DocumentEditLease({
+        document: this.document,
+        activityNonce: activityNonce,
+      });
       window.addEventListener('pageshow', (event) => {
         if (event.persisted && this.isDirty() && this.editLease.state === 'viewing') {
           this.editLease.acquire();
@@ -202,7 +206,10 @@
       });
       this.annotationsView.listenTo(this.sourceEditorView, 'rendered', this.annotationsView.renderAnnotations);
 
-      this.activityView = new Indigo.DocumentActivityView({document: this.document});
+      this.activityView = new Indigo.DocumentActivityView({
+        document: this.document,
+        nonce: activityNonce,
+      });
       this.issuesView = new Indigo.DocumentIssuesView({
         document: this.document,
         documentContent: this.documentContent,

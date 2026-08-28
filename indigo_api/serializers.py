@@ -7,6 +7,7 @@ from actstream.signals import action
 from allauth.account.utils import user_display
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.utils.translation import gettext as _
 from lxml import etree
 from lxml.etree import LxmlError
 from rest_framework import serializers
@@ -16,8 +17,9 @@ from typing import List
 
 from cobalt import StructuredDocument, FrbrUri
 from cobalt.akn import AKN_NAMESPACES, DEFAULT_VERSION
-from indigo_api.models import Document, Attachment, Annotation, DocumentActivity, Work, Amendment, Language, \
+from indigo_api.models import Document, Attachment, Annotation, DocumentActivity, DocumentEditLease, Work, Amendment, Language, \
     PublicationDocument, Task, Commencement
+from indigo_api.exceptions import DocumentChanged, EditLeaseLost
 from indigo_api.signals import document_published
 
 log = logging.getLogger(__name__)
@@ -210,6 +212,31 @@ class UserSerializer(serializers.ModelSerializer):
         return user_display(user)
 
 
+class DocumentEditLeaseRequestSerializer(serializers.Serializer):
+    expected_updated_at = serializers.DateTimeField()
+    client_id = serializers.UUIDField()
+    activity_nonce = serializers.CharField(max_length=10, required=False)
+    token = serializers.UUIDField(required=False)
+
+
+class DocumentEditLeaseReleaseSerializer(serializers.Serializer):
+    client_id = serializers.UUIDField()
+    token = serializers.UUIDField()
+
+
+class DocumentEditLeaseSerializer(serializers.ModelSerializer):
+    holder = UserSerializer(source='user', read_only=True)
+    renew_after_seconds = serializers.IntegerField(source='RENEW_AFTER_SECS', read_only=True)
+
+    class Meta:
+        model = DocumentEditLease
+        fields = (
+            'token', 'client_id', 'activity_nonce', 'document_updated_at', 'holder',
+            'acquired_at', 'renewed_at', 'expires_at', 'renew_after_seconds',
+        )
+        read_only_fields = fields
+
+
 class VersionSerializer(serializers.ModelSerializer):
     date = serializers.DateTimeField(source='revision.date_created')
     comment = serializers.CharField(source='revision.comment')
@@ -222,8 +249,8 @@ class VersionSerializer(serializers.ModelSerializer):
 
 
 class DocumentSerializer(serializers.HyperlinkedModelSerializer):
+    # A write-only field for setting the entire XML content of the document. """
     content = serializers.CharField(required=False, write_only=True)
-    """ A write-only field for setting the entire XML content of the document. """
 
     frbr_uri = serializers.CharField(read_only=True, help_text="FRBR URI that uniquely identifies this work.")
 
@@ -268,12 +295,16 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
     updated_by_user = UserSerializer(read_only=True)
     created_by_user = UserSerializer(read_only=True)
 
+    # the "updated_at" field that the client has, for optimistic concurrency checks
+    expected_updated_at = serializers.DateTimeField(required=False, write_only=True)
+    edit_lease_token = serializers.UUIDField(required=False, write_only=True)
+
     class Meta:
         model = Document
         fields = (
             # readonly, url is part of the rest framework
             'id', 'url',
-            'content', 'title', 'draft',
+            'content', 'expected_updated_at', 'edit_lease_token', 'title', 'draft',
             'created_at', 'updated_at', 'updated_by_user', 'created_by_user',
 
             # frbr_uri components
@@ -317,6 +348,28 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
         ]
 
     def validate(self, attrs):
+        expected_updated_at = attrs.pop('expected_updated_at', None)
+        edit_lease_token = attrs.pop('edit_lease_token', None)
+        if expected_updated_at and expected_updated_at != self.instance.updated_at:
+            raise DocumentChanged(self.instance, expected_updated_at)
+
+        if edit_lease_token:
+            if not expected_updated_at:
+                raise ValidationError({'expected_updated_at': _('This field is required when saving with an edit lease.')})
+            try:
+                lease = DocumentEditLease.objects.select_related('user').get(
+                    document=self.instance,
+                    user=self.context['request'].user,
+                    token=edit_lease_token,
+                )
+            except DocumentEditLease.DoesNotExist:
+                raise EditLeaseLost()
+            if lease.is_expired:
+                raise EditLeaseLost()
+            if lease.document_updated_at != expected_updated_at:
+                raise DocumentChanged(self.instance, expected_updated_at)
+            self.edit_lease = lease
+
         if attrs.get('content'):
             # validate the content
             try:
@@ -364,6 +417,12 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
 
         # save as a revision
         document.save_with_revision(user)
+
+        edit_lease = getattr(self, 'edit_lease', None)
+        if edit_lease:
+            edit_lease.document_updated_at = document.updated_at
+            edit_lease.renew()
+            edit_lease.save(update_fields=('document_updated_at', 'expires_at', 'renewed_at'))
 
         # reload it to ensure we have an id for new documents
         document = Document.objects.get(pk=document.id)
@@ -596,6 +655,7 @@ class AnnotationSerializer(serializers.ModelSerializer):
 class DocumentActivitySerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
     document_updated_at = serializers.SerializerMethodField()
+    has_edit_lease = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = DocumentActivity
@@ -605,6 +665,7 @@ class DocumentActivitySerializer(serializers.ModelSerializer):
             'updated_at',
             'nonce',
             'is_asleep',
+            'has_edit_lease',
             'document_updated_at',
         )
         read_only_fields = ('created_at', 'updated_at')

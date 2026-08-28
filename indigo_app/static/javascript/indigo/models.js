@@ -280,11 +280,21 @@
       // serialise the xml from the live DOM
       this.document.attributes.content = this.wrapInAkn(this.toXml());
       this.document.attributes.provision_eid = Indigo.Preloads.provisionEid;
+      // send our updated_at for optimistic concurrency checks
+      this.document.attributes.expected_updated_at = this.document.get('updated_at');
+      if (this.document.editLease && this.document.editLease.token) {
+        this.document.attributes.edit_lease_token = this.document.editLease.token;
+      }
       const result = this.document.save();
       // don't re-parse the content in the response to the save() call
       delete this.document.attributes.content;
-      this.document.setClean();
-      this.trigger('sync');
+      delete this.document.attributes.provision_eid;
+      delete this.document.attributes.expected_updated_at;
+      delete this.document.attributes.edit_lease_token;
+
+      // Only mark the content as saved once the server has accepted it. In
+      // particular, keep it dirty when optimistic concurrency returns a 409.
+      result.done(() => this.trigger('sync'));
 
       return result;
     },
@@ -633,7 +643,9 @@
   });
 
   Indigo.Attachment = Backbone.Model.extend({
-    initialize: function() {
+    initialize: function(attributes, options) {
+      options = options || {};
+      this.document = options.collection && options.collection.document;
       this.on('sync', this.clearFile, this);
     },
 
@@ -642,6 +654,13 @@
     },
 
     sync: function(method, model, options) {
+      options.headers = options.headers || {};
+      const document = model.document || (model.collection && model.collection.document);
+      const editLease = document && document.editLease;
+      if (editLease && editLease.token) {
+        options.headers['X-Edit-Lease-Token'] = editLease.token;
+        options.headers['X-Expected-Updated-At'] = document.get('updated_at');
+      }
       if (method === 'create' && model.get('file')) {
         // override params passed in for create to allow us to inject the file
         //

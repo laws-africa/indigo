@@ -127,6 +127,7 @@
       let self = this;
 
       this.$saveBtn = $('.document-workspace-buttons .btn.save');
+      this.$leaseStatus = $('.edit-lease-status');
       this.$menu = $('.document-toolbar-menu');
       this.secondaryPaneToggle = this.el.querySelector('.document-toolbar-wrapper .document-secondary-pane-toggle');
       this.dirty = false;
@@ -148,6 +149,16 @@
       this.document = new Indigo.Document(Indigo.Preloads.document);
       this.document.work = new Indigo.Work(Indigo.Preloads.work);
       this.document.issues = new Backbone.Collection();
+      const activityNonce = Math.floor(Math.random() * (1000000 - 1000) + 1000).toString();
+      this.editLease = new Indigo.DocumentEditLease({
+        document: this.document,
+        activityNonce: activityNonce,
+      });
+      window.addEventListener('pageshow', (event) => {
+        if (event.persisted && this.isDirty() && this.editLease.state === 'viewing') {
+          this.editLease.acquire();
+        }
+      });
 
       this.document.on('sync', this.setClean, this);
       this.document.on('change', this.setDirty, this);
@@ -179,6 +190,7 @@
         model: this.document,
         tocView: this.tocView,
       });
+      this.listenTo(this.editLease, 'state', this.updateSaveControls);
       this.sourceEditorView.editorReady.then(function() {
         // select the appropriate element in the toc
         // TODO: there's a race condition here: the TOC might not be built yet
@@ -194,7 +206,10 @@
       });
       this.annotationsView.listenTo(this.sourceEditorView, 'rendered', this.annotationsView.renderAnnotations);
 
-      this.activityView = new Indigo.DocumentActivityView({document: this.document});
+      this.activityView = new Indigo.DocumentActivityView({
+        document: this.document,
+        nonce: activityNonce,
+      });
       this.issuesView = new Indigo.DocumentIssuesView({
         document: this.document,
         documentContent: this.documentContent,
@@ -208,6 +223,8 @@
       // preload content and pretend this document is unchanged
       this.documentContent.set('content', Indigo.Preloads.documentContent);
       this.document.trigger('sync');
+      this.updateSaveControls();
+      this.leaseAcquisitionOnDirty = true;
 
       // make menu peers behave like real menus on hover
       $('.menu .btn-link').on('mouseover', function(e) {
@@ -232,8 +249,13 @@
 
     setDirty: function() {
       this.dirty = true;
-      this.$saveBtn.prop('disabled', false);
-      this.$menu.find('.save').removeClass('disabled');
+      // A dirty model is the single signal that saving access is needed. This
+      // also covers new or plugin-provided mutation paths without coupling
+      // individual editing components to the lease.
+      if (this.leaseAcquisitionOnDirty && this.editLease.state === 'viewing' && !this.editLease.pending) {
+        this.editLease.acquire();
+      }
+      this.updateSaveControls();
     },
 
     setClean: function() {
@@ -247,6 +269,7 @@
             .addClass('fa-save');
         this.$menu.find('.save').addClass('disabled');
       }
+      this.updateSaveControls();
     },
 
     draftChanged: function() {
@@ -259,14 +282,18 @@
       this.$menu.find('.delete-document').toggleClass('disabled', !draft);
     },
 
-    saveAndPublish: function() {
+    saveAndPublish: function(e) {
+      e.preventDefault();
+      if (!this.editLease.held) return;
       if (Indigo.user.hasPerm('indigo_api.publish_document') && confirm($t('Publish this document to users?'))) {
         this.document.set('draft', false);
         this.save();
       }
     },
 
-    saveAndUnpublish: function() {
+    saveAndUnpublish: function(e) {
+      e.preventDefault();
+      if (!this.editLease.held) return;
       if (Indigo.user.hasPerm('indigo_api.publish_document') && confirm($t('Hide this document from users?'))) {
         this.document.set('draft', true);
         this.save();
@@ -275,6 +302,8 @@
 
     save: async function() {
       if (!this.sourceEditorView.confirmAndDiscardChanges()) return;
+      if (!await this.editLease.prepareToSave()) return;
+      let saved = false;
 
       this.$saveBtn
         .prop('disabled', true)
@@ -286,18 +315,55 @@
         // this saves the content and the document properties together
         await Indigo.deferredToAsync(this.documentContent.save());
         await Indigo.deferredToAsync(this.attachmentsView.save());
+        saved = true;
 
         // TODO: a better way of reloading the page (will redirect to provision chooser for now)
         if (this.sourceEditorView.aknTextEditor.reloadOnSave) {
           window.location.reload();
         }
-      } catch {
-        this.$saveBtn
-          .prop('disabled', false)
-          .find('.fa')
+      } catch (xhr) {
+        const code = xhr && xhr.responseJSON && xhr.responseJSON.code;
+        if (code === 'document_changed' || code === 'edit_lease_lost') {
+          this.editLease.lose(xhr.responseJSON);
+        }
+        this.$saveBtn.find('.fa')
           .removeClass('fa-pulse fa-spinner')
           .addClass('fa-save');
+      } finally {
+        this.editLease.saveFinished();
+        if (saved) this.editLease.release();
+        this.updateSaveControls();
       }
+    },
+
+    updateSaveControls: function(state, details) {
+      if (state) {
+        this.leaseState = state;
+        if (details !== undefined) this.leaseStateDetails = details;
+      }
+      const leaseReady = this.editLease.held;
+      const canSave = this.dirty && leaseReady;
+      const leaseState = this.leaseState || this.editLease.state;
+      const leaseDetails = this.leaseStateDetails || {};
+      let status = '';
+      if (leaseState === 'acquiring' && !leaseDetails.holder) {
+        status = $t('Acquiring saving access…');
+      } else if (leaseState === 'locked' || (leaseState === 'acquiring' && leaseDetails.holder)) {
+        const holder = leaseDetails.holder && leaseDetails.holder.display_name;
+        status = holder
+          ? $t('Saving is currently reserved by ') + holder + '. ' + $t('You can continue editing.')
+          : $t('Saving is currently reserved by another editor. You can continue editing.');
+      } else if (leaseState === 'lost' || leaseState === 'viewing') {
+        status = this.dirty ? $t('Saving is currently unavailable. Retrying…') : '';
+      } else if (leaseState === 'stale') {
+        status = $t('The document has changed. Refresh before saving.');
+      }
+      this.$saveBtn.prop('disabled', !canSave);
+      if (this.$leaseStatus.text() !== status) this.$leaseStatus.text(status);
+      this.$leaseStatus.toggleClass('d-none', !status);
+      $('.save-and-publish, .save-and-unpublish')
+        .toggleClass('edit-lease-disabled', !leaseReady)
+        .attr('aria-disabled', leaseReady ? null : 'true');
     },
 
     delete: function() {

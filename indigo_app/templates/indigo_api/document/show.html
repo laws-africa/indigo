@@ -30,7 +30,10 @@
         </div>
 
         <div class="d-flex">
-          {% include 'indigo_api/document/_activity.html' %}
+          <div class="document-activity-column me-2">
+            {% include 'indigo_api/document/_activity.html' %}
+            <small class="edit-lease-status text-muted d-none"></small>
+          </div>
 
           <div class="document-workspace-buttons mt-1">
             {% block save-buttons %}

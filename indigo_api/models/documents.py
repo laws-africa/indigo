@@ -1,6 +1,7 @@
 import os
 import logging
 import datetime
+import uuid
 
 from actstream import action
 from django.conf import settings
@@ -907,3 +908,40 @@ class DocumentActivity(models.Model):
     def vacuum(cls):
         threshold = timezone.now() - datetime.timedelta(seconds=cls.DEAD_SECS)
         cls.objects.filter(updated_at__lte=threshold).delete()
+
+
+class DocumentEditLease(models.Model):
+    """An exclusive, expiring lease to edit a particular document version."""
+    document = models.OneToOneField(
+        Document, on_delete=models.CASCADE, related_name='edit_lease', verbose_name=_("document"),
+    )
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='document_edit_leases', verbose_name=_("user"),
+    )
+    token = models.UUIDField(_("token"), default=uuid.uuid4, unique=True, editable=False)
+    # unique client-side ID for de-duplication of sessions for the same user
+    client_id = models.UUIDField(_("client id"))
+    # page-specific presence identifier whose activity badge represents this lease
+    activity_nonce = models.CharField(_("activity nonce"), max_length=10, blank=True, null=True)
+    # links in with optimistic concurrency control to ensure the lease is for the latest version of the document
+    document_updated_at = models.DateTimeField(_("document updated at"))
+    acquired_at = models.DateTimeField(_("acquired at"), auto_now_add=True)
+    renewed_at = models.DateTimeField(_("renewed at"), auto_now=True)
+    expires_at = models.DateTimeField(_("expires at"))
+
+    # a lease is lost if not renewed after this time
+    LEASE_SECS = 90
+    # clients must renew at this frequency
+    RENEW_AFTER_SECS = 20
+
+    class Meta:
+        verbose_name = _("document edit lease")
+        verbose_name_plural = _("document edit leases")
+
+    @property
+    def is_expired(self):
+        return self.expires_at <= timezone.now()
+
+    def renew(self, now=None):
+        now = now or timezone.now()
+        self.expires_at = now + datetime.timedelta(seconds=self.LEASE_SECS)

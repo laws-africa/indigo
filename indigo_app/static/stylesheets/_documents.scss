@@ -96,6 +96,11 @@
   }
 }
 
+.edit-lease-disabled {
+  pointer-events: none;
+  opacity: 0.65;
+}
+
 /* headers with help buttons */
 a.help,
 button.btn-link.help {
@@ -429,6 +434,15 @@ body.document-editor-view {
 }
 
 #document-activity-view {
+  min-height: 25px;
+
+  ul {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 0;
+    padding-left: 0;
+  }
+
   li {
     list-style: none;
     float: left;
@@ -452,6 +466,16 @@ body.document-editor-view {
   .user-5 { background-color: #e6ab02; }
   .user-6 { background-color: #a6761d; }
   .user-7 { background-color: #666666; }
+}
+
+.document-activity-column {
+  max-width: 32rem;
+  text-align: right;
+
+  .edit-lease-status {
+    display: block;
+    line-height: 1.2;
+  }
 }
 
 .cheatsheet {

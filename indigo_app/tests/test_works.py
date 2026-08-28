@@ -663,7 +663,7 @@ class WorksWebTest(WebTest):
         work = Work.objects.get(pk=1)
         commencement = work.main_commencement
 
-        response = self.client.post(f'/works{work.frbr_uri}/commencements/{commencement.id}', {'delete': ''})
+        response = self.app.post(f'/works{work.frbr_uri}/commencements/{commencement.id}', {'delete': ''})
 
         self.assertRedirects(response, f'/works{work.frbr_uri}/commencements/', fetch_redirect_response=False)
         self.assertFalse(Commencement.objects.filter(pk=commencement.pk).exists())

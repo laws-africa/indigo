@@ -3,7 +3,7 @@ from urllib.parse import unquote
 from unittest.mock import Mock, patch
 
 import reversion
-from django.contrib.auth.models import User
+from django.contrib.auth.models import Permission, User
 from django.test import testcases, override_settings
 from django_webtest import WebTest
 from webtest import Upload
@@ -660,12 +660,14 @@ class WorksWebTest(WebTest):
         self.assertIsNone(work.main_commencement)
 
     def test_delete_work_commencement_clears_main_commencement(self):
+        user = User.objects.get(username='email@example.com')
+        user.user_permissions.add(Permission.objects.get(codename='delete_commencement'))
+        self.client.force_login(user)
         work = Work.objects.get(pk=1)
         commencement = work.main_commencement
         url = f'/works{work.frbr_uri}/commencements/{commencement.id}'
-        csrf_token = self.app.get(url).forms[0]['csrfmiddlewaretoken'].value
 
-        response = self.app.post(url, {'delete': '', 'csrfmiddlewaretoken': csrf_token})
+        response = self.client.post(url, {'delete': ''})
 
         self.assertRedirects(response, f'/works{work.frbr_uri}/commencements/', fetch_redirect_response=False)
         self.assertFalse(Commencement.objects.filter(pk=commencement.pk).exists())

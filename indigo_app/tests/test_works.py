@@ -662,8 +662,10 @@ class WorksWebTest(WebTest):
     def test_delete_work_commencement_clears_main_commencement(self):
         work = Work.objects.get(pk=1)
         commencement = work.main_commencement
+        url = f'/works{work.frbr_uri}/commencements/{commencement.id}'
+        csrf_token = self.app.get(url).forms[0]['csrfmiddlewaretoken'].value
 
-        response = self.app.post(f'/works{work.frbr_uri}/commencements/{commencement.id}', {'delete': ''})
+        response = self.app.post(url, {'delete': '', 'csrfmiddlewaretoken': csrf_token})
 
         self.assertRedirects(response, f'/works{work.frbr_uri}/commencements/', fetch_redirect_response=False)
         self.assertFalse(Commencement.objects.filter(pk=commencement.pk).exists())

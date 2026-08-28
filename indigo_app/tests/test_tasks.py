@@ -1,8 +1,9 @@
 from django.test import override_settings
 from django.contrib.auth.models import User
+from django.core.files.base import ContentFile
 from django_webtest import WebTest
 
-from indigo_api.models import Task, Work
+from indigo_api.models import Task, TaskFile, Work
 from indigo_app.tests.utils import TEST_STORAGES
 
 
@@ -41,6 +42,28 @@ class TasksTest(WebTest):
         self.assertEqual(task.description, "test description")
         self.assertEqual([x.title for x in task.labels.all()], ["Label 1"])
         self.assertEqual(task.work, Work.objects.get(frbr_uri='/akn/za/act/2014/10'))
+
+    def test_download_task_file_quotes_filename(self):
+        task_file = TaskFile.objects.create(
+            filename='Gazette, 12.pdf',
+            mime_type='application/pdf',
+            size=4,
+        )
+        task = Task.objects.create(
+            title='Test title',
+            country_id=1,
+            created_by_user_id=1,
+            input_file=task_file,
+        )
+        task_file.file = ContentFile(b'test', name='Gazette, 12.pdf')
+        task_file.save()
+
+        response = self.app.get(f'/places/za/tasks/{task.pk}/input-file')
+
+        self.assertEqual(
+            response['Content-Disposition'],
+            'attachment; filename="Gazette, 12.pdf"',
+        )
 
     def test_edit_task_with_work(self):
         task = Task.objects.create(

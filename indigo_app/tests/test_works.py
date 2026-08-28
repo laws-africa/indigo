@@ -658,3 +658,14 @@ class WorksWebTest(WebTest):
         work.main_commencement.delete()
         work.refresh_from_db()
         self.assertIsNone(work.main_commencement)
+
+    def test_delete_work_commencement_clears_main_commencement(self):
+        work = Work.objects.get(pk=1)
+        commencement = work.main_commencement
+
+        response = self.client.post(f'/works{work.frbr_uri}/commencements/{commencement.id}', {'delete': ''})
+
+        self.assertRedirects(response, f'/works{work.frbr_uri}/commencements/', fetch_redirect_response=False)
+        self.assertFalse(Commencement.objects.filter(pk=commencement.pk).exists())
+        work.refresh_from_db()
+        self.assertIsNone(work.main_commencement)

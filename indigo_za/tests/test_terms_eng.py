@@ -64,6 +64,34 @@ class TermsFinderENGTestCase(APITestCase):
   
 ''', etree.tostring(doc.doc.body, pretty_print=True).decode('utf-8'))
 
+    def test_link_terms_in_element_uses_full_definitions_and_leaves_siblings(self):
+        doc = Document(work=self.work, content=document_fixture(xml="""
+<section eId="sec_1">
+  <num>1.</num>
+  <heading>Definitions</heading>
+  <content><p eId="sec_1__p_1">“<def refersTo="#term-board">board</def>” means the board.</p></content>
+</section>
+<section eId="sec_2">
+  <num>2.</num>
+  <content><p eId="sec_2__p_1">The board must meet.</p></content>
+</section>
+<section eId="sec_3">
+  <num>3.</num>
+  <content><p eId="sec_3__p_1">The board must report.</p></content>
+</section>
+"""))
+        root = etree.fromstring(doc.content.encode('utf-8'))
+        target = root.xpath('//*[@eId="sec_2"]')[0]
+        sibling = root.xpath('//*[@eId="sec_3"]')[0]
+
+        self.finder.link_terms_in_element(root, target)
+
+        self.assertEqual(
+            ['board'],
+            target.xpath('.//a:term/text()', namespaces={'a': root.nsmap[None]}),
+        )
+        self.assertFalse(sibling.xpath('.//a:term', namespaces={'a': root.nsmap[None]}))
+
     def test_find_no_heading(self):
         doc = Document(work=self.work, content=document_fixture(xml="""
 <section eId="sec_1">

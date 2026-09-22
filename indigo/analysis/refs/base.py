@@ -1,69 +1,39 @@
-from lxml import etree
 import re
 
 from django.conf import settings
 
 from docpipe.citations import ActNoOfYearMatcher, ActYearNumberMatcher
 from docpipe.matchers import CitationMatcher, ExtractedMatch
-from indigo.analysis.markup import TextPatternMarker
 from indigo.analysis.matchers import DocumentPatternMatcherMixin
-from indigo.plugins import LocaleBasedMatcher, plugins
+from indigo.plugins import plugins
 from indigo_api.models import Subtype, Work, Country
 
 
 def markup_document_refs(document):
-    # TODO: this is old and should be retired
-    finder = plugins.for_document('refs', document)
-    if finder:
-        finder.find_references_in_document(document)
+    """Markup references throughout an Indigo Document."""
+    markup_refs(document)
 
-    # new mechanism for calling locale-based matchers based on DocumentPatternMatcher
+
+def markup_element_refs(document, element):
+    """Markup references only inside ``element``, using its full tree as context.
+
+    The editable etree element should be attached at its correct position in a
+    complete document tree when internal references need surrounding structural
+    context. The Indigo Document is used for locale, FRBR URI and remote-work
+    lookups, but its content is not changed.
+    """
+    markup_refs(document, element)
+
+
+def markup_refs(document, element=None):
+    """Run the configured reference plugins in order."""
     for plugin_type in settings.INDIGO['LINK_REFERENCES_PLUGINS']:
         matcher = plugins.for_document(plugin_type, document)
         if matcher:
-            matcher.markup_document_matches(document)
-
-
-class BaseRefsFinder(LocaleBasedMatcher, TextPatternMarker):
-    """ Finds references to Acts in documents.
-    """
-    marker_tag = 'ref'
-
-    def find_references_in_document(self, document):
-        """ Find references in +document+, which is an Indigo Document object.
-        """
-        # we need to use etree, not objectify, so we can't use document.doc.root,
-        # we have to re-parse it
-        root = etree.fromstring(document.content.encode('utf-8'))
-        self.document = document
-        self.frbr_uri = document.doc.frbr_uri
-        self.setup(root)
-        self.markup_patterns(root)
-        document.content = etree.tostring(root, encoding='unicode')
-
-    def is_valid(self, node, match):
-        if self.make_href(match) != self.frbr_uri.work_uri():
-            return True
-
-    def markup_match(self, node, match):
-        """ Markup the match with a ref tag. The first group in the match is substituted with the ref.
-        """
-        ref = etree.Element(self.marker_tag)
-        ref.text = match.group('ref')
-        ref.set('href', self.make_href(match))
-        return ref, match.start('ref'), match.end('ref')
-
-    def make_href(self, match):
-        """ Turn this match into a full FRBR URI href.
-            Check for an existing Act with that FRBR URI in the locality first; default to national (may or may not exist).
-        """
-        link_uri = f"/akn/{self.frbr_uri.country}/act/{match.group('year')}/{match.group('num')}"
-        if self.frbr_uri.locality:
-            local = f"/akn/{self.frbr_uri.country}-{self.frbr_uri.locality}/act/{match.group('year')}/{match.group('num')}"
-            if Work.objects.filter(frbr_uri=local).exists():
-                link_uri = local
-
-        return link_uri
+            if element is None:
+                matcher.markup_document_matches(document)
+            else:
+                matcher.markup_element_matches(document, element)
 
 
 class ActNumberCitationMatcher(DocumentPatternMatcherMixin, ActNoOfYearMatcher):

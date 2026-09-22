@@ -1,4 +1,5 @@
 import unittest.util
+from types import SimpleNamespace
 from unittest.mock import patch
 
 from django.test import TestCase
@@ -467,6 +468,31 @@ class ProvisionRefsMatcherTestCase(TestCase):
             expected.to_xml(encoding='unicode'),
             etree.tostring(actual, encoding='unicode')
         )
+
+    def test_markup_element_uses_full_tree_context_without_touching_siblings(self):
+        doc = AkomaNtosoDocument(document_fixture(xml="""
+            <section eId="sec_1">
+              <num>1.</num>
+              <content><p>See section 2.</p></content>
+            </section>
+            <section eId="sec_2">
+              <num>2.</num>
+              <content><p>See section 1.</p></content>
+            </section>
+        """))
+        root = etree.fromstring(doc.to_xml())
+        target = root.xpath('//*[@eId="sec_1"]')[0]
+        sibling = root.xpath('//*[@eId="sec_2"]')[0]
+        document = SimpleNamespace(doc=SimpleNamespace(frbr_uri=self.frbr_uri))
+
+        finder = ProvisionRefsFinderENG()
+        finder.markup_element_matches(document, target)
+
+        self.assertEqual(
+            ['#sec_2'],
+            target.xpath('.//a:ref/@href', namespaces={'a': doc.namespace}),
+        )
+        self.assertFalse(sibling.xpath('.//a:ref', namespaces={'a': doc.namespace}))
 
     def test_local_sections_explicit_this_target(self):
         doc = AkomaNtosoDocument(document_fixture(xml="""

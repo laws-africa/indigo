@@ -40,7 +40,7 @@ jobs:
     - name: Install LibreOffice
       run: |
         sudo apt-get update
-        sudo apt-get install -y libreoffice
+        sudo apt-get install -y libreoffice poppler-utils
 
     - name: Install binary dependencies
       run: |

@@ -6,8 +6,8 @@ from django.test import TestCase
 from cobalt import FrbrUri
 from docpipe.matchers import ExtractedCitation
 
-from indigo.analysis.refs.base import SubtypeNumberCitationMatcherENG, RefsFinderCapENG, ActNumberCitationMatcherFRA, \
-    ActNumberCitationMatcherAFR, ActNumberCitationMatcherGH
+from indigo.analysis.refs.base import SubtypeNumberCitationMatcherENG, RefsFinderCapENG, \
+    ActNumberCitationMatcherFRA, ActNumberCitationMatcherAFR, ActNumberCitationMatcherGH
 
 from indigo_api.models import Document, Language, Work, Country, User
 from indigo_api.tests.fixtures import document_fixture

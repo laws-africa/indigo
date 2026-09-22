@@ -14,3 +14,21 @@ class DocumentPatternMatcherMixin(LocaleBasedMatcher):
         root = etree.fromstring(document.content.encode('utf-8'))
         self.markup_xml_matches(document.doc.frbr_uri, root)
         document.content = etree.tostring(root, encoding='unicode')
+
+    def markup_element_matches(self, document, element):
+        """Markup matches only inside ``element``.
+
+        ``element`` must be an editable etree element and may be attached to a
+        larger XML tree. This lets matchers inspect its ancestors and siblings
+        while limiting candidate text to the supplied subtree. Unlike
+        :meth:`markup_document_matches`, this method does not update
+        ``document.content``.
+        """
+        ancestor_xpath = self.xml_ancestor_xpath
+        try:
+            # TextPatternMatcher normally anchors XML matching at body-like
+            # elements. For a scoped run, the supplied element is the anchor.
+            self.xml_ancestor_xpath = None
+            self.markup_xml_matches(document.doc.frbr_uri, element)
+        finally:
+            self.xml_ancestor_xpath = ancestor_xpath

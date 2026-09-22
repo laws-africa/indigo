@@ -60,11 +60,27 @@ class BaseTermsFinder(LocaleBasedMatcher):
         """ Passively link defined terms in a Document while editing in provision mode.
         """
         root = etree.fromstring(document.doc.to_xml(encoding='unicode'))
+        self.link_terms(root)
+        document.content = etree.tostring(root, encoding='unicode')
+
+    def link_terms_in_element(self, root, element):
+        """Passively link terms only inside ``element``.
+
+        Definitions are discovered in the complete editable etree ``root``.
+        ``element`` should be attached to that tree so definition-scope checks
+        retain their normal structural context.
+        """
+        self.link_terms(root, element)
+
+    def link_terms(self, root, element=None):
+        """Link existing definitions throughout ``root`` or in one element."""
         self.setup(root)
         terms = self.find_definitions(root)
-        self.find_term_references(root, terms)
+        target = element if element is not None else root
+        self.find_term_references(target, terms, element is not None)
+        # Renumber against the complete contextual tree to preserve globally
+        # consistent eIds, even when only one subtree received new term nodes.
         self.renumber_terms(root)
-        document.content = etree.tostring(root, encoding='unicode')
 
     def setup(self, doc):
         self.ns = doc.nsmap[None]
@@ -214,7 +230,7 @@ class BaseTermsFinder(LocaleBasedMatcher):
             ref = ref[5:]
         elem.set('href', self.ontology_template.format(language=self.language, term=ref))
 
-    def find_term_references(self, doc, terms):
+    def find_term_references(self, doc, terms, element_scoped=False):
         """ Find and decorate references to terms in the document.
         The +terms+ param is a dict from term_id to actual term.
         """
@@ -246,7 +262,8 @@ class BaseTermsFinder(LocaleBasedMatcher):
                 if ancestor.get('refersTo'):
                     return ancestor.get('refersTo') == term_id
 
-        for candidate in self.text_xpath(doc):
+        text_nodes = doc.xpath('.//text()') if element_scoped else self.text_xpath(doc)
+        for candidate in text_nodes:
             node = candidate.getparent()
 
             # skip if we're already inside a def or term element

@@ -37,7 +37,6 @@ topic. The following plugin topics are understood by Indigo:
 
 * ``importer`` plugins import text from documents and mark them up with Akoma Ntoso. Usually extend :class:`indigo_api.importers.base.Importer`.
 * ``publications`` plugins provide publication documents for works. Usually extend :class:`indigo.analysis.publications.base.BasePublicationFinder`.
-* ``refs`` plugins automatically identify and markup references between works in the text of a document. Usually extend :class:`indigo.analysis.refs.base.BaseRefsFinder`.
 * ``terms`` plugins automatically identify and markup defined terms in document markup. Usually extend :class:`indigo.analysis.terms.base.BaseTermsFinder`.
 * ``toc`` plugins return a Table of Contents from document markup. Usually extend :class:`indigo.analysis.toc.base.TOCBuilderBase`.
 * ``work-detail`` plugins return tradition-specific information for a work, such as numbered titles. Usually extend :class:`indigo.analysis.work_detail.base.BaseWorkDetail`.
@@ -52,6 +51,8 @@ Register a plugin using ``plugins.register(topic)`` and include a ``locale`` tha
     class CustomisedWorkDetail(BaseWorkDetail):
         locale = ('za', 'afr', None)
         ...
+
+* Reference matcher plugins automatically identify and markup references between works in the text of a document. Each matcher registers a distinct plugin topic which is listed in ``INDIGO['LINK_REFERENCES_PLUGINS']``. They usually combine :class:`indigo.analysis.matchers.DocumentPatternMatcherMixin` with ``docpipe.matchers.CitationMatcher``.
 
 Fetching a plugin
 -----------------
@@ -123,7 +124,7 @@ Plugin API reference
 .. autoclass:: indigo.analysis.publications.base.BasePublicationFinder
     :members:
 
-.. autoclass:: indigo.analysis.refs.base.BaseRefsFinder
+.. autoclass:: indigo.analysis.matchers.DocumentPatternMatcherMixin
     :members:
 
 .. autoclass:: indigo.analysis.terms.base.BaseTermsFinder

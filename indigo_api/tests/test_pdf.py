@@ -11,8 +11,8 @@ from lxml import etree
 
 from cobalt.hierarchical import Act
 from indigo.xmlutils import canonical_xml as canonicalize_xml
-from indigo_api.exporters import PDFExporter
-from indigo_api.models import Document, Work, Language
+from indigo_api.exporters import HTMLExporter, PDFExporter
+from indigo_api.models import Document, Work, Language, Locality
 from indigo_api.pdf import run_fop
 
 
@@ -35,6 +35,36 @@ class PDFExporterTestCase(TestCase):
 
     def assertXmlEqual(self, expected, actual):
         self.assertMultiLineEqual(self.canonical_xml(expected), self.canonical_xml(actual))
+
+    def test_document_notice_uses_the_work_place_on_html_and_pdf_coverpages(self):
+        self.work.country.settings.document_notice = 'Country & <notice>\nSecond line'
+        self.work.country.settings.save()
+        locality = Locality.objects.get(country=self.work.country, code='cpt')
+        locality.settings.document_notice = 'Locality notice'
+        locality.settings.save()
+        self.work.disclaimer = 'Work disclaimer'
+
+        html = HTMLExporter().render_coverpage(self.document)
+        self.assertIn('Country &amp; &lt;notice&gt;<br>Second line', html)
+        self.assertNotIn('Locality notice', html)
+        self.assertIn('Work disclaimer', html)
+
+        self.work.locality = locality
+        html = HTMLExporter().render_coverpage(self.document)
+        self.assertIn('Locality notice', html)
+        self.assertNotIn('Country &amp; &lt;notice&gt;', html)
+
+        coverpage = self.exporter.html_to_xml(self.exporter.render_coverpage(self.document))
+        coverpage_text = ' '.join(coverpage.itertext())
+        self.assertIn('Locality notice', coverpage_text)
+        self.assertNotIn('Country & <notice>', coverpage_text)
+        self.assertIn('Work disclaimer', coverpage_text)
+
+        locality.settings.document_notice = ''
+        locality.settings.save()
+        html = HTMLExporter().render_coverpage(self.document)
+        self.assertNotIn('Locality notice', html)
+        self.assertNotIn('Country &amp; &lt;notice&gt;', html)
 
     def render_frontmatter(self, notices):
         self.document.expression_date = '2025-10-03'

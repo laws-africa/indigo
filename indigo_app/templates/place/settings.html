@@ -66,6 +66,19 @@
         </div>
 
         <div class="mb-3">
+          <label for="{{ form.document_notice.id_for_label }}">{{ form.document_notice.label }}</label>
+          <textarea class="form-control" name="{{ form.document_notice.html_name }}" id="{{ form.document_notice.id_for_label }}" rows="3">{{ form.document_notice.value|default:'' }}</textarea>
+          <p class="form-text text-muted">{% trans "Shown on the HTML and PDF cover page of every document in this place." %}</p>
+          {% if form.document_notice.errors %}
+            <div class="text-danger">
+              {% for error in form.document_notice.errors %}
+                <p>{{ error }}</p>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+
+        <div class="mb-3">
           <label for="{{ form.consolidation_note.id_for_label }}">{{ form.consolidation_note.label }}</label>
           <input type="text" class="form-control" name="{{ form.consolidation_note.html_name }}" id="{{ form.consolidation_note.id_for_label }}" value="{{ form.consolidation_note.value|default:'' }}">
           <p class="form-text text-muted">{% trans "The text to display on a document's coverpage when it's part of a consolidation." %}</p>

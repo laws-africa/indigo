@@ -94,6 +94,14 @@
         {% endwith %}
       {% endblock %}
 
+      {% block document_notice %}
+        {% with document.work.place.settings.document_notice as notice %}
+          {% if notice %}
+            <li class="verification-notice">[{{ notice|linebreaksbr }}]</li>
+          {% endif %}
+        {% endwith %}
+      {% endblock %}
+
       {% block consolidation_note %}
         {% with document.work.consolidation_note as consolidation_note %}
           {% if consolidation_note %}

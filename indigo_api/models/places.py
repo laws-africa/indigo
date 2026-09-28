@@ -257,6 +257,8 @@ class PlaceSettings(models.Model):
     as_at_date = models.DateField(_("as-at date"), null=True, blank=True)
     styleguide_url = models.URLField(_("styleguide URL"), null=True, blank=True)
     consolidation_note = models.CharField(_("consolidation note"), max_length=1024, null=True, blank=True)
+    document_notice = models.TextField(_("document notice"), blank=True, default='',
+                                       help_text=_("Notice shown on every document in this place"))
     no_publication_document_text = models.CharField(
         _("'No publication document' text"), max_length=1024, null=False, blank=True,
         default=_("Note: The original publication document is not available and this content could not be verified."))

@@ -90,4 +90,26 @@ case is penal code important
         self.matcher.extract_text_matches(FrbrUri.parse("/akn/xx/act/2020/1"), "hi")
         self.assertEqual([], self.matcher.citations)
 
+    def test_aliases_with_quotes_and_regex_punctuation(self):
+        aliases = ["King's Regulation", 'The "Blue" Act', 'King\'s "Blue" Act', 'A.B Code']
+        alias_map = {alias: "/akn/ke/act/2009/1" for alias in aliases}
+        self.matcher.aliases = {"ke": alias_map}
 
+        self.matcher.extract_text_matches(self.frbr_uri, ' | '.join(aliases) + ' | A-B Code')
+        self.assertEqual(aliases, [citation.text for citation in self.matcher.citations])
+
+        for markup, marker in (("xml", "ref"), ("html", "a")):
+            with self.subTest(markup=markup):
+                if markup == "xml":
+                    root = etree.fromstring('<body xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0"><p/></body>')
+                    paragraph = root[0]
+                else:
+                    root = lxml_html.fromstring('<div><p/></div>')
+                    paragraph = root[0]
+                paragraph.text = ' | '.join(aliases) + ' | A-B Code'
+
+                self.matcher.aliases = {"ke": alias_map}
+                getattr(self.matcher, f'markup_{markup}_matches')(self.frbr_uri, root)
+
+                self.assertEqual(aliases, [node.text for node in root.iter() if etree.QName(node).localname == marker])
+                self.assertIn('A-B Code', ''.join(root.itertext()))

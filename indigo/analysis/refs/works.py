@@ -10,6 +10,15 @@ from indigo_api.models import Country, Work, WorkAlias
 from indigo_api.models.citations import CitationAlias
 
 
+def _xpath_literal(value):
+    """Represent a string as an XPath 1.0 literal."""
+    if "'" not in value:
+        return f"'{value}'"
+    if '"' not in value:
+        return f'"{value}"'
+    return 'concat(' + ', "\'", '.join(f"'{part}'" for part in value.split("'")) + ')'
+
+
 class CommonTitlesCitationMatcher(DocumentPatternMatcherMixin, CitationMatcher):
     """Finds references to works based "the XXX Act" patterns. """
     # only supports English
@@ -119,10 +128,10 @@ class AliasCitationMatcher(DocumentPatternMatcherMixin, CitationMatcher):
         if self.aliases:
             # sort longest first
             titles = sorted(self.aliases.keys(), key=lambda x: -len(x))
-            self.pattern_re = re.compile(r"\b(" + "|".join(titles) + r")\b")
+            self.pattern_re = re.compile(r"\b(" + "|".join(re.escape(title) for title in titles) + r")\b")
 
             if self.candidate_xpath:
-                patterns = ' or '.join([f"contains(., '{title}')" for title in titles])
+                patterns = ' or '.join(f"contains(., {_xpath_literal(title)})" for title in titles)
                 self.candidate_xpath = self.candidate_xpath.replace('ALIASES', patterns)
 
         super().setup(frbr_uri, text, root)

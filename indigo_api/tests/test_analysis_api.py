@@ -19,6 +19,16 @@ class AnalysisTestCase(APITestCase):
         })
         self.assertEqual(response.status_code, 400)
 
+    def test_link_terms_missing_provision(self):
+        response = self.client.post('/api/documents/1/analysis/link-terms', {
+            'xml': portion_fixture('updated provision'),
+            'language': 'eng',
+            'provision_eid': 'sec_missing',
+        })
+
+        self.assertEqual(response.status_code, 400)
+        self.assertIn('provision_eid', response.data)
+
     def test_link_terms(self):
         response = self.client.post('/api/documents/1/analysis/link-terms', {
             'xml': document_fixture(xml="""

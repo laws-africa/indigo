@@ -98,6 +98,32 @@ class DocumentAPITest(APITestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn('<p>in γνωρίζω body</p>', response.data['content'])
 
+    def test_update_provision_content(self):
+        response = self.client.patch('/api/documents/1', {
+            'content': portion_fixture('updated provision'),
+            'provision_eid': 'sec_1',
+        })
+
+        self.assertEqual(response.status_code, 200)
+        content = self.client.get('/api/documents/1/content').data['content']
+        self.assertIn('>updated provision</p>', content)
+
+    def test_update_missing_provision_does_not_change_document(self):
+        document = Document.objects.get(pk=1)
+        original_xml = document.document_xml
+        original_updated_at = document.updated_at
+
+        response = self.client.patch('/api/documents/1', {
+            'content': portion_fixture('updated provision'),
+            'provision_eid': 'sec_missing',
+        })
+
+        self.assertEqual(response.status_code, 400)
+        self.assertIn('provision_eid', response.data)
+        document.refresh_from_db()
+        self.assertEqual(document.document_xml, original_xml)
+        self.assertEqual(document.updated_at, original_updated_at)
+
     def test_update_with_matching_expected_updated_at(self):
         document = self.client.get('/api/documents/1').data
 

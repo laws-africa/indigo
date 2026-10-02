@@ -120,10 +120,12 @@ class TaskBroker:
             if publication_document.trusted_url:
                 input_file.url = publication_document.trusted_url
                 self.save_input_file_using_publication_document_info(input_file, task, publication_document)
-            elif publication_document.file:
-                # make a copy of the publication document's file, since the task form can be edited and the file deleted
-                input_file.file = File(publication_document.file, name=publication_document.filename)
-                self.save_input_file_using_publication_document_info(input_file, task, publication_document)
+            else:
+                publication_file = publication_document.get_file()
+                if publication_file:
+                    # make a copy since the task form can be edited and the file deleted
+                    input_file.file = File(publication_file, name=publication_document.filename)
+                    self.save_input_file_using_publication_document_info(input_file, task, publication_document)
             task.input_file = input_file
             task.save()
 

@@ -9,6 +9,7 @@ from rest_framework.test import APITestCase
 from indigo_api.exporters import PDFExporter
 from indigo_api.models import Country, Language, Work
 from indigo_app.tests.utils import TEST_STORAGES
+from indigo_content_api.v2.serializers import PublicationDocumentSerializer
 from languages_plus.models import Language as MasterLanguage
 
 
@@ -571,6 +572,19 @@ class ContentAPIV2TestMixin:
                      f'http://{self.api_host}{self.api_path}/akn/za/act/2014/10/media/publication/za-act-2014-10-publication-document.pdf')
         self.assertFalse(response.data['publication_document']['has_trusted_url'])
         self.assertIsNone(response.data['publication_document']['start_page'])
+
+    def test_published_publication_document_null_trusted_url_is_false(self):
+        work = Work.objects.get(frbr_uri='/akn/za/act/2014/10')
+        publication_document = work.publication_document
+        publication_document.trusted_url = None
+        publication_document.save(update_fields=['trusted_url'])
+
+        self.assertIs(
+            PublicationDocumentSerializer().get_has_trusted_url(
+                publication_document,
+            ),
+            False,
+        )
 
     def test_published_work_before_1900(self):
         response = self.client.get(self.api_path + '/akn/za/act/1880/1.html')

@@ -66,7 +66,8 @@ def retrieve_profile_photo_on_signup(sender, **kwargs):
     try:
         user_social_account = SocialAccount.objects.get(user=user, provider='google')
         url = user_social_account.extra_data.get('picture')
-        retrieve_social_profile_photo(user.userprofile, url)
+        if url:
+            retrieve_social_profile_photo(user.userprofile, url)
 
     except (SocialAccount.DoesNotExist, UserProfile.DoesNotExist):
         pass

@@ -1,9 +1,13 @@
+import datetime
+import shutil
+from unittest import skipUnless
+
 from django.test import override_settings
 from django.contrib.auth.models import User
 from django.core.files.base import ContentFile
 from django_webtest import WebTest
 
-from indigo_api.models import Task, TaskFile, Work
+from indigo_api.models import Document, Task, TaskFile, Work
 from indigo_app.tests.utils import TEST_STORAGES
 
 
@@ -13,6 +17,53 @@ class TasksTest(WebTest):
 
     def setUp(self):
         self.app.set_user(User.objects.get(username='email@example.com'))
+
+    @skipUnless(shutil.which('soffice'), 'LibreOffice is required for RTF conversion')
+    def test_conversion_task_imports_rtf_through_shared_importer(self):
+        work = Work.objects.get(frbr_uri='/akn/za/act/2014/10')
+        user = User.objects.get(username='email@example.com')
+        source = (b'{\\rtf1\\ansi\\deff0{\\fonttbl{\\f0 Arial;}}'
+                  b'\\f0\\fs24 TEST ACT\\par 1. Short title\\par'
+                  b'This Act may be cited as the Test Act.\\par}')
+        output = TaskFile.objects.create(
+            filename='example.rtf', mime_type='text/rtf', size=len(source),
+        )
+        task = Task.objects.create(
+            title='Convert document', country=work.country, work=work,
+            code='convert-document', timeline_date=datetime.date(2001, 1, 1),
+            output_file=output, created_by_user=user,
+        )
+        output.file = ContentFile(source, name='example.rtf')
+        output.save()
+
+        task.finish(user)
+
+        doc = Document.objects.get(work=work, expression_date=datetime.date(2001, 1, 1))
+        self.assertIn('Short title', doc.content)
+        self.assertEqual({a.filename for a in doc.attachments.all()}, {'example.rtf', 'example.docx'})
+
+    def test_failed_rtf_conversion_keeps_task_open_and_shows_error(self):
+        work = Work.objects.get(frbr_uri='/akn/za/act/2014/10')
+        user = User.objects.get(username='email@example.com')
+        source = b'not an RTF file'
+        output = TaskFile.objects.create(
+            filename='example.rtf', mime_type='application/rtf', size=len(source),
+        )
+        task = Task.objects.create(
+            title='Convert document', country=work.country, work=work,
+            code='convert-document', timeline_date=datetime.date(2001, 1, 1),
+            output_file=output, created_by_user=user,
+        )
+        output.file = ContentFile(source, name='example.rtf')
+        output.save()
+
+        self.client.force_login(user)
+        response = self.client.post(f'/places/za/tasks/{task.pk}/finish', follow=True)
+
+        self.assertContains(response, 'valid RTF file')
+        task.refresh_from_db()
+        self.assertEqual(task.state, 'open')
+        self.assertFalse(Document.objects.filter(work=work, expression_date=datetime.date(2001, 1, 1)).exists())
 
     def test_create_task(self):
         form = self.app.get('/places/za/tasks/new').forms['task-form']

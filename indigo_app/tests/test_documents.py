@@ -1,8 +1,13 @@
 import os
+import shutil
 import tempfile
 import datetime
+from unittest import skipUnless
+from unittest.mock import patch
 
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import testcases, override_settings
+from docpipe.soffice import SOfficeError
 from lxml import etree
 
 from indigo_api.importers.pdfs import pdf_count_pages
@@ -72,6 +77,46 @@ class DocumentViewsTest(testcases.TestCase):
         self.assertEqual(doc.draft, True)
         self.assertIn('accreditation', doc.content, msg='"accreditation" missing')
         self.assertEqual(len(doc.attachments.all()), 2)
+
+    @skipUnless(shutil.which('soffice'), 'LibreOffice is required for RTF conversion')
+    def test_create_from_rtf(self):
+        work = Work.objects.get_for_frbr_uri('/akn/za/act/2014/10')
+        source = (b'{\\rtf1\\ansi\\deff0{\\fonttbl{\\f0 Arial;}}'
+                  b'\\f0\\fs24 TEST ACT\\par 1. Short title\\par'
+                  b'This Act may be cited as the Test Act.\\par}')
+        upload = SimpleUploadedFile('example.rtf', source, content_type='text/rtf')
+
+        response = self.client.post('/works/akn/za/act/2014/10/import/', {
+            'file': upload,
+            'expression_date': '2001-01-01',
+            'language': '1',
+        })
+        self.assertEqual(response.status_code, 200)
+
+        doc = work.expressions().get(expression_date=datetime.date(2001, 1, 1))
+        self.assertIn('Short title', doc.content)
+        self.assertNotIn('\\rtf1', doc.content)
+        attachments = {a.filename: a.mime_type for a in doc.attachments.all()}
+        self.assertEqual(attachments, {
+            'example.rtf': 'application/rtf',
+            'example.docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        })
+
+    def test_rtf_conversion_failure_does_not_create_a_document(self):
+        work = Work.objects.get_for_frbr_uri('/akn/za/act/2014/10')
+        prior_count = work.expressions().count()
+        upload = SimpleUploadedFile('example.rtf', b'{\\rtf1 broken}', content_type='text/rtf')
+
+        with patch('indigo_api.importers.base.soffice_convert', side_effect=SOfficeError('failed')):
+            response = self.client.post('/works/akn/za/act/2014/10/import/', {
+                'file': upload,
+                'expression_date': '2001-01-01',
+                'language': '1',
+            })
+
+        self.assertEqual(response.status_code, 400)
+        self.assertIn('Could not convert this RTF file to DOCX', response.json()['file'])
+        self.assertEqual(work.expressions().count(), prior_count)
 
     def test_create_from_file(self):
         work = Work.objects.get_for_frbr_uri('/akn/za/act/1998/2')

@@ -19,6 +19,7 @@ from cobalt import StructuredDocument, FrbrUri
 from cobalt.akn import AKN_NAMESPACES, DEFAULT_VERSION
 from indigo_api.models import Document, Attachment, Annotation, DocumentActivity, DocumentEditLease, Work, Amendment, Language, \
     PublicationDocument, Task, Commencement
+from indigo_api.models.documents import ProvisionNotFound
 from indigo_api.exceptions import DocumentChanged, EditLeaseLost
 from indigo_api.signals import document_published
 
@@ -455,7 +456,10 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
         if content is not None:
             if provision_eid:
                 # this will reset the XML on the document
-                document.update_provision_xml(provision_eid, content)
+                try:
+                    document.update_provision_xml(provision_eid, content)
+                except ProvisionNotFound as exc:
+                    raise ValidationError({'provision_eid': str(exc)}) from exc
             else:
                 document.reset_xml(content, from_model=True)
 
@@ -534,7 +538,10 @@ class DocumentAPISerializer(serializers.Serializer):
             if self.use_full_xml:
                 # we'll need the document's full XML for the analysis,
                 # but update the relevant provision with what's in the editor first
-                document.update_provision_xml(provision_eid, xml)
+                try:
+                    document.update_provision_xml(provision_eid, xml)
+                except ProvisionNotFound as exc:
+                    raise ValidationError({'provision_eid': str(exc)}) from exc
             else:
                 # update the document to be a 'portion' and use only what's in the editor as the content
                 document.work.work_uri.doctype = 'portion'

@@ -35,6 +35,15 @@ class DocumentTestCase(TestCase):
         self.assertEqual(d.country, 'za')
         self.assertEqual(d.doc.publication_date, date(2005, 7, 24))
 
+    def test_update_missing_provision_raises_clear_error(self):
+        document = Document.objects.get(pk=1)
+        original_xml = document.doc.to_xml(encoding='unicode')
+
+        with self.assertRaisesRegex(ValueError, "No provision with eId 'sec_missing' found"):
+            document.update_provision_xml('sec_missing', portion_fixture('updated provision'))
+
+        self.assertEqual(document.doc.to_xml(encoding='unicode'), original_xml)
+
     def test_expression_date(self):
         d = Document(work=self.work)
         d.content = document_fixture('test')

@@ -17,7 +17,7 @@
     {% if forloop.counter > 1 %}<hr>{% endif %}
     <div class="row align-items-center">
       <div class="col">
-        {% if form.commencing_work.value and not form.clear_commencing_work.value %}
+        {% if form.commencing_work_obj.frbr_uri and not form.clear_commencing_work.value %}
           <div class="mt-2">
             <a href="{% url 'work' form.commencing_work_obj.frbr_uri %}" target="_blank">{{ form.commencing_work_obj.title }}</a>
             <br>
@@ -46,7 +46,7 @@
               data-bs-toggle="modal"
               data-bs-target="#work-chooser-modal"
           >
-            {% if form.commencing_work.value and not form.clear_commencing_work.value %}
+            {% if form.commencing_work_obj.frbr_uri and not form.clear_commencing_work.value %}
               {% trans 'Change commencing work' %}
             {% else %}
               {% trans 'Choose commencing work' %}

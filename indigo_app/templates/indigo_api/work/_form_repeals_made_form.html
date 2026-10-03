@@ -6,9 +6,11 @@
     {% if forloop.counter > 1 %}<hr>{% endif %}
     <div class="row align-items-center ">
       <div class="col">
-        <a href="{% url 'work' form.repealed_work_obj.frbr_uri %}" target="_blank">{{ form.repealed_work_obj.title }}</a>
-        <br />
-        <span>{{ form.repealed_work_obj.frbr_uri }}</span>
+        {% if form.repealed_work_obj.frbr_uri %}
+          <a href="{% url 'work' form.repealed_work_obj.frbr_uri %}" target="_blank">{{ form.repealed_work_obj.title }}</a>
+          <br />
+          <span>{{ form.repealed_work_obj.frbr_uri }}</span>
+        {% endif %}
         {{ form.repealed_work.as_hidden }}
         {% if form.DELETE.value %}
           {{ form.DELETE.as_hidden }}

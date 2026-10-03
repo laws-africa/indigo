@@ -17,11 +17,11 @@
     {% if forloop.counter > 1 %}<hr>{% endif %}
     <div class="row align-items-center ">
       <div class="col">
-      {% if form.amending_work_obj == work %}
+      {% if form.amending_work_obj == work and form.amended_work_obj.frbr_uri %}
         <a href="{% url 'work' form.amended_work_obj.frbr_uri %}" target="_blank">{{ form.amended_work_obj.title }}</a>
         <br />
         <span>{{ form.amended_work_obj.frbr_uri }}</span>
-      {% elif form.amended_work_obj == work %}
+      {% elif form.amended_work_obj == work and form.amending_work_obj.frbr_uri %}
         <a href="{% url 'work' form.amending_work_obj.frbr_uri %}" target="_blank">{{ form.amending_work_obj.title }}</a>
         <br />
         <span>{{ form.amending_work_obj.frbr_uri }}</span>

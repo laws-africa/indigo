@@ -1,9 +1,14 @@
 import os
+import shutil
 from io import StringIO
+from unittest import skipUnless
+from unittest.mock import patch
 
 from cobalt import FrbrUri
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 from docpipe.pipeline import Pipeline, PipelineContext
+from docpipe.soffice import SOfficeError
 from lxml import etree
 
 from indigo.pipelines.base import ParseBluebellText, WrapAnnotations
@@ -30,6 +35,61 @@ class ImporterTestCase(TestCase):
             parse_page_nums(" 1-  ")
 
         self.assertEqual(parse_page_nums(" , ,  "), [])
+
+
+class ImporterRTFTestCase(TestCase):
+    fixtures = ['languages_data', 'countries', 'user', 'editor', 'taxonomy_topics', 'work', 'drafts']
+
+    def setUp(self):
+        self.importer = Importer()
+        self.doc = Document.objects.first()
+
+    def test_rtf_detection_by_mime_type_and_extension(self):
+        for name, content_type in [
+            ('example.rtf', 'text/rtf'),
+            ('example.rtf', 'application/octet-stream'),
+            ('example.RTF', 'application/octet-stream'),
+            ('example.bin', 'application/rtf'),
+            ('example.bin', 'application/x-rtf'),
+        ]:
+            with self.subTest(name=name, content_type=content_type):
+                upload = SimpleUploadedFile(name, b'{\\rtf1}', content_type=content_type)
+                with patch.object(self.importer, 'import_from_rtf') as import_rtf, \
+                        patch.object(self.importer, 'analyse_after_import'):
+                    self.importer.import_from_upload(upload, self.doc, None)
+                import_rtf.assert_called_once_with(upload, self.doc)
+
+    def test_invalid_rtf_is_rejected_before_conversion(self):
+        upload = SimpleUploadedFile('invalid.rtf', b'not an RTF', content_type='text/rtf')
+        with patch('indigo_api.importers.base.soffice_convert') as convert:
+            with self.assertRaisesRegex(ValueError, 'valid RTF'):
+                self.importer.import_from_upload(upload, self.doc, None)
+        convert.assert_not_called()
+        self.assertFalse(self.doc.attachments.exists())
+
+    def test_conversion_failure_is_a_clear_import_error(self):
+        upload = SimpleUploadedFile('invalid.rtf', b'{\\rtf1 broken}', content_type='text/rtf')
+        with patch('indigo_api.importers.base.soffice_convert', side_effect=SOfficeError('failed')):
+            with self.assertRaisesRegex(ValueError, 'Could not convert this RTF file to DOCX'):
+                self.importer.import_from_upload(upload, self.doc, None)
+        self.assertFalse(self.doc.attachments.exists())
+
+    @skipUnless(shutil.which('soffice'), 'LibreOffice is required for RTF conversion')
+    def test_import_rtf_via_docx_and_keep_both_files(self):
+        source = (b'{\\rtf1\\ansi\\deff0{\\fonttbl{\\f0 Arial;}}'
+                  b'\\f0\\fs24 TEST ACT\\par 1. Short title\\par'
+                  b'This Act may be cited as the Test Act.\\par}')
+        upload = SimpleUploadedFile('example.rtf', source, content_type='text/rtf')
+
+        self.importer.import_from_upload(upload, self.doc, None)
+
+        self.assertIn('Short title', self.doc.document_xml)
+        self.assertNotIn('\\rtf1', self.doc.document_xml)
+        attachments = {a.filename: a.mime_type for a in self.doc.attachments.all()}
+        self.assertEqual(attachments, {
+            'example.rtf': 'application/rtf',
+            'example.docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        })
 
 
 class ImporterBluebellTestCase(TestCase):

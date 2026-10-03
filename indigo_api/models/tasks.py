@@ -459,6 +459,7 @@ class Task(models.Model):
             if document.pk:
                 document.delete()
             log.error(f"Error during import: {e}", exc_info=e)
+            raise
 
         document.updated_by_user = user
         document.save_with_revision(user)

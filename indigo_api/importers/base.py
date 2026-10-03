@@ -1,12 +1,16 @@
 import logging
+import os
 import re
 import shutil
+import subprocess
 import tempfile
+from zipfile import BadZipFile, ZipFile
 
 from django.core.files.uploadedfile import UploadedFile
 from docpipe.html import parse_and_clean, TextToHtmlText, SplitPOnBr, RemoveEmptyParagraphs
 from docpipe.pdf import PdfToText
 from docpipe.pipeline import Pipeline, PipelineContext
+from docpipe.soffice import SOfficeError, soffice_convert
 
 import indigo.pipelines.html as html
 import indigo.pipelines.pdf as pdf
@@ -22,6 +26,7 @@ from indigo_api.importers.pipelines import text_cleanup, RemoveBoilerplate, Unbr
 from indigo_api.serializers import AttachmentSerializer
 
 DOCX_MIME_TYPE = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+RTF_MIME_TYPES = {'application/rtf', 'application/x-rtf', 'text/rtf'}
 
 
 class ImportContext(PipelineContext):
@@ -210,7 +215,14 @@ class Importer(LocaleBasedMatcher):
         """
         self.log.info("Processing upload: filename='%s', content type=%s" % (upload.name, upload.content_type))
 
-        if upload.content_type in ['text/xml', 'application/xml']:
+        content_type = (upload.content_type or '').split(';', 1)[0].strip().lower()
+        is_rtf = content_type in RTF_MIME_TYPES or upload.name.lower().endswith('.rtf')
+
+        if is_rtf:
+            self.log.info("Processing upload as an RTF file")
+            self.import_from_rtf(upload, doc)
+
+        elif upload.content_type in ['text/xml', 'application/xml']:
             self.log.info("Processing upload as an AKN XML file")
             self.import_from_xml(upload, doc)
 
@@ -234,6 +246,42 @@ class Importer(LocaleBasedMatcher):
 
         # TODO: make a pipeline?
         self.analyse_after_import(doc)
+
+    def import_from_rtf(self, upload, doc):
+        """ Convert RTF to DOCX and import through the existing DOCX pipeline.
+
+        Keep both the source RTF and the converted DOCX as attachments.
+        """
+        upload.seek(0)
+        header = upload.read(64)
+        upload.seek(0)
+        if not re.match(rb'^\s*\{\\rtf\d', header):
+            raise ValueError("This doesn't seem to be a valid RTF file.")
+
+        files = {}
+        try:
+            converted, files = soffice_convert(upload, 'rtf', 'docx')
+            converted.seek(0)
+            with ZipFile(converted) as archive:
+                if 'word/document.xml' not in archive.namelist():
+                    raise ValueError("LibreOffice did not produce a valid DOCX file.")
+
+            converted.seek(0, 2)
+            size = converted.tell()
+            converted.seek(0)
+            name = os.path.splitext(upload.name)[0] + '.docx'
+            docx_upload = UploadedFile(file=converted, name=name, size=size, content_type=DOCX_MIME_TYPE)
+            self.import_from_docx(docx_upload, doc)
+
+            upload.seek(0)
+            rtf_upload = UploadedFile(file=upload, name=upload.name, size=upload.size, content_type='application/rtf')
+            self.stash_attachment(rtf_upload, doc)
+        except (SOfficeError, subprocess.TimeoutExpired, FileNotFoundError, BadZipFile, KeyError) as e:
+            self.log.warning("Could not convert RTF upload %s: %s", upload.name, getattr(e, 'message', str(e)))
+            raise ValueError("Could not convert this RTF file to DOCX.") from e
+        finally:
+            for file in files.values():
+                file.close()
 
     def analyse_after_import(self, doc):
         """ Run analysis after first import.

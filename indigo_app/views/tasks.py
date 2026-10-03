@@ -401,21 +401,27 @@ class TaskChangeStateView(AtomicPostMixin, SingleTaskViewBase, View, SingleObjec
                 if not has_transition_perm(state_change, user):
                     raise PermissionDenied
 
-                if comment_text:
-                    comment = Comment(user=user, object_pk=task.id,
-                                      user_name=user.get_full_name() or user.username,
-                                      user_email=user.email,
-                                      comment=comment_text,
-                                      content_type=task_content_type,
-                                      site_id=get_current_site(request).id)
+                try:
+                    if comment_text:
+                        comment = Comment(user=user, object_pk=task.id,
+                                          user_name=user.get_full_name() or user.username,
+                                          user_email=user.email,
+                                          comment=comment_text,
+                                          content_type=task_content_type,
+                                          site_id=get_current_site(request).id)
 
-                    state_change(user, comment=comment.comment)
-                    # save the comment here so that it appears after the action
-                    comment.submit_date = now()
-                    comment.save()
+                        state_change(user, comment=comment.comment)
+                        # save the comment here so that it appears after the action
+                        comment.submit_date = now()
+                        comment.save()
 
-                else:
-                    state_change(user)
+                    else:
+                        state_change(user)
+                except ValueError as e:
+                    if change == 'finish' and task.code == 'convert-document':
+                        messages.error(request, str(e))
+                        return redirect(self.get_redirect_url())
+                    raise
 
                 if change == 'submit':
                     verb = _('submitted for review')

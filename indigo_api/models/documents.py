@@ -32,6 +32,10 @@ from indigo.xmlutils import rewrite_all_attachment_work_components
 log = logging.getLogger(__name__)
 
 
+class ProvisionNotFound(ValueError):
+    pass
+
+
 class DocumentManager(models.Manager):
     def get_queryset(self):
         # defer expensive or unnecessary fields
@@ -620,6 +624,8 @@ class Document(DocumentMixin, models.Model):
         # portionBody will always have exactly one child
         updated_provision = xml.xpath('a:portion/a:portionBody/a:*', namespaces={'a': self.doc.namespace})[0]
         old_provision = self.doc.get_portion_element(provision_eid)
+        if old_provision is None:
+            raise ProvisionNotFound(f"No provision with eId '{provision_eid}' found in this document.")
         old_provision.getparent().replace(old_provision, updated_provision)
         generator = XmlGenerator(self.frbr_uri)
         generator.generate_eids(self.doc.root)

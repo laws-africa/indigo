@@ -5,12 +5,14 @@ from unittest.mock import Mock, patch
 import reversion
 from django.contrib.auth.models import Permission, User
 from django.test import testcases, override_settings
+from django.template.loader import render_to_string
 from django_webtest import WebTest
 from webtest import Upload
 
 from indigo_api.models import Work, Commencement, Amendment, ArbitraryExpressionDate, Document
 from indigo_app.tests.utils import TEST_STORAGES
 from indigo_app.views.works import WorkFormAmendmentsView, WorkViewBase
+from indigo_app.forms.works import CommencementsBaseFormset
 
 
 @override_settings(STORAGES=TEST_STORAGES)
@@ -31,6 +33,32 @@ class WorksTest(testcases.TestCase):
         self.assertEqual(response.status_code, 200)
         response = self.client.get('/works/akn/za-cpt/act/2005/1/')
         self.assertEqual(response.status_code, 200)
+
+    def test_commencement_form_with_unusable_commencing_work_uri(self):
+        work = Work.objects.get(frbr_uri='/akn/za/act/2014/10')
+        user = User.objects.get(username='email@example.com')
+        commencing_work = Work.objects.exclude(pk=work.pk).first()
+        Work.objects.filter(pk=commencing_work.pk).update(frbr_uri='')
+
+        for commencing_work_id in ('999999999', str(commencing_work.pk)):
+            with self.subTest(commencing_work_id=commencing_work_id):
+                formset = CommencementsBaseFormset({
+                    'commencements-TOTAL_FORMS': '1',
+                    'commencements-INITIAL_FORMS': '0',
+                    'commencements-MIN_NUM_FORMS': '0',
+                    'commencements-MAX_NUM_FORMS': '1000',
+                    'commencements-0-commencing_work': commencing_work_id,
+                    'commencements-0-commenced_work': str(work.pk),
+                }, work=work, user=user,
+                    form_kwargs={'work': work, 'user': user},
+                    prefix='commencements')
+
+                html = render_to_string('indigo_api/work/_form_commencements_form.html', {
+                    'formset': formset, 'work': work, 'place': work.place, 'prefix': 'commencements',
+                })
+
+                self.assertIn('Choose commencing work', html)
+                self.assertIn(f'value="{commencing_work_id}"', html)
 
     def test_publication_document_start_page_on_detail_page(self):
         work = Work.objects.get(frbr_uri='/akn/za/act/2014/10')

@@ -45,8 +45,13 @@ log = logging.getLogger(__name__)
 
 
 def publication_document_response(publication_document):
-    """ Either return the publication document as a response, or redirect to the trusted URL.
-    """
+    """Return a publication document using a locale-specific resolver when available."""
+    resolver = plugins.for_work('publication-document-resolver', publication_document.work)
+    if resolver:
+        response = resolver.get_response(publication_document)
+        if response is not None:
+            return response
+
     if publication_document.trusted_url:
         return redirect(publication_document.trusted_url)
     return view_attachment(publication_document)

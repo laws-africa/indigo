@@ -88,8 +88,10 @@ class ParseBluebellText(Stage):
 
 
 class WrapAnnotations(Stage):
-    """ Wrap the content of <p>s that start with [ and end with ] (and have no ]s before the end)
-        in <remark status="editorial">s.
+    """Wrap standalone editorial annotations in <remark status="editorial">.
+
+    Also convert clearly identified, round-bracketed amendment notes to square
+    brackets. Other parenthesised text remains ordinary document text.
 
     Reads: context.xml
     Writes: context.xml
@@ -97,17 +99,45 @@ class WrapAnnotations(Stage):
 
     ns = AKN_NAMESPACES[DEFAULT_VERSION]
     annotation_re = re.compile(r'^\[[^]]+\]$')
+    amendment_re = re.compile(
+        r'^\((?:Sections?|Regulations?|Rules?|Schedules?|Chapters?|Parts?|'
+        r'Definition of|Words preceding|Portion preceding|Closing phrase of|'
+        r'Long title|Heading|Proviso)\b'
+        r'.+\b(?:amended|substituted|inserted|added|deleted|repealed|renumbered)\b'
+        r'.*\bby\s+.+\b(?:(?:Act|Notice|Proclamation)\b|Proc\.).+\)$'
+    )
+
+    @staticmethod
+    def replace_outer_brackets(elem):
+        """Replace the first and last text characters without losing inline tags."""
+        nodes = elem.xpath('.//text()')
+        first, last = nodes[0], nodes[-1]
+        first_parent = first.getparent()
+        first_value = first_parent.tail if first.is_tail else first_parent.text
+        if first.is_tail:
+            first_parent.tail = '[' + first_value[1:]
+        else:
+            first_parent.text = '[' + first_value[1:]
+
+        last_parent = last.getparent()
+        last_value = last_parent.tail if last.is_tail else last_parent.text
+        if last.is_tail:
+            last_parent.tail = last_value[:-1] + ']'
+        else:
+            last_parent.text = last_value[:-1] + ']'
 
     def __call__(self, context):
         maker = get_maker()
         for annotation_elem in context.xml.xpath(
                 './/a:*['
                 '(self::a:p or self::a:listIntroduction or self::a:listWrapUp)'
-                ' and starts-with(., "[")]',
+                ' and not(a:remark)'
+                ' and (starts-with(., "[") or starts-with(., "("))]',
                 namespaces={'a': self.ns}):
             text = ''.join(annotation_elem.itertext())
-            match = re.match(self.annotation_re, text)
-            if match:
+            if self.annotation_re.fullmatch(text) or self.amendment_re.fullmatch(text):
+                if text.startswith('('):
+                    self.replace_outer_brackets(annotation_elem)
                 remark = maker('remark', status='editorial')
                 # move the text from the element into the new remark
                 remark.text = annotation_elem.text

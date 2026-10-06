@@ -42,6 +42,90 @@ class TasksTest(WebTest):
         self.assertIn('Short title', doc.content)
         self.assertEqual({a.filename for a in doc.attachments.all()}, {'example.rtf', 'example.docx'})
 
+    def test_conversion_task_without_output_file_finishes_without_document(self):
+        work = Work.objects.get(frbr_uri='/akn/za/act/2014/10')
+        user = User.objects.get(username='email@example.com')
+        expression_date = datetime.date(2001, 1, 1)
+        task = Task.objects.create(
+            title='Convert document', country=work.country, work=work,
+            code='convert-document', timeline_date=expression_date,
+            created_by_user=user)
+        import_task = Task.objects.create(
+            title='Import content', country=work.country, work=work,
+            code='import-content', timeline_date=expression_date,
+            created_by_user=user)
+        import_task.blocked_by.add(task)
+        import_task.block(user)
+
+        task.finish(user)
+
+        task.refresh_from_db()
+        import_task.refresh_from_db()
+        self.assertEqual(task.state, Task.DONE)
+        self.assertEqual(import_task.state, Task.OPEN)
+        self.assertIsNone(import_task.document_id)
+        self.assertFalse(Document.objects.filter(work=work, expression_date=expression_date).exists())
+
+    @skipUnless(shutil.which('soffice'), 'LibreOffice is required for RTF conversion')
+    def test_conversion_task_can_import_another_document_at_same_date(self):
+        work = Work.objects.get(frbr_uri='/akn/za/act/2014/10')
+        user = User.objects.get(username='email@example.com')
+        expression_date = datetime.date(2001, 1, 1)
+        existing = Document.objects.create(
+            work=work, title=work.title, expression_date=expression_date,
+            language=work.country.primary_language, created_by_user=user)
+        source = (b'{\\rtf1\\ansi\\deff0{\\fonttbl{\\f0 Arial;}}'
+                  b'\\f0\\fs24 TEST ACT\\par 1. Short title\\par'
+                  b'This Act may be cited as the Test Act.\\par}')
+        output = TaskFile.objects.create(
+            filename='example.rtf', mime_type='text/rtf', size=len(source))
+        task = Task.objects.create(
+            title='Convert document', country=work.country, work=work,
+            code='convert-document', timeline_date=expression_date,
+            output_file=output, created_by_user=user)
+        output.file = ContentFile(source, name='example.rtf')
+        output.save()
+
+        task.finish(user)
+
+        documents = Document.objects.filter(work=work, expression_date=expression_date)
+        self.assertEqual(documents.count(), 2)
+        self.assertTrue(documents.filter(pk=existing.pk).exists())
+        self.assertIn('Short title', documents.exclude(pk=existing.pk).get().content)
+
+    @skipUnless(shutil.which('soffice'), 'LibreOffice is required for RTF conversion')
+    def test_conversion_task_prefers_its_blocked_import_task(self):
+        work = Work.objects.get(frbr_uri='/akn/za/act/2014/10')
+        user = User.objects.get(username='email@example.com')
+        expression_date = datetime.date(2001, 1, 1)
+        source = (b'{\\rtf1\\ansi\\deff0{\\fonttbl{\\f0 Arial;}}'
+                  b'\\f0\\fs24 TEST ACT\\par 1. Short title\\par'
+                  b'This Act may be cited as the Test Act.\\par}')
+        output = TaskFile.objects.create(
+            filename='example.rtf', mime_type='text/rtf', size=len(source))
+        conversion = Task.objects.create(
+            title='Convert document', country=work.country, work=work,
+            code='convert-document', timeline_date=expression_date,
+            output_file=output, created_by_user=user)
+        output.file = ContentFile(source, name='example.rtf')
+        output.save()
+        other_import = Task.objects.create(
+            title='Other import', country=work.country, work=work,
+            code='import-content', timeline_date=expression_date, created_by_user=user)
+        preferred_import = Task.objects.create(
+            title='Preferred import', country=work.country, work=work,
+            code='import-content', timeline_date=expression_date, created_by_user=user)
+        preferred_import.blocked_by.add(conversion)
+        preferred_import.block(user)
+
+        conversion.finish(user)
+
+        other_import.refresh_from_db()
+        preferred_import.refresh_from_db()
+        self.assertIsNone(other_import.document_id)
+        self.assertIsNotNone(preferred_import.document_id)
+        self.assertEqual(preferred_import.state, Task.OPEN)
+
     def test_failed_rtf_conversion_keeps_task_open_and_shows_error(self):
         work = Work.objects.get(frbr_uri='/akn/za/act/2014/10')
         user = User.objects.get(username='email@example.com')

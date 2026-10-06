@@ -22,7 +22,7 @@ from django_comments.signals import comment_was_posted
 
 from indigo.custom_tasks import tasks as custom_tasks
 from indigo.plugins import plugins
-from indigo_api.models import Document, Amendment
+from indigo_api.models import Document, Amendment, Language
 from indigo_api.signals import task_closed, task_assigned
 
 log = logging.getLogger(__name__)
@@ -432,19 +432,31 @@ class Task(models.Model):
         self.update_blocked_tasks(self, user)
 
     def create_and_import_document(self, user):
-        # create the document
-        document = Document()
+        if not self.output_file or not self.output_file.file:
+            return
+
         import_date = self.work.get_import_date()
+        expression_date = self.timeline_date or import_date or datetime.date.today()
+        language_code = (self.extra_data or {}).get('document_language')
+        language = Language.for_code(language_code) if language_code else self.country.primary_language
+
+        # Prefer the import task explicitly blocked by this conversion task. Historical
+        # cancelled tasks at the same date must never receive the new document.
+        import_task = self.blocking.filter(
+            code='import-content', work=self.work, timeline_date=expression_date,
+            state__in=Task.OPEN_STATES).order_by('pk').first()
+        if not import_task:
+            import_task = Task.objects.filter(
+                code='import-content', work=self.work, timeline_date=expression_date,
+                state__in=Task.OPEN_STATES).order_by('pk').first()
+
+        document = Document()
         document.work = self.work
-        document.expression_date = self.timeline_date or import_date or datetime.date.today()
-        document.language = self.country.primary_language
+        document.expression_date = expression_date
+        document.language = language
         document.created_by_user = user
         document.save()
 
-        # link it to the related import task (only if the work has an import date)
-        import_task = Task.objects.filter(work=self.work, code='import-content',
-                                          timeline_date=self.timeline_date or self.work.get_import_date()).first() \
-            if import_date else None
         if import_task:
             import_task.document = document
             import_task.save()

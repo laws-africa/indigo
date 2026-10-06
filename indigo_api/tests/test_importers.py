@@ -1245,6 +1245,46 @@ PARAGRAPH 9.2.2
   </content>
 </akomaNtoso>''', new_xml_text)
 
+    def test_wrap_round_bracketed_amendment_notes(self):
+        context = PipelineContext(pipeline=None)
+        context.xml = etree.fromstring('''
+<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
+  <content>
+    <p>(Section 9 amended by section 4 of Act 9 of 1993)</p>
+    <p>(Definition of “MEC” amended by section 1 of Act 8 of 2004)</p>
+    <p>(Words preceding Section 153(1)(a) substituted by section 8 of Act 41 of 2007)</p>
+    <p>(Regulation 111(1)(bA) inserted by regulation 22 of Government Notice R881 of 2004)</p>
+    <p><b>(</b>Section 34(2) substituted by section 24 of Act 3 of 2011<i>)</i></p>
+    <p>(Section 9(2) renumbered to 9(2)(a) by section 1 of Act 23 of 1987)</p>
+    <p>(Definition of “Minister” substituted by section 1 (Schedule) of Proc. No. R28 of 1995)</p>
+    <p>(Section 3 amended by section 2 of Act 32 of 2003) and more text</p>
+    <p>(Commencement date of section 6: 1 July 2004)</p>
+    <p>(Publisher’s note – section 60 was amended by Proclamation R73 of 1991)</p>
+    <p>(1)</p>
+    <p>(The Act was amended by the Minister.)</p>
+  </content>
+</akomaNtoso>''')
+
+        WrapAnnotations()(context)
+
+        ns = {'a': WrapAnnotations.ns}
+        paragraphs = context.xml.xpath('//a:p', namespaces=ns)
+        for paragraph in paragraphs[:7]:
+            remarks = paragraph.xpath('./a:remark[@status="editorial"]', namespaces=ns)
+            self.assertEqual(1, len(remarks))
+            self.assertTrue(''.join(remarks[0].itertext()).startswith('['))
+            self.assertTrue(''.join(remarks[0].itertext()).endswith(']'))
+        inline_remark = paragraphs[4][0]
+        self.assertEqual('[', inline_remark[0].text)
+        self.assertEqual('Section 34(2) substituted by section 24 of Act 3 of 2011', inline_remark[0].tail)
+        self.assertEqual(']', inline_remark[1].text)
+        for paragraph in paragraphs[7:]:
+            self.assertFalse(paragraph.xpath('./a:remark', namespaces=ns))
+
+        # Running the wrapper twice must not nest editorial remarks.
+        WrapAnnotations()(context)
+        self.assertEqual(7, len(context.xml.xpath('//a:remark', namespaces=ns)))
+
     def test_wrap_intro_wrapup_annotations(self):
         # note: we have to ParseBluebellText, then WrapAnnotations,
         # because simply using etree.fromstring(xml) doesn't reproduce what happens on import

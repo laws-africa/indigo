@@ -5,6 +5,7 @@ from rest_framework import mixins, viewsets, renderers
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.permissions import IsAuthenticated, BasePermission
 from rest_framework.response import Response
+from rest_framework.exceptions import NotAcceptable
 from django_filters import rest_framework as filters
 from django.db.models import Q
 from drf_spectacular.utils import extend_schema, OpenApiParameter
@@ -188,11 +189,6 @@ class PublishedDocumentDetailView(DocumentViewMixin,
     filter_backends = [filters.DjangoFilterBackend]
     filterset_class = PublishedDocumentFilterSet
 
-    def perform_content_negotiation(self, request, force=False):
-        # force content negotiation to succeed, because sometimes the suffix format
-        # doesn't match a renderer
-        return super().perform_content_negotiation(request, force=True)
-
     def get(self, request, **kwargs):
         if self.frbr_uri:
             return self.retrieve(request)
@@ -209,6 +205,12 @@ class PublishedDocumentDetailView(DocumentViewMixin,
 
         # get the document
         document = self.get_document()
+
+        if format == 'json' and (self.portion or self.component != 'main'):
+            raise NotAcceptable(
+                'JSON is not supported for sections or non-main components. '
+                'Request a supported format, such as .html or .xml.'
+            )
 
         if self.portion:
             # get the component, if any, and then the portion within that component

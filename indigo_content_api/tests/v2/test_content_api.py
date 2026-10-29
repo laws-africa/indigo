@@ -55,6 +55,77 @@ class ContentAPIV2TestMixin:
         self.assertEqual(response.accepted_media_type, 'application/json')
         self.assertEqual(response.data['frbr_uri'], '/za/act/2014/10')
 
+    def test_published_json_unsupported_parts(self):
+        message = ('JSON is not supported for sections or non-main components. '
+                   'Request a supported format, such as .html or .xml.')
+        for part in ['!main~sec_1', '!schedule_1']:
+            url = self.api_path + '/akn/za/act/2014/10/eng/' + part
+            for suffix, headers in [('', {}), ('', {'HTTP_ACCEPT': '*/*'}),
+                                    ('.json', {}), ('?format=json', {}),
+                                    ('', {'HTTP_ACCEPT': 'application/json'})]:
+                with self.subTest(part=part, suffix=suffix, headers=headers):
+                    response = self.client.get(url + suffix, **headers)
+                    self.assertEqual(response.status_code, 406)
+                    self.assertEqual(response['Content-Type'], 'application/json')
+                    self.assertEqual(response.json(), {'detail': message})
+
+    def test_published_explicit_main_json(self):
+        response = self.client.get(self.api_path + '/akn/za/act/2014/10/eng/!main.json')
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('frbr_uri', response.json())
+
+    def test_published_content_negotiation_errors(self):
+        url = self.api_path + '/akn/za/act/2014/10/eng'
+        for suffix, accept, status in [('.html', 'application/json', 406),
+                                       ('.json', 'text/html', 406),
+                                       ('', 'application/x-unsupported', 406),
+                                       ('.unsupported', '*/*', 404)]:
+            with self.subTest(suffix=suffix, accept=accept):
+                response = self.client.get(url + suffix, HTTP_ACCEPT=accept)
+                self.assertEqual(response.status_code, status)
+                self.assertIn('detail', response.json())
+
+    def test_published_portion_header_negotiation(self):
+        url = self.api_path + '/akn/za/act/2014/10/eng/!main~sec_1'
+        for suffix, accept in [('.html', 'text/html'), ('.xml', 'application/xml')]:
+            with self.subTest(accept=accept):
+                expected = self.client.get(url + suffix)
+                response = self.client.get(url, HTTP_ACCEPT=accept)
+                self.assertEqual(response.status_code, 200)
+                self.assertEqual(response['Content-Type'], expected['Content-Type'])
+                self.assertEqual(response.content, expected.content)
+
+    def test_published_component_header_negotiation(self):
+        from cobalt.akn import StructuredDocument
+
+        components = StructuredDocument.components
+
+        def with_schedule(document):
+            result = components(document)
+            result['schedule_1'] = result['main']
+            return result
+
+        url = self.api_path + '/akn/za/act/2014/10/eng/!schedule_1'
+        with patch.object(StructuredDocument, 'components', with_schedule):
+            for suffix, accept in [('.html', 'text/html'), ('.xml', 'application/xml')]:
+                with self.subTest(accept=accept):
+                    expected = self.client.get(url + suffix)
+                    response = self.client.get(url, HTTP_ACCEPT=accept)
+                    self.assertEqual(expected.status_code, 200)
+                    self.assertEqual(response.status_code, 200)
+                    self.assertEqual(response['Content-Type'], expected['Content-Type'])
+                    self.assertEqual(response.content, expected.content)
+
+    def test_published_json_part_lookup_and_permissions(self):
+        response = self.client.get(self.api_path + '/akn/za/act/9999/999/eng/!main~sec_1')
+        self.assertEqual(response.status_code, 404)
+        self.assertIn('detail', response.json())
+        self.client.logout()
+        self.client.login(username='email@example.com', password='password')
+        response = self.client.get(self.api_path + '/akn/za/act/2014/10/eng/!main~sec_1')
+        self.assertEqual(response.status_code, 403)
+        self.assertIn('detail', response.json())
+
     def test_published_numbered_title(self):
         response = self.client.get(self.api_path + '/akn/za/act/2014/10')
         self.assertEqual(response.status_code, 200)

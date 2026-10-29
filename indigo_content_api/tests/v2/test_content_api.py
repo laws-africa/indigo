@@ -66,7 +66,7 @@ class ContentAPIV2TestMixin:
                 with self.subTest(part=part, suffix=suffix, headers=headers):
                     response = self.client.get(url + suffix, **headers)
                     self.assertEqual(response.status_code, 406)
-                    self.assertEqual(response['Content-Type'], 'application/json')
+                    self.assertEqual(response['Content-Type'].split(';', 1)[0].strip(), 'application/json')
                     self.assertEqual(response.json(), {'detail': message})
 
     def test_published_explicit_main_json(self):

@@ -6,7 +6,7 @@ from unittest.mock import patch
 
 from django.conf import settings
 from django.template.loader import render_to_string
-from django.test import TestCase
+from django.test import SimpleTestCase, TestCase
 from lxml import etree
 
 from cobalt.hierarchical import Act
@@ -14,6 +14,40 @@ from indigo.xmlutils import canonical_xml as canonicalize_xml
 from indigo_api.exporters import HTMLExporter, PDFExporter
 from indigo_api.models import Document, Work, Language, Locality
 from indigo_api.pdf import run_fop
+
+
+class PDFLongTitleTestCase(SimpleTestCase):
+    def test_long_titles_render_as_bold_blocks(self):
+        cases = {
+            'direct_text': '<longTitle>To provide for broadcasting.</longTitle>',
+            'paragraphs': '<longTitle><p>To provide for broadcasting.</p><p>And related matters.</p></longTitle>',
+            'list_item': '<blockList><item eId="preface_item"><longTitle><p>To provide for broadcasting.</p>'
+                         '</longTitle><longTitle><p>And related matters.</p></longTitle></item></blockList>',
+        }
+        exporter = PDFExporter()
+        stylesheet = os.path.join(exporter.base_xsl_fo_dir, 'fo_akn.xsl')
+        ns = {'fo': 'http://www.w3.org/1999/XSL/Format'}
+        for name, content in cases.items():
+            with self.subTest(name=name), tempfile.TemporaryDirectory() as tmpdir:
+                xml_file = os.path.join(tmpdir, 'raw.xml')
+                with open(xml_file, 'w') as f:
+                    f.write('<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">'
+                            f'<act><preface>{content}</preface></act></akomaNtoso>')
+                xsl_file = os.path.join(tmpdir, 'fo.xsl')
+                with open(xsl_file, 'w') as f:
+                    f.write(exporter.update_base_xsl_fo_dir(stylesheet))
+                fo_file = os.path.join(tmpdir, 'out.fo')
+                run_fop(fo_file, tmpdir, xml_file, xsl_file, output_fo=True)
+                fo = etree.parse(fo_file)
+                self.assertFalse(fo.xpath('//fo:list-item-body/fo:inline', namespaces=ns))
+                titles = fo.xpath('//fo:block[@font-weight="bold"]', namespaces=ns)
+                self.assertEqual(2 if name == 'list_item' else 1, len(titles))
+                self.assertIn('To provide for broadcasting.', ''.join(titles[0].itertext()))
+                # Exercise FOP validation as well as the generated FO structure.
+                pdf_file = os.path.join(tmpdir, 'out.pdf')
+                run_fop(pdf_file, tmpdir, xml_file, xsl_file)
+                with open(pdf_file, 'rb') as f:
+                    self.assertEqual(b'%PDF-', f.read(5))
 
 
 class PDFExporterTestCase(TestCase):

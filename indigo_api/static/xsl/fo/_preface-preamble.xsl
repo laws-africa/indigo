@@ -25,9 +25,9 @@
   </xsl:template>
 
   <xsl:template match="akn:longTitle">
-    <fo:inline font-weight="bold">
+    <fo:block font-weight="bold">
       <xsl:apply-templates/>
-    </fo:inline>
+    </fo:block>
   </xsl:template>
 
 </xsl:stylesheet>

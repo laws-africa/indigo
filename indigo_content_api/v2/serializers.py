@@ -61,7 +61,7 @@ class MediaAttachmentSerializer(AttachmentSerializer, PublishedDocUrlMixin):
 
 
 class PublicationDocumentSerializer(PublicationDocumentSerializerBase):
-    has_trusted_url = serializers.BooleanField(source='trusted_url')
+    has_trusted_url = serializers.SerializerMethodField()
     """Details of the original publication document for a work."""
     class Meta:
         model = PublicationDocument
@@ -77,6 +77,9 @@ class PublicationDocumentSerializer(PublicationDocumentSerializerBase):
         return reverse_content_api('indigo_content_api:published-document-publication',
                                    request=self.context['request'],
                                    kwargs={'frbr_uri': uri, 'filename': instance.filename})
+
+    def get_has_trusted_url(self, instance):
+        return bool(instance.trusted_url)
 
     def get_work_uri(self, instance):
         # the publication document is linked to the work, not the expression

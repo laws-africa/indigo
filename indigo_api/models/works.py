@@ -921,6 +921,12 @@ class PublicationDocument(models.Model):
         ])
 
     def get_file(self):
+        resolver = plugins.for_work('publication-document-resolver', self.work)
+        if resolver:
+            file = resolver.get_file(self)
+            if file is not None:
+                return file
+
         if self.file:
             return self.file
 

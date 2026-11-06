@@ -82,6 +82,20 @@ body.is-staff {
   .nav-item {
     margin-left: $spacer;
   }
+
+  @include media-breakpoint-up(xl) {
+    .nav-item {
+      margin-left: $spacer * .5;
+    }
+
+    .nav-link {
+      white-space: nowrap;
+    }
+
+    input[type="search"] {
+      width: 10rem;
+    }
+  }
 }
 
 /* breadcrumbs */

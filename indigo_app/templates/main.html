@@ -18,20 +18,21 @@
   <div class="page-body">
     <main id="{% block view-id %}{% endblock %}" class="main-container">
       {% block navbar %}
-        <nav class="navbar navbar-expand-md navbar-dark">
+        <nav class="navbar navbar-expand-xl navbar-dark">
           <div class="container-fluid">
             {% block navbar-brand %}
             <a class="navbar-brand" href="/"><img src="{% static 'images/logo-inverse.png' %}" title="{{ INDIGO_ORGANISATION }}"></a>
             {% endblock %}
+            {% block navbar-actions %}{% endblock %}
             {% block navbar-toggle %}
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-collapse">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-collapse" aria-controls="navbar-collapse" aria-expanded="false" aria-label="{% trans 'Toggle navigation' %}">
               <span class="navbar-toggler-icon"></span>
             </button>
             {% endblock %}
 
             {% block navbar-content %}
-            <div class="collapse navbar-collapse" id="navbar-collapse">
-              <ul class="navbar-nav me-auto mt-2 mt-lg-0">
+            <div class="collapse navbar-collapse order-xl-1" id="navbar-collapse">
+              <ul class="navbar-nav me-auto mt-2 mt-xl-0">
               {% block navbar-left %}
                 {% if request.user.is_authenticated %}
                   <li class="nav-item"><a class="nav-link" href="/">{% trans "Home" %}</a></li>
@@ -39,6 +40,21 @@
                   <li class="nav-item"><a class="nav-link" href="{% url 'place_works' 'all' %}">{% trans "Works" %}</a></li>
                 {% endif %}
               {% endblock %}
+                {% block navbar-help-menu %}
+                  <li class="nav-item dropdown">
+                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">{% trans "Help" %}</a>
+                    <div class="dropdown-menu">
+                      <a class="dropdown-item" href="{% url 'help' %}" target="_blank"><i class="fas fa-question fa-fw"></i> {% trans "Documentation" %}</a>
+                      <a class="dropdown-item" href="mailto:info@laws.africa" target="_blank"><i class="fas fa-envelope fa-fw"></i> {% trans "Feedback" %}</a>
+
+                      <div class="dropdown-divider"></div>
+                      <a class="dropdown-item" href="https://github.com/laws-africa/indigo" target="_blank"><i class="fab fa-github fa-fw"></i> {% trans "Indigo on GitHub" %}</a>
+
+                      <div class="dropdown-divider"></div>
+                      <a class="dropdown-item" href="{% url 'terms_of_use' %}" target="_blank">{% trans "Terms of Use &amp; Privacy Policy" %}</a>
+                    </div>
+                  </li>
+                {% endblock %}
               </ul>
 
               <ul class="navbar-nav" id="user-buttons">
@@ -66,21 +82,6 @@
                   {% else %}
                     <li class="nav-item not-logged-in"><a href="{% url 'account_login' %}?next={{ request.get_full_path|urlencode }}" class="nav-link bg-success"><i class="fas fa-sign-in-alt"></i> {% trans "Log in" %}</a></li>
                   {% endif %}
-                {% endblock %}
-                {% block navbar-help-menu %}
-                  <li class="nav-item dropdown">
-                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">{% trans "Help" %}</a>
-                    <div class="dropdown-menu">
-                      <a class="dropdown-item" href="{% url 'help' %}" target="_blank"><i class="fas fa-question fa-fw"></i> {% trans "Documentation" %}</a>
-                      <a class="dropdown-item" href="mailto:info@laws.africa" target="_blank"><i class="fas fa-envelope fa-fw"></i> {% trans "Feedback" %}</a>
-
-                      <div class="dropdown-divider"></div>
-                      <a class="dropdown-item" href="https://github.com/laws-africa/indigo" target="_blank"><i class="fab fa-github fa-fw"></i> {% trans "Indigo on GitHub" %}</a>
-
-                      <div class="dropdown-divider"></div>
-                      <a class="dropdown-item" href="{% url 'terms_of_use' %}" target="_blank">{% trans "Terms of Use &amp; Privacy Policy" %}</a>
-                    </div>
-                  </li>
                 {% endblock %}
               </ul>
 

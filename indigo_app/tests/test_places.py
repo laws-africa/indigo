@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from django.test import testcases, override_settings
 from django_webtest import WebTest
+from lxml import html
 from indigo_app.tests.utils import TEST_STORAGES
 
 
@@ -10,6 +11,21 @@ class PlacesTest(testcases.TestCase):
 
     def setUp(self):
         self.assertTrue(self.client.login(username='email@example.com', password='password'))
+
+    def test_navbar_collapses_below_extra_large_and_groups_help_with_navigation(self):
+        response = self.client.get('/places')
+        self.assertEqual(response.status_code, 200)
+        root = html.fromstring(response.content)
+        collapse = root.get_element_by_id('navbar-collapse')
+        nav = collapse.getparent().getparent()
+        self.assertIn('navbar-expand-xl', nav.get('class').split())
+        toggle = nav.xpath('.//button[@data-bs-target="#navbar-collapse"]')[0]
+        self.assertEqual(toggle.get('aria-controls'), 'navbar-collapse')
+        self.assertEqual(toggle.get('aria-expanded'), 'false')
+        self.assertTrue(toggle.get('aria-label'))
+        help_link = nav.xpath('.//a[normalize-space(text())="Help"]')[0]
+        self.assertNotIn(root.get_element_by_id('user-buttons'), help_link.iterancestors())
+        self.assertEqual(help_link.getparent(), collapse.xpath('./ul')[0][-1])
 
     def test_place_detail(self):
         response = self.client.get('/places/za')

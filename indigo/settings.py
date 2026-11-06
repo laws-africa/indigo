@@ -22,7 +22,7 @@ from .version import __version__
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 # Shared workhorse model for extraction, chat, and other routine AI tasks.
-OPENAI_MODEL_SMALL = "gpt-6-luna"
+OPENAI_MODEL = "gpt-6-luna"
 
 
 # SECURITY WARNING: don't run with debug turned on in production!

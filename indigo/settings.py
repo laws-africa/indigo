@@ -21,6 +21,9 @@ from .version import __version__
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
+# Shared workhorse model for extraction, chat, and other routine AI tasks.
+OPENAI_MODEL_SMALL = "gpt-6-luna"
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DJANGO_DEBUG', 'true') == 'true'

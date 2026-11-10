@@ -3,6 +3,7 @@ from urllib.parse import unquote
 from unittest.mock import Mock, patch
 
 import reversion
+from actstream import action
 from django.contrib.auth.models import Permission, User
 from django.test import testcases, override_settings
 from django.template.loader import render_to_string
@@ -11,7 +12,8 @@ from webtest import Upload
 
 from indigo_api.models import Work, Commencement, Amendment, ArbitraryExpressionDate, Document
 from indigo_app.tests.utils import TEST_STORAGES
-from indigo_app.views.works import WorkFormAmendmentsView, WorkViewBase
+from indigo_app.views.works import WorkFormAmendmentsView, WorkViewBase, WorkVersionsView
+from indigo_api.utils import actions_for_objects
 from indigo_app.forms.works import CommencementsBaseFormset
 
 
@@ -27,6 +29,20 @@ class WorksTest(testcases.TestCase):
         self.assertEqual(response.status_code, 200)
         response = self.client.get('/places/za-cpt/works/new')
         self.assertEqual(response.status_code, 200)
+
+    def test_revisions_without_tasks_exclude_unrelated_approvals(self):
+        work = Work.objects.get(frbr_uri='/akn/za/act/2014/10')
+        work.tasks.all().delete()
+        other_work = Work.objects.exclude(pk=work.pk).first()
+        user = User.objects.get(username='email@example.com')
+        action.send(user, verb='approved', action_object=other_work)
+
+        view = WorkVersionsView()
+        view.object = work
+        self.assertFalse(view.get_task_actions().exists())
+        self.assertFalse(actions_for_objects([]).exists())
+        self.assertTrue(actions_for_objects([other_work]).filter(verb='approved').exists())
+        self.assertFalse(actions_for_objects([work]).filter(verb='approved').exists())
 
     def test_edit_page(self):
         response = self.client.get('/works/akn/za/act/2014/10/')

@@ -170,6 +170,9 @@ def actions_for_objects(objs):
     for o in objs:
         groups[o.__class__].add(o.pk)
 
+    if not groups:
+        return Action.objects.none()
+
     # get content types in one go (cached anyway)
     ctypes = ContentType.objects.get_for_models(*groups.keys(), for_concrete_models=False)
 

@@ -38,7 +38,7 @@ class WorksTest(testcases.TestCase):
         action.send(user, verb='approved', action_object=other_work)
 
         view = WorkVersionsView()
-        view.work = work
+        view.object = work
         self.assertFalse(view.get_task_actions().exists())
         self.assertFalse(actions_for_objects([]).exists())
         self.assertTrue(actions_for_objects([other_work]).filter(verb='approved').exists())

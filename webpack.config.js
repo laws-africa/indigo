@@ -7,6 +7,8 @@ const legacyConfig = {
   entry: './indigo_app/js/external-imports.src.js',
   mode: 'development',
   resolve: {
+    // The WASM dependency also contains Node-only paths.
+    fallback: { fs: false, crypto: false },
     modules: [
       './node_modules',
     ],
@@ -33,6 +35,8 @@ const appConfig = {
   entry: './indigo_app/js/main.js',
   mode: 'production',
   resolve: {
+    // The WASM dependency also contains Node-only paths.
+    fallback: { fs: false, crypto: false },
     modules: [
       './node_modules',
     ],

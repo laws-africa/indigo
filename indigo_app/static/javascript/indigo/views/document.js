@@ -140,8 +140,6 @@
         'document-secondary-pane': this.panes['document-secondary-pane'].previousElementSibling
       };
 
-      this.detectUnsupportedBrowsers();
-
       // stop disable menus
       $('.menu').on('click', '.disabled a', _.bind(this.stopMenuClick));
 
@@ -235,12 +233,6 @@
           $menuItem.click();
         }
       });
-    },
-
-    detectUnsupportedBrowsers: function() {
-      if (!('XSLTProcessor' in window)) {
-        alert($t("Your browser is not supported by Indigo. Please use Chrome, Firefox, Safari or Edge instead."));
-      }
     },
 
     isDirty: function(e) {

@@ -221,3 +221,19 @@ in the ``indigo`` task queue. See `django-background-tasks <https://django-backg
 for more details on running background tasks.
 
 To enable background tasks, set ``INDIGO.NOTIFICATION_EMAILS_BACKGROUND`` to True.
+
+
+Synchronising badge permissions
+-------------------------------
+
+After migrations, run ``python manage.py sync_badge_permissions`` to create
+badge groups and synchronise their permissions with the badge definitions.
+This updates groups only; it does not scan users or change memberships.
+Badge groups are code-owned: permissions added manually to these groups will
+be removed by synchronisation. Use separate groups for additional permissions.
+
+Normal group membership and permitted-country changes keep badge awards in
+sync through Django signals. New countries do not require a full badge scan.
+Keep badge slugs and group names stable; renames need an explicit migration.
+For imports or other updates that bypass signals, run
+``python manage.py award_badges`` explicitly to repair awards and access.

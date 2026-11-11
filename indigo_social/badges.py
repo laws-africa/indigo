@@ -119,9 +119,9 @@ class PermissionBadge(BaseBadge):
         return self._group
 
     def refresh_permissions(self):
-        """ Ensure the permissions on the group are up to date.
+        """ Make this code-owned group match the declared permissions exactly.
         """
-        self.group().permissions.add(*self.get_permissions())
+        self.group().permissions.set(self.get_permissions())
 
     def get_permissions(self):
         """ Return a list of Permission objects for this badge.
@@ -180,13 +180,17 @@ def groups_changed(sender, instance, action, reverse, model, pk_set, **kwargs):
     """ When user groups change, award or unaward any matching PermissionBadges
     as necessary.
     """
-    if reverse or action not in ["post_add", "post_remove"]:
+    if action not in ["post_add", "post_remove", "pre_clear"]:
         return
 
-    user = instance
     added = action == "post_add"
-    groups = Group.objects.filter(pk__in=pk_set).all()
-    PermissionBadge.group_membership_changed(user, groups, added)
+    if reverse:
+        users = instance.user_set.all() if action == "pre_clear" else model.objects.filter(pk__in=pk_set)
+        for user in list(users):
+            PermissionBadge.group_membership_changed(user, [instance], added)
+    else:
+        groups = instance.groups.all() if action == "pre_clear" else model.objects.filter(pk__in=pk_set)
+        PermissionBadge.group_membership_changed(instance, list(groups), added)
 
 
 class CountryBadge(BaseBadge):
@@ -214,7 +218,11 @@ class CountryBadge(BaseBadge):
     @classmethod
     def editor_countries_changed(cls, editor, countries, added):
         for country in countries:
-            badge = badges.registry[cls.badge_slug(country)]
+            slug = cls.badge_slug(country)
+            # A country may have been created by another worker since startup.
+            if slug not in badges.registry:
+                cls.create_for_country(country)
+            badge = badges.registry[slug]
             if added:
                 badge.possibly_award(user=editor.user)
             else:
@@ -256,13 +264,17 @@ def editor_countries_changed(sender, instance, action, reverse, model, pk_set, *
     """ When user's permitted countries change, award or unaward any matching CountryBadges
     as necessary.
     """
-    if reverse or action not in ["post_add", "post_remove"]:
+    if action not in ["post_add", "post_remove", "pre_clear"]:
         return
 
-    editor = instance
     added = action == "post_add"
-    countries = model.objects.filter(pk__in=pk_set).all()
-    CountryBadge.editor_countries_changed(editor, countries, added)
+    if reverse:
+        editors = instance.editors.all() if action == "pre_clear" else model.objects.filter(pk__in=pk_set)
+        for editor in list(editors):
+            CountryBadge.editor_countries_changed(editor, [instance], added)
+    else:
+        countries = instance.permitted_countries.all() if action == "pre_clear" else model.objects.filter(pk__in=pk_set)
+        CountryBadge.editor_countries_changed(instance, list(countries), added)
 
 
 @receiver(post_save, sender=Country)

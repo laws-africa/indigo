@@ -1,3 +1,5 @@
+import { createXsltProcessor } from '@lawsafrica/indigo-akn/dist/xslt';
+
 class HtmlRenderer {
   constructor (documentModel) {
     this.document = documentModel;
@@ -10,7 +12,7 @@ class HtmlRenderer {
       })
       .then((text) => {
         const xml = new DOMParser().parseFromString(text, 'text/xml');
-        const htmlTransform = new XSLTProcessor();
+        const htmlTransform = createXsltProcessor();
         htmlTransform.importStylesheet(xml);
         htmlTransform.setParameter(null, 'resolverUrl', '/works');
         this.htmlTransform = htmlTransform;
@@ -110,7 +112,7 @@ let transform;
 
 function getPrettyPrintTransform () {
   if (!transform) {
-    const processor = new XSLTProcessor();
+    const processor = createXsltProcessor();
     processor.importStylesheet(new DOMParser().parseFromString(xsltSource, 'text/xml'));
     transform = processor;
   }

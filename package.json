@@ -14,7 +14,7 @@
     "@fortawesome/fontawesome-free": "^5.2.0",
     "@lawsafrica/bluebell-monaco": "^5.0.0",
     "@lawsafrica/bluebell-wasm": "^5.0.0",
-    "@lawsafrica/indigo-akn": "^5.8.0",
+    "@lawsafrica/indigo-akn": "^5.8.2",
     "@lawsafrica/law-widgets": "^2.2.1",
     "bootstrap-select": "^1.13.18",
     "bower": "^1.8.8",

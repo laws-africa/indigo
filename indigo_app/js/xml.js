@@ -104,8 +104,18 @@ const xsltSource =
   '</xsl:stylesheet>';
 
 const serializer = new XMLSerializer();
-const transform = new XSLTProcessor();
-transform.importStylesheet(new DOMParser().parseFromString(xsltSource, 'text/xml'));
+// Creating this at module load would prevent the entire app from starting in
+// browsers without native XSLT, even on pages that never format XML.
+let transform;
+
+function getPrettyPrintTransform () {
+  if (!transform) {
+    const processor = new XSLTProcessor();
+    processor.importStylesheet(new DOMParser().parseFromString(xsltSource, 'text/xml'));
+    transform = processor;
+  }
+  return transform;
+}
 
 export function prettyPrintXml (xml) {
   if (typeof (xml) === 'string') {
@@ -113,7 +123,7 @@ export function prettyPrintXml (xml) {
     xml = xml.replace(/([\n\r]| +)/g, ' ');
     xml = parseXml(xml);
   }
-  return serializer.serializeToString(transform.transformToDocument(xml));
+  return serializer.serializeToString(getPrettyPrintTransform().transformToDocument(xml));
 }
 
 /**

@@ -38,6 +38,8 @@ accounts/login/\Z
 accounts/login/code/confirm/\Z
 accounts/signup/\Z
 accounts/reauthenticate/\Z
+accounts/reauthenticate/code/\Z
+accounts/reauthenticate/code/confirm/\Z
 resolver/(?P<path>.+)$
 resolver/((?P<authorities>[\w,.-]+)/)?resolve(?P<frbr_uri>/.*)$
 

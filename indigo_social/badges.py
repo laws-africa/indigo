@@ -1,5 +1,7 @@
 import dataclasses
+from importlib import import_module
 
+from django.conf import settings
 from django.contrib.auth.models import Permission, Group
 from django.db.models.signals import m2m_changed, post_save, post_delete
 from django.dispatch import receiver
@@ -22,6 +24,15 @@ class BadgeCache:
     def register(self, badge):
         badge = badge()
         self.registry[badge.slug] = badge
+
+    def extend_permissions(self, slug, permissions):
+        """Declare extra permissions from a plugin, without depending on ready() order."""
+        if settings.INDIGO_SOCIAL['badges']:
+            import_module(settings.INDIGO_SOCIAL['badges'])
+        badge = self.registry.get(slug)
+        if badge is not None:
+            badge.permissions = tuple(dict.fromkeys((*badge.permissions, *permissions)))
+            badge._perms = None
 
 
 badges = BadgeCache()
@@ -119,9 +130,9 @@ class PermissionBadge(BaseBadge):
         return self._group
 
     def refresh_permissions(self):
-        """ Make this code-owned group match the declared permissions exactly.
+        """ Ensure declared permissions exist, preserving group customisations.
         """
-        self.group().permissions.set(self.get_permissions())
+        self.group().permissions.add(*self.get_permissions())
 
     def get_permissions(self):
         """ Return a list of Permission objects for this badge.

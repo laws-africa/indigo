@@ -19,7 +19,7 @@ class ContentAPIBadge(PermissionBadge):
     name = 'Content API'
     group_name = name + ' Badge'
     description = 'Can use the Content API'
-    permissions = ('indigo_api.view_published_document',)
+    permissions = ('indigo_api.view_published_document', 'indigo_api.view_taxonomytopic')
 
 
 class ContributorBadge(PermissionBadge):
@@ -32,6 +32,8 @@ class ContributorBadge(PermissionBadge):
         'indigo_api.view_work', 'indigo_api.view_document', 'indigo_api.view_commencement',
         'indigo_api.view_task', 'indigo_api.add_task',
         'indigo_api.view_amendment', 'indigo_api.view_arbitraryexpressiondate', 'indigo_api.view_country',
+        'indigo_api.add_documentactivity', 'indigo_api.change_documentactivity', 'indigo_api.delete_documentactivity',
+        'indigo_api.view_published_document',
     )
 
 
@@ -42,6 +44,8 @@ class EditorBadge(PermissionBadge):
     description = 'Can create new works and edit the details of existing works, as well as working with tasks'
     permissions = (
         'indigo_api.add_work', 'indigo_api.change_work',
+        'indigo_api.view_work',
+        'indigo_api.view_commencement', 'indigo_api.add_commencement', 'indigo_api.change_commencement', 'indigo_api.delete_commencement',
         'indigo_api.add_document', 'indigo_api.change_document',
         'indigo_api.view_documentactivity', 'indigo_api.add_documentactivity', 'indigo_api.change_documentactivity', 'indigo_api.delete_documentactivity',
         'indigo_api.view_attachment', 'indigo_api.add_attachment', 'indigo_api.change_attachment', 'indigo_api.delete_attachment',
@@ -70,6 +74,7 @@ class ResearcherBadge(PermissionBadge):
     description = 'Can perform bulk imports from and exports to spreadsheets'
     permissions = (
         'indigo_api.bulk_add_work', 'indigo_api.bulk_export_work',
+        'indigo_api.add_amendmentinstruction', 'indigo_api.change_amendmentinstruction', 'indigo_api.delete_amendmentinstruction',
     )
 
 
@@ -91,7 +96,10 @@ class SuperReviewerBadge(PermissionBadge):
     name = 'Super Reviewer'
     group_name = name + ' Badge'
     description = 'Can approve any tasks'
-    permissions = ('indigo_api.close_any_task', 'indigo_api.exceed_task_limits')
+    permissions = (
+        'indigo_api.close_any_task', 'indigo_api.exceed_task_limits',
+        'indigo_api.add_placesettings', 'indigo_api.change_placesettings', 'indigo_api.delete_placesettings',
+    )
 
 
 class ContentManagerBadge(PermissionBadge):

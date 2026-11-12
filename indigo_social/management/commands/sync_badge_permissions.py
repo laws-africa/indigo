@@ -4,7 +4,7 @@ from indigo_social.badges import PermissionBadge, badges
 
 
 class Command(BaseCommand):
-    help = "Synchronise code-owned badge group permissions without scanning users. Run after migrate."
+    help = "Ensure declared badge permissions exist, preserving custom permissions, without scanning users. Run after migrate."
 
     def handle(self, *args, **options):
         for badge in badges.registry.values():

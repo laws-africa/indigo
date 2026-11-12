@@ -229,8 +229,10 @@ Synchronising badge permissions
 After migrations, run ``python manage.py sync_badge_permissions`` to create
 badge groups and synchronise their permissions with the badge definitions.
 This updates groups only; it does not scan users or change memberships.
-Badge groups are code-owned: permissions added manually to these groups will
-be removed by synchronisation. Use separate groups for additional permissions.
+Synchronisation adds missing declared permissions and preserves permissions
+added by administrators or plugins. Removing a permission from a badge definition
+does not revoke it from existing groups; use an explicit migration or
+administrative action to revoke permissions.
 
 Normal group membership and permitted-country changes keep badge awards in
 sync through Django signals. New countries do not require a full badge scan.

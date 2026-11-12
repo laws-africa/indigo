@@ -222,6 +222,27 @@ for more details on running background tasks.
 
 To enable background tasks, set ``INDIGO.NOTIFICATION_EMAILS_BACKGROUND`` to True.
 
+Worker recycling
+~~~~~~~~~~~~~~~~
+
+To periodically release accumulated RAM, run workers with a positive duration::
+
+    python manage.py process_tasks --queue indigo --duration 43200
+
+This recycles the worker approximately every 12 hours. Indigo subclasses the
+upstream ``django-background-tasks-updated`` command and, after a positive duration
+expires, logs an informational recycling message and intentionally exits with
+status 1. Configure a process supervisor to restart workers on nonzero exit (for
+example, Dokku's ``on-failure:10`` policy). The exit is intentional and does not
+raise an application exception.
+
+Duration is checked between tasks, so the current task finishes before recycling.
+This does not interrupt stuck tasks or enforce a memory limit. Upstream signal
+shutdown behavior is preserved and returns normally without the recycling exit
+status. Omitting ``--duration``, or setting it to zero or less, keeps unlimited
+operation.
+
+
 
 Synchronising badge permissions
 -------------------------------

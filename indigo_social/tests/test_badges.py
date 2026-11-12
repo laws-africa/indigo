@@ -29,8 +29,8 @@ class BadgeSyncTestCase(TestCase):
 
     def test_sync_permissions_without_scanning_users(self):
         group = self.badge.group()
-        obsolete = Permission.objects.get(codename='delete_user', content_type__app_label='auth')
-        group.permissions.set([obsolete])
+        custom = Permission.objects.get(codename='view_group', content_type__app_label='auth')
+        group.permissions.set([custom])
         self.user.groups.add(group)
         awards = list(self.user.badges_earned.values_list('pk', flat=True))
         with patch.object(PermissionBadge, 'synch', side_effect=AssertionError), \
@@ -38,7 +38,7 @@ class BadgeSyncTestCase(TestCase):
                 patch.object(User.objects, 'all', side_effect=AssertionError):
             call_command('sync_badge_permissions')
             call_command('sync_badge_permissions')
-        self.assertSetEqual(set(group.permissions.all()), set(self.badge.get_permissions()))
+        self.assertSetEqual(set(group.permissions.all()), set(self.badge.get_permissions()) | {custom})
         self.assertTrue(self.user.groups.filter(pk=group.pk).exists())
         self.assertEqual(list(self.user.badges_earned.values_list('pk', flat=True)), awards)
 
@@ -131,3 +131,14 @@ class BadgePermissionsTestCase(TestCase):
         self.assertEqual(badge.permissions.count('auth.view_group'), 1)
         badge.refresh_permissions()
         self.assertIn('auth.view_group', perms_to_codes(badge.group().permissions.all()))
+
+    def test_sync_preserves_custom_permissions_and_restores_defaults(self):
+        group = self.badge.group()
+        custom = Permission.objects.get(codename='view_group', content_type__app_label='auth')
+        group.permissions.set([custom])
+        # Exercise the first group lookup as well as subsequent command refreshes.
+        self.badge._group = None
+        self.badge.group()
+        for _ in range(2):
+            call_command('sync_badge_permissions')
+            self.assertSetEqual(set(group.permissions.all()), set(self.badge.get_permissions()) | {custom})

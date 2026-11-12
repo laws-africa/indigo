@@ -130,9 +130,9 @@ class PermissionBadge(BaseBadge):
         return self._group
 
     def refresh_permissions(self):
-        """ Make this code-owned group match the declared permissions exactly.
+        """ Ensure declared permissions exist, preserving group customisations.
         """
-        self.group().permissions.set(self.get_permissions())
+        self.group().permissions.add(*self.get_permissions())
 
     def get_permissions(self):
         """ Return a list of Permission objects for this badge.

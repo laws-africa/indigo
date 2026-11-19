@@ -8,7 +8,8 @@
   <xsl:template match="akn:table">
     <fo:table width="100%" table-layout="fixed"
               margin-top="{$para-spacing-table}" margin-bottom="{$para-spacing-table}">
-      <xsl:if test="@class='border'">
+      <xsl:call-template name="formatting-attributes"/>
+      <xsl:if test="contains(concat(' ', normalize-space(@class), ' '), ' border ')">
         <xsl:attribute name="border"><xsl:value-of select="$table-border-outer"/></xsl:attribute>
       </xsl:if>
       <xsl:apply-templates select="akn:colgroup"/>
@@ -25,7 +26,7 @@
 
   <xsl:template match="akn:col">
     <fo:table-column column-width="{@width}">
-      <xsl:if test="ancestor::akn:table[@class='border'] and not(position()=last())">
+      <xsl:if test="ancestor::akn:table[contains(concat(' ', normalize-space(@class), ' '), ' border ')] and not(position()=last())">
         <xsl:attribute name="border-right"><xsl:value-of select="$table-border-inner"/></xsl:attribute>
       </xsl:if>
     </fo:table-column>
@@ -33,10 +34,10 @@
 
   <xsl:template match="akn:tr">
     <fo:table-row>
-      <xsl:if test="ancestor::akn:table[@class='border'] and not(position()=last())">
+      <xsl:if test="ancestor::akn:table[contains(concat(' ', normalize-space(@class), ' '), ' border ')] and not(position()=last())">
         <xsl:attribute name="border-bottom"><xsl:value-of select="$table-border-inner"/></xsl:attribute>
       </xsl:if>
-      <xsl:if test="ancestor::akn:table[@class='border'] and @style='header-row'">
+      <xsl:if test="ancestor::akn:table[contains(concat(' ', normalize-space(@class), ' '), ' border ')] and @style='header-row'">
         <xsl:attribute name="border-bottom"><xsl:value-of select="$table-border-outer"/></xsl:attribute>
       </xsl:if>
       <xsl:apply-templates/>
@@ -45,6 +46,7 @@
 
   <xsl:template match="akn:th | akn:td">
     <fo:table-cell padding="6pt" keep-together.within-column="always" min-height="1em">
+      <xsl:call-template name="table-padding-attributes"/>
       <xsl:if test="@colspan">
         <xsl:attribute name="number-columns-spanned"><xsl:value-of select="@colspan"/></xsl:attribute>
       </xsl:if>
@@ -65,6 +67,9 @@
         <xsl:if test="@style='center'">
           <xsl:attribute name="text-align">center</xsl:attribute>
         </xsl:if>
+        <xsl:call-template name="formatting-attributes">
+          <xsl:with-param name="inherit-alignment" select="true()"/>
+        </xsl:call-template>
         <xsl:apply-templates/>
       </fo:block>
     </fo:table-cell>

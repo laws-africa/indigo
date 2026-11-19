@@ -623,16 +623,19 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
             # honour alignment
             for row in table.xpath('a:tr', namespaces={'a': doc.namespace}):
                 for cell in row.xpath('a:th|a:td', namespaces={'a': doc.namespace}):
-                    cell_class = cell.get('class')
-                    if cell_class:
-                        if 'akn--text-right' in cell_class:
-                            cell.set('style', 'right')
-                        elif 'akn--text-center' in cell_class:
-                            cell.set('style', 'center')
+                    cell_class = cell.get('class', '').split()
+                    for alignment in ('justify', 'right', 'center', 'left'):
+                        if f'akn--text-{alignment}' in cell_class:
+                            cell.set('style', alignment)
+                            break
 
             # set the table class to 'border', unless it has any cell with .akn--no-border
-            if not list(table.xpath('.//a:*[contains(@class, "akn--no-border")]', namespaces={'a': doc.namespace})):
-                table.set('class', 'border')
+            if not list(table.xpath('descendant-or-self::a:*[contains(concat(" ", normalize-space(@class), " "), " akn--no-border ")]', namespaces={'a': doc.namespace})):
+                # Rendering controls must not discard authored formatting classes.
+                classes = table.get('class', '').split()
+                if 'border' not in classes:
+                    classes.append('border')
+                table.set('class', ' '.join(classes))
 
     def map_table(self, table, doc):
         """ Return a truth-table matrix for this table, where map[row][col] is True if a table cell covers it.

@@ -1,0 +1,11 @@
+/*!
+ * (C) Law Widgets https://laws.africa - GNU Lesser General Public License 3
+ */
+
+/*!
+ * Vue.js v2.6.14
+ * (c) 2014-2021 Evan You
+ * Released under the MIT License.
+ */
+
+/*! https://mths.be/he v1.2.0 by @mathias | MIT license */

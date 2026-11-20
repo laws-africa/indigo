@@ -53,7 +53,7 @@
             </tr>
           </table>
           <table eId="part_1__table_2" class="border">
-            <colgroup><col width="14.0%"/><col width="57.0%"/><col width="29.0%"/></colgroup><tr style="header-row">
+            <colgroup><col width="12.517200000000003%"/><col width="57.7893%"/><col width="29.6935%"/></colgroup><tr style="header-row">
               <th>
                 <p eId="part_1__table_2__p_1">heading 1 missing width</p>
               </th>
@@ -85,7 +85,7 @@
             </tr>
           </table>
           <table eId="part_1__table_3" class="border">
-            <colgroup><col width="14.0%"/><col width="57.0%"/><col width="29.0%"/></colgroup><tr style="header-row">
+            <colgroup><col width="12.517200000000003%"/><col width="57.7893%"/><col width="29.6935%"/></colgroup><tr style="header-row">
               <th>
                 <p eId="part_1__table_3__p_1">heading 1 missing width</p>
               </th>

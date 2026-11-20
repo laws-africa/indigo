@@ -2,7 +2,6 @@ from collections import defaultdict
 
 import datetime
 import logging
-import math
 import os
 import re
 import shutil
@@ -24,6 +23,7 @@ from docpipe.xmlutils import wrap_text
 from indigo.analysis.toc.base import descend_toc_pre_order
 from indigo.plugins import plugins, LocaleBasedMatcher
 from indigo.xmlutils import parse_html_str
+from indigo_api.table_layout import TableLayout
 from indigo_api.models import Colophon
 from indigo_api.pdf import run_fop
 from indigo_api.utils import filename_candidates, find_best_template, find_best_static
@@ -502,9 +502,25 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
         PDF generation fails.
         """
         for table in doc.root.xpath('//a:table', namespaces={'a': doc.namespace}):
-            # there should never be a completely empty row (FOP constraint)
-            for empty_row in table.xpath('a:tr[not(a:td|a:th)]', namespaces={'a': doc.namespace}):
-                table.remove(empty_row)
+            rows = table.findall(f'{{{doc.namespace}}}tr')
+            layout = TableLayout.from_table(table).geometry()
+            empty = [i for i, row in enumerate(rows) if not row.xpath('a:td | a:th', namespaces={'a': doc.namespace})]
+            if layout is not None and empty:
+                # FOP cannot emit a row without cells. Remove only those rows,
+                # subtracting exactly the removed rows crossed by each rowspan.
+                for cell in layout['cells']:
+                    removed = sum(cell['row'] < i < cell['row'] + cell['rowspan'] for i in empty)
+                    if removed:
+                        node = rows[cell['row']].xpath('a:td | a:th', namespaces={'a': doc.namespace})[cell['index']]
+                        node.set('rowspan', str(cell['rowspan'] - removed))
+            for i in empty:
+                table.remove(rows[i])
+            # Render-copy repair only. The shared normalizer rejects malformed
+            # spans without mutation; FOP still needs safe integer attributes.
+            for cell in table.xpath('a:tr/a:td | a:tr/a:th', namespaces={'a': doc.namespace}):
+                for attr in ('colspan', 'rowspan'):
+                    if TableLayout.parse_span(cell.get(attr)) is None:
+                        cell.attrib.pop(attr, None)
             # a cell can't span more rows than actually come after it (FOP constraint)
             for row in table.xpath('a:tr', namespaces={'a': doc.namespace}):
                 actual = len(list(row.itersiblings(f'{{{doc.namespace}}}tr')))
@@ -538,67 +554,19 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
                 for x in range(n_cols):
                     matrix[y][x] = True
 
-            # add colgroup element with each column and its width
-            column_widths = [0 for _ in range(n_cols)]
-            # offset also needs to take rowspans into account: update the matrix to be False for co-ordinates where
-            # a cell is not expected because of a rowspan on a previous cell
-            for y, row in enumerate(table.xpath('a:tr', namespaces={'a': doc.namespace})):
-                offset = 0
-                for x, cell in enumerate(row.xpath('a:th|a:td', namespaces={'a': doc.namespace})):
-                    # take colspan into account to set False on the correct cell in the matrix
-                    colspan, rowspan = self.get_spans(cell)
-                    offset += colspan - 1
-                    if rowspan > 1:
-                        for r in range(rowspan - 1):
-                            matrix[y + 1 + r][x + offset] = False
-
-            for y, row in enumerate(table.xpath('a:tr', namespaces={'a': doc.namespace})):
-                # lets us derive the column from the current cell and all previously spanned columns in each row
-                offset = 0
-                for x, cell in enumerate(row.xpath('a:th|a:td', namespaces={'a': doc.namespace})):
-                    # ignore cells with a colspan other than 1
-                    # (assumes that if there is a colspan it's a positive integer)
-                    colspan, _ = self.get_spans(cell)
-                    offset += colspan - 1
-                    # also increase offset if rowspan(s) in a previous row affect this row (indicated by a 'False' cell)
-                    for col in range(n_cols):
-                        # only check cells up to where we are currently
-                        if col > x + offset:
-                            break
-                        if not matrix[y][col]:
-                            offset += 1
-                            # only count each 'False' cell once
-                            matrix[y][col] = True
-                    if colspan > 1:
-                        continue
-
-                    # ignore cells for which the column width has already been set
-                    if column_widths[x + offset]:
-                        continue
-
-                    # set the width if there is one
-                    cell_style = cell.get('style', '')
-                    if cell_style.startswith('width:'):
-                        try:
-                            column_widths[x + offset] = math.floor(float(cell_style[6:].strip(' %;')))
-                        except ValueError:
-                            continue
-
-            # if the total is > 100% and any columns are missing a width, just use defaults
-            if sum(column_widths) > 100 and 0 in column_widths:
-                column_widths = [0 for _ in range(n_cols)]
-
-            # spread the remaining available space evenly between any columns that don't have a width
-            # (including if none of them do)
-            missing_width_indexes = [i for i, w in enumerate(column_widths) if not w]
-            default_width = math.floor((100 - sum(column_widths)) / (len(missing_width_indexes) or 1))
-            for i in missing_width_indexes:
-                column_widths[i] = default_width
-
-            # normalise columns so that total is 100%
-            normalizr = 100 / sum(column_widths) if column_widths else 1
-            for i, w in enumerate(column_widths):
-                column_widths[i] = w * normalizr
+            # Resolve widths from actual cell rectangles, including the full
+            # area occupied by combined row/column spans. This is the same
+            # planner used by editor-save compaction.
+            planner = TableLayout.from_table(table)
+            layout = planner.geometry()
+            if layout is not None:
+                column_widths = planner.resolve_widths(layout)
+                if column_widths is None:
+                    column_widths = planner.legacy_widths(layout)
+            else:
+                column_widths = [100 / n_cols] * n_cols if n_cols else []
+            for group in table.findall(f'{{{doc.namespace}}}colgroup'):
+                table.remove(group)
 
             colgroup = doc.maker('colgroup')
             for width in column_widths:
@@ -650,6 +618,7 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
             return r.xpath('a:td | a:th', namespaces={'a': doc.namespace})
 
         matrix = defaultdict(lambda: defaultdict(dict))
+        max_columns = max_rows = 0
         for y, row in enumerate(rows(table)):
             for x, cell in enumerate(cells(row)):
                 # skip already occupied cells in current row
@@ -658,21 +627,26 @@ class PDFExporter(HTMLExporter, LocaleBasedMatcher):
 
                 # mark matrix elements occupied by current cell with true
                 colspan, rowspan = self.get_spans(cell)
+                max_columns = max(max_columns, x + colspan)
+                max_rows = max(max_rows, y + rowspan)
+                if max_columns > TableLayout.MAX_COLUMNS or max_columns * max_rows > TableLayout.MAX_GRID_SLOTS:
+                    raise ValueError('Table exceeds supported grid size')
                 for xx in range(x, x + colspan):
                     for yy in range(y, y + rowspan):
                         # skip already occupied cells due to overlapping spans
                         xxx = xx
                         while matrix[yy][xxx]:
                             xxx += 1
+                        max_columns = max(max_columns, xxx + 1)
+                        if max_columns > TableLayout.MAX_COLUMNS or max_columns * max_rows > TableLayout.MAX_GRID_SLOTS:
+                            raise ValueError('Table exceeds supported grid size')
                         matrix[yy][xxx] = True
 
         return matrix
 
     def get_spans(self, cell):
-        colspan = cell.get('colspan')
-        colspan = int(colspan) if colspan else 1
-        rowspan = cell.get('rowspan')
-        rowspan = int(rowspan) if rowspan else 1
+        colspan = TableLayout.parse_span(cell.get('colspan')) or 1
+        rowspan = TableLayout.parse_span(cell.get('rowspan')) or 1
         return colspan, rowspan
 
     def find_xsl_fo(self, document):

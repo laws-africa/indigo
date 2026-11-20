@@ -27,7 +27,7 @@ async function run () {
   let toolbar = fs.readFileSync(path.join(templates, '_toolbar.html'), 'utf8').split('<div class="table-editor-wrapper')[1].split('<!-- end table editor wrapper -->')[0];
   toolbar = '<div class="table-editor-wrapper' + toolbar;
   toolbar = english(toolbar.replace(/{% include 'indigo_api\/document\/_table_size_options.html' %}/g, fs.readFileSync(path.join(templates, '_table_size_options.html'), 'utf8')));
-  const scripts = ['bower_components/jquery/dist/jquery.js', 'bower_components/underscore/underscore.js', 'bower_components/backbone/backbone.js', 'ckeditor/ckeditor.js', 'javascript/indigo/views/table_editor.js'];
+  const scripts = ['bower_components/jquery/dist/jquery.js', 'bower_components/underscore/underscore.js', 'bower_components/backbone/backbone.js', 'ckeditor/ckeditor.js', 'javascript/indigo/table_layout.js', 'javascript/indigo/views/table_editor.js'];
   const html = `<!doctype html><html><head><link rel="stylesheet" href="/static/stylesheets/app.css"></head><body>${toolbar}<div class="document-primary-pane-content-pane"><la-akoma-ntoso></la-akoma-ntoso></div>${scripts.map(s => `<script src="/static/${s}"></script>`).join('')}<script src="/bootstrap.js"></script><script src="/converter.js"></script></body></html>`;
   const server = http.createServer((req, res) => {
     if (req.url === '/') { res.end(html); return; }
@@ -161,7 +161,84 @@ async function run () {
     saved = await page.evaluate(() => { view.saveChanges(); return window.saved; });
     assert.doesNotMatch(saved, /fontsize=/);
     assert.match(saved, /class="[^"]*akn--no-border[^"]*"/);
-    console.log('PASS: unchanged save, formatting save, mixed selection, explicit Left/Default, cancel, disabled controls (real CKEditor + converter)');
+    // One language-neutral corpus is consumed by Python and the actual JS planner.
+    const cases = JSON.parse(fs.readFileSync(path.join(root, 'indigo_api/tests/table_layout_cases.json'), 'utf8')).cases;
+    const results = await page.evaluate(cases => cases.map(test => {
+      const plan = new Indigo.TableLayout(test.rows, test.columns === undefined ? null : test.columns).plan();
+      const doc = new DOMParser().parseFromString('<table xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0"/>', 'text/xml');
+      const table = doc.documentElement;
+      if (test.columns) {
+        const group = doc.createElementNS(table.namespaceURI, 'colgroup');
+        for (const width of test.columns) { const col = doc.createElementNS(table.namespaceURI, 'col'); col.setAttribute('width', width + '%'); group.append(col); }
+        table.append(group);
+      }
+      for (const row of test.rows) {
+        const tr = doc.createElementNS(table.namespaceURI, 'tr');
+        for (const attrs of row) {
+          const td = doc.createElementNS(table.namespaceURI, 'td');
+          for (const name of ['colspan', 'rowspan', 'style']) if (attrs[name] !== undefined) td.setAttribute(name, attrs[name]);
+          tr.append(td);
+        }
+        table.append(tr);
+      }
+      const original = new XMLSerializer().serializeToString(table);
+      view.removeRedundantColspans(table);
+      const xml = new XMLSerializer().serializeToString(table);
+      const savedPlan = Indigo.TableLayout.fromTable(table).plan();
+      return {plan, savedPlan, xml, unchanged: xml === original};
+    }), cases);
+    function closeNumbers (actual, expected, name) {
+      assert.equal(actual.length, expected.length, name);
+      actual.forEach((n, i) => assert.ok(Math.abs(n - expected[i]) < 1e-7, `${name}: ${n} != ${expected[i]}`));
+    }
+    cases.forEach((test, i) => {
+      const result = results[i];
+      if (test.expected === null) { assert.equal(result.plan, null, test.name); assert.equal(result.unchanged, true, test.name); return; }
+      assert.ok(result.plan, test.name);
+      const spans = test.rows.map(() => []);
+      result.plan.cells.forEach(cell => spans[cell.row].push(cell.colspan));
+      assert.deepEqual(spans, test.expected.spans, test.name);
+      closeNumbers(result.plan.compact_widths, test.expected.widths, test.name);
+      assert.ok(result.savedPlan, test.name + ' saved plan');
+      closeNumbers(result.savedPlan.widths, test.expected.widths, test.name + ' saved widths');
+    });
+    if (process.env.TABLE_LAYOUT_RESULTS) fs.writeFileSync(process.env.TABLE_LAYOUT_RESULTS, JSON.stringify(results));
+    // Saving an otherwise unchanged real CKEditor table cleans both outer and nested spans.
+    await page.evaluate(() => {
+      fixture = '<table id="t1" data-eid="t1" class="akn-table custom akn--text-small"><tr><th colspan="3" rowspan="1" class="cell-custom" style="width:35%"><p data-eid="p1" class="paragraph-custom akn--text-left">First</p><p class="akn--text-normal">Second</p></th><td colspan="3" style="width:65%">Value</td></tr><tr><td colspan="3"><table><tr><td colspan="4">Nested A</td><td colspan="4">Nested B</td></tr></table></td><td colspan="3">Other</td></tr></table>';
+      const html = new DOMParser().parseFromString(fixture, 'text/html').querySelector('table');
+      const xml = indigoAkn.htmlToAkn(html).firstElementChild;
+      xml.setAttribute('fontsize', '9');
+      sourceXml = new DOMParser().parseFromString(new XMLSerializer().serializeToString(xml), 'text/xml');
+      view.documentContent.document = sourceXml;
+      window.saved = null;
+      view.editTable(document.querySelector('la-akoma-ntoso table'));
+    });
+    await page.waitForFunction(() => window.view.table && window.view.ckeditor.status === 'ready');
+    assert.equal(await page.evaluate(() => view.ckeditor.getData().includes('colspan="3"')), true);
+    await page.evaluate(() => view.discardChanges(true));
+    assert.equal(await page.evaluate(() => window.saved), null);
+    assert.equal(await page.evaluate(() => sourceXml.querySelector('th').getAttribute('colspan')), '3');
+    await page.evaluate(() => view.editTable(document.querySelector('la-akoma-ntoso table')));
+    await page.waitForFunction(() => window.view.table && window.view.ckeditor.status === 'ready');
+    const normalized = await page.evaluate(() => {
+      view.saveChanges();
+      const table = new DOMParser().parseFromString(window.saved, 'text/xml').documentElement;
+      return {spans: table.querySelectorAll('[colspan]').length, tables: table.querySelectorAll('table').length,
+        classes: table.getAttribute('class'), fontsize: table.getAttribute('fontsize'), heading: table.querySelector('th').getAttribute('class'),
+        rowspan: table.querySelector('th').getAttribute('rowspan'), width: table.querySelector('th').getAttribute('style'),
+        paragraphs: Array.from(table.querySelector('th').children).map(el => [(el.getAttribute('class') || '').split(/\s+/).sort().join(' '), el.getAttribute('eId'), el.textContent])};
+    });
+    assert.equal(normalized.spans, 0);
+    assert.equal(normalized.tables, 1);
+    assert.match(normalized.classes, /custom/);
+    assert.match(normalized.classes, /akn--text-small/);
+    assert.equal(normalized.fontsize, '9');
+    assert.equal(normalized.heading, 'cell-custom');
+    assert.equal(normalized.rowspan, '1');
+    assert.match(normalized.width, /35%/);
+    assert.deepEqual(normalized.paragraphs, [['akn--text-left paragraph-custom', 'p1', 'First'], ['akn--text-normal', null, 'Second']]);
+    console.log('PASS: formatting, unchanged save/cancel, selection controls, ' + cases.length + ' shared layout cases, and real CKEditor save normalization with nested tables and metadata preservation');
   } finally {
     if (browser) await browser.close();
     server.close();

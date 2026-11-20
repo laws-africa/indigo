@@ -227,7 +227,19 @@ class PDFExporterTestCase(TestCase):
         with open(output_path, 'r') as f:
             expected = f.read()
 
-        self.assertXmlEqual(expected, xml_out)
+        # Percentage widths are floating-point calculations; compare their
+        # values, then retain strict XML comparison for the rest of the grid.
+        actual_tree, expected_tree = etree.fromstring(xml_out.encode()), etree.fromstring(expected.encode())
+        ns = {'a': 'http://docs.oasis-open.org/legaldocml/ns/akn/3.0'}
+        actual_cols = actual_tree.xpath('//a:col', namespaces=ns)
+        expected_cols = expected_tree.xpath('//a:col', namespaces=ns)
+        self.assertEqual(len(expected_cols), len(actual_cols))
+        for actual_col, expected_col in zip(actual_cols, expected_cols):
+            a, b = actual_col.get('width', ''), expected_col.get('width', '')
+            if a.endswith('%') and b.endswith('%'):
+                self.assertAlmostEqual(float(b[:-1]), float(a[:-1]), places=7)
+                actual_col.set('width', b)
+        self.assertXmlEqual(expected, etree.tostring(actual_tree, encoding='unicode'))
 
     def test_basic(self):
         self.run_and_compare('basic')

@@ -144,6 +144,7 @@
       }
 
       if (table) {
+        table.querySelectorAll('table').forEach(this.removeRedundantColspans.bind(this));
         // Retain the legacy PDF-only override from source XML. It is not
         // exposed to HTML, CKEditor or the HTML-to-AKN converter.
         if (oldTable && oldTable.hasAttribute('fontsize')) {
@@ -158,6 +159,35 @@
 
       this.parent.render();
       this.trigger('save');
+    },
+
+    removeRedundantColspans: function(table) {
+      var plan = Indigo.TableLayout.fromTable(table).plan();
+      if (!plan) return;
+      var rows = Array.from(table.children).filter(function(el) { return el.localName === 'tr'; });
+      var group = Array.from(table.children).find(function(el) { return el.localName === 'colgroup'; });
+      if (group && plan.compact_widths.length < plan.columns) {
+        group.replaceChildren();
+        plan.compact_widths.forEach(function(width) {
+          var col = table.ownerDocument.createElementNS(table.namespaceURI, 'col');
+          col.setAttribute('width', width + '%');
+          group.appendChild(col);
+        });
+      }
+      plan.cells.forEach(function(placement) {
+        var cells = Array.from(rows[placement.row].children).filter(function(el) { return el.localName === 'td' || el.localName === 'th'; });
+        var cell = cells[placement.index];
+        if (placement.colspan === 1) cell.removeAttribute('colspan');
+        else cell.setAttribute('colspan', placement.colspan);
+        if (plan.compact_widths.length < plan.columns) {
+          // Width styles are already supported throughout the editing round trip.
+          // Save every visible cell's width so later PDF planning reconstructs
+          // the same (possibly unequal) compacted column widths.
+          var style = (cell.getAttribute('style') || '').split(';').filter(function(part) { return part.trim() && !/^\s*width\s*:/i.test(part); });
+          style.push('width: ' + placement.width + '%');
+          cell.setAttribute('style', style.join('; ') + ';');
+        }
+      });
     },
 
     discardChanges: function(force) {

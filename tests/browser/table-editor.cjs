@@ -28,7 +28,7 @@ async function run () {
   toolbar = '<div class="table-editor-wrapper' + toolbar;
   toolbar = english(toolbar.replace(/{% include 'indigo_api\/document\/_table_size_options.html' %}/g, fs.readFileSync(path.join(templates, '_table_size_options.html'), 'utf8')));
   const scripts = ['bower_components/jquery/dist/jquery.js', 'bower_components/underscore/underscore.js', 'bower_components/backbone/backbone.js', 'ckeditor/ckeditor.js', 'javascript/indigo/table_layout.js', 'javascript/indigo/views/table_editor.js'];
-  const html = `<!doctype html><html><head><link rel="stylesheet" href="/static/stylesheets/app.css"></head><body>${toolbar}<div class="document-primary-pane-content-pane"><la-akoma-ntoso></la-akoma-ntoso></div>${scripts.map(s => `<script src="/static/${s}"></script>`).join('')}<script src="/bootstrap.js"></script><script src="/converter.js"></script></body></html>`;
+  const html = `<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="/static/stylesheets/app.css"></head><body>${toolbar}<div class="document-primary-pane-content-pane"><la-akoma-ntoso></la-akoma-ntoso></div>${scripts.map(s => `<script src="/static/${s}"></script>`).join('')}<script src="/bootstrap.js"></script><script src="/converter.js"></script></body></html>`;
   const server = http.createServer((req, res) => {
     if (req.url === '/') { res.end(html); return; }
     const name = req.url === '/bootstrap.js' ? require.resolve('bootstrap/dist/js/bootstrap.bundle.min.js') : req.url === '/converter.js' ? path.join(temp, 'converter.js') : path.join(root, 'indigo_app', req.url.split('?')[0]);

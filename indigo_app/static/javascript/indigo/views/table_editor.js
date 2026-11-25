@@ -72,12 +72,21 @@
     makeTablesEditable: function(html) {
       for (const table of html.querySelectorAll('table[id]')) {
         const w = this.tableWrapper.cloneNode(true);
+        const editable = w.querySelector('.table-container');
+        const renderedContainer = table.parentElement;
 
         w.querySelector('button').dataset.tableId = table.id;
-        table.insertAdjacentElement('beforebegin', w);
-        // we bind the CKEditor instance to this div, since CKEditor can't be
-        // directly attached to the table element
-        w.querySelector('.table-container').append(table);
+        if (renderedContainer && renderedContainer.classList.contains('akn--table-container')) {
+          // Keep the toolbar outside the scroller. Reuse the renderer's wrapper
+          // so any following table footnotes retain their original container.
+          renderedContainer.insertAdjacentElement('beforebegin', w);
+          w.querySelector('.akn--table-container').replaceWith(renderedContainer);
+          renderedContainer.prepend(editable);
+        } else {
+          table.insertAdjacentElement('beforebegin', w);
+        }
+        // Bind CKEditor to the table-only div inside the scrolling wrapper.
+        editable.append(table);
       }
     },
 

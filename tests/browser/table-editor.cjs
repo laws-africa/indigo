@@ -1,5 +1,6 @@
 /* Real CKEditor + HTML-to-AKN integration. Run with:
  * CHROME_BIN=/path/to/chrome INDIGO_AKN_SOURCE=/path/to/indigo-akn npm run test:table-editor
+ * Requires the Sass CLI, as used by the application asset build.
  * Without INDIGO_AKN_SOURCE, use the installed dependency.
  */
 const assert = require('node:assert/strict');
@@ -9,6 +10,7 @@ const os = require('node:os');
 const path = require('node:path');
 const puppeteer = require('puppeteer-core');
 const webpack = require('webpack');
+const {execFileSync} = require('node:child_process');
 
 const root = path.resolve(__dirname, '../..');
 const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'indigo-table-test-'));
@@ -29,8 +31,12 @@ async function run () {
   toolbar = english(toolbar.replace(/{% include 'indigo_api\/document\/_table_size_options.html' %}/g, fs.readFileSync(path.join(templates, '_table_size_options.html'), 'utf8')));
   const scripts = ['bower_components/jquery/dist/jquery.js', 'bower_components/underscore/underscore.js', 'bower_components/backbone/backbone.js', 'ckeditor/ckeditor.js', 'javascript/indigo/table_layout.js', 'javascript/indigo/views/table_editor.js'];
   const html = `<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="/static/stylesheets/app.css"></head><body>${toolbar}<div class="document-primary-pane-content-pane"><la-akoma-ntoso></la-akoma-ntoso></div>${scripts.map(s => `<script src="/static/${s}"></script>`).join('')}<script src="/bootstrap.js"></script><script src="/converter.js"></script></body></html>`;
+  const appCss = execFileSync('sass', ['--no-source-map', '--load-path', path.join(root, 'indigo_app/static'),
+    '--load-path', path.join(root, 'node_modules'), path.join(root, 'indigo_app/static/stylesheets/app.scss')], {encoding: 'utf8'});
+  const widgetCss = fs.readFileSync(require.resolve('@lawsafrica/law-widgets/dist/collection/components/akoma-ntoso/akoma-ntoso.css'), 'utf8');
   const server = http.createServer((req, res) => {
     if (req.url === '/') { res.end(html); return; }
+    if (req.url === '/static/stylesheets/app.css') { res.setHeader('Content-Type', 'text/css'); res.end(widgetCss + '\n' + appCss); return; }
     const name = req.url === '/bootstrap.js' ? require.resolve('bootstrap/dist/js/bootstrap.bundle.min.js') : req.url === '/converter.js' ? path.join(temp, 'converter.js') : path.join(root, 'indigo_app', req.url.split('?')[0]);
     fs.readFile(name, (err, data) => { res.statusCode = err ? 404 : 200; res.setHeader('Content-Type', name.endsWith('.js') ? 'application/javascript' : 'text/css'); res.end(err ? '' : data); });
   });
@@ -64,11 +70,56 @@ async function run () {
         const div = document.createElement('div'); div.innerHTML = fixture; return div;
       }}};
       window.view = new Indigo.TableEditorView({parent, documentContent: content});
-      const container = document.querySelector('la-akoma-ntoso'); container.innerHTML = fixture;
+      const container = document.querySelector('la-akoma-ntoso'); container.innerHTML = '<div class="akn--table-container">' + fixture + '<div id="table-note">Table footnote</div></div>';
       view.makeTablesEditable(container); view.editTable(container.querySelector('table'));
+      // A detached fragment may contain a top-level table without a parentElement.
+      const fragment = document.createDocumentFragment();
+      const table = document.createElement('table'); table.id = 'fragment-table'; fragment.append(table);
+      view.makeTablesEditable(fragment);
+      if (!fragment.querySelector('.table-editor-wrapper table')) throw new Error('Detached table was not wrapped');
     });
     await page.waitForFunction(() => window.view.table && window.view.ckeditor.status === 'ready');
     assert.equal(await page.evaluate(() => view.ckeditor.getData().includes('fontsize')), false);
+    assert.equal(await page.evaluate(() => view.editable.contains(document.getElementById('table-note'))), false);
+    assert.equal(await page.evaluate(() => view.editable.parentElement.contains(document.getElementById('table-note'))), true);
+    // Exercise the real rendered wrapper and real CSS: a dropdown must escape
+    // the short table, while only the table scrolls horizontally.
+    await page.evaluate(() => {
+      const wrapper = view.editable.closest('.table-editor-wrapper');
+      wrapper.style.width = '450px';
+      view.table.style.minWidth = '1100px';
+    });
+    await openTableFormatting();
+    const layout = await page.evaluate(() => {
+      const wrapper = view.editable.closest('.table-editor-wrapper');
+      const toggle = wrapper.querySelector('.table-format-toggle');
+      const menu = toggle.nextElementSibling;
+      const last = menu.lastElementChild;
+      const rect = last.getBoundingClientRect();
+      const hit = document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2);
+      const toggleLeft = toggle.getBoundingClientRect().left;
+      const tableLeft = view.table.getBoundingClientRect().left;
+      const scroller = view.editable.closest('.akn--table-container');
+      const scrollable = scroller.scrollWidth > scroller.clientWidth;
+      scroller.scrollLeft = 100;
+      return {menuVisible: last.contains(hit), extendsBelowTable: rect.bottom > view.editable.getBoundingClientRect().bottom,
+        scrollable, scrolled: scroller.scrollLeft > 0,
+        toolbarMovement: toggle.getBoundingClientRect().left - toggleLeft,
+        tableMovement: view.table.getBoundingClientRect().left - tableLeft};
+    });
+    assert.equal(layout.extendsBelowTable, true);
+    assert.equal(layout.menuVisible, true, 'dropdown is visible beyond the short table');
+    assert.equal(layout.scrollable, true);
+    assert.equal(layout.scrolled, true, 'the table area scrolls horizontally');
+    assert.equal(layout.toolbarMovement, 0, 'horizontal scrolling leaves the toolbar in place');
+    assert.equal(layout.tableMovement, -100);
+    await page.click('.table-format-toggle');
+    await page.evaluate(() => {
+      view.editable.closest('.akn--table-container').scrollLeft = 0;
+      view.table.style.removeProperty('min-width');
+      view.editable.closest('.table-editor-wrapper').style.removeProperty('width');
+    });
+
     // Saving without changes must preserve authored table/cell/paragraph classes and legacy fontsize.
     let saved = await page.evaluate(() => { view.saveChanges(); return window.saved; });
     assert.match(saved, /class="custom akn--text-small"/);
@@ -238,7 +289,7 @@ async function run () {
     assert.equal(normalized.rowspan, '1');
     assert.match(normalized.width, /35%/);
     assert.deepEqual(normalized.paragraphs, [['akn--text-left paragraph-custom', 'p1', 'First'], ['akn--text-normal', null, 'Second']]);
-    console.log('PASS: formatting, unchanged save/cancel, selection controls, ' + cases.length + ' shared layout cases, and real CKEditor save normalization with nested tables and metadata preservation');
+    console.log('PASS: unclipped dropdowns and horizontal table scrolling, formatting, unchanged save/cancel, selection controls, ' + cases.length + ' shared layout cases, and real CKEditor save normalization with nested tables and metadata preservation');
   } finally {
     if (browser) await browser.close();
     server.close();

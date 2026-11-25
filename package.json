@@ -14,8 +14,8 @@
     "@fortawesome/fontawesome-free": "^5.2.0",
     "@lawsafrica/bluebell-monaco": "^5.0.1",
     "@lawsafrica/bluebell-wasm": "^5.0.0",
-    "@lawsafrica/indigo-akn": "^5.9.0",
-    "@lawsafrica/law-widgets": "^2.2.1",
+    "@lawsafrica/indigo-akn": "^5.9.1",
+    "@lawsafrica/law-widgets": "^2.3.2",
     "bootstrap-select": "^1.13.18",
     "bower": "^1.8.8",
     "canopy": "^0.4.1",
@@ -50,12 +50,14 @@
     "vue-loader": "^15.10.0",
     "vue-template-compiler": "2.6.14",
     "webpack": "^5.94.0",
-    "webpack-cli": "^4.10.0"
+    "webpack-cli": "^4.10.0",
+    "puppeteer-core": "^22.12.1"
   },
   "scripts": {
     "test": "python manage.py test",
     "lint": "npx eslint indigo_app/static/javascript/indigo/",
-    "extract-translations": "i18next"
+    "extract-translations": "i18next",
+    "test:table-editor": "node tests/browser/table-editor.cjs"
   },
   "repository": {
     "type": "git",

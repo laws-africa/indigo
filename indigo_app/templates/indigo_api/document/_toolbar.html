@@ -104,6 +104,31 @@
         <button class="btn btn-secondary cancel-edit-table" title="Cancel"><i class="fas fa-times"></i> {% trans "Cancel" %}</button>
       </div>
 
+      <div class="btn-group btn-group-sm me-2">
+        <button type="button" class="btn btn-outline-secondary dropdown-toggle table-format-toggle" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false" title="{% trans 'Table Formatting' %}" aria-label="{% trans 'Table Formatting' %}">
+          <i class="fas fa-cog" aria-hidden="true"></i>
+        </button>
+        <div class="dropdown-menu p-3" style="--bs-dropdown-min-width: 20rem;">
+          <label class="d-block mb-3">{% trans "Text size" %}
+            <select class="form-select form-select-sm table-format-select mt-1" data-format="size" data-format-target="table">
+              {% include 'indigo_api/document/_table_size_options.html' %}
+            </select>
+          </label>
+          <label class="d-block mb-3">{% trans "Alignment" %}
+            <select class="form-select form-select-sm table-format-select mt-1" data-format="alignment" data-format-target="table">
+              <option value="">{% trans "Default" %}</option>
+              <option value="left">{% trans "Left" %}</option>
+              <option value="center">{% trans "Centre" %}</option>
+              <option value="right">{% trans "Right" %}</option>
+              <option value="justify">{% trans "Justify" %}</option>
+            </select>
+          </label>
+          <label class="d-block mb-3"><input type="checkbox" class="form-check-input table-remove-padding me-1"> {% trans "Remove cell padding" %}</label>
+          <label class="d-block mb-3"><input type="checkbox" class="form-check-input table-toggle-border me-1"> {% trans "Remove cell borders" %}</label>
+          <small class="text-muted d-block">{% trans "Default uses publication settings. Unmarked wide tables may keep legacy PDF sizing; choose Normal to override it." %}</small>
+        </div>
+      </div>
+
       <div class="btn-group me-2">
         <div class="btn-group btn-group-sm">
           <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -130,18 +155,32 @@
       </div>
 
       <div class="btn-group btn-group-sm me-2">
-        <button type="button" class="btn btn-outline-secondary table-text-left"><i class="fas fa-align-left"></i></button>
-        <button type="button" class="btn btn-outline-secondary table-text-center"><i class="fas fa-align-center"></i></button>
-        <button type="button" class="btn btn-outline-secondary table-text-right"><i class="fas fa-align-right"></i></button>
-        <button type="button" class="btn btn-outline-secondary table-toggle-border"><i class="fa fa-table"></i></button>
-        <button type="button" class="btn btn-outline-secondary table-merge-cells">{% trans "Merge cells" %}</button>
-        <button type="button" class="btn btn-outline-secondary table-toggle-heading"><i class="fas fa-heading"></i> {% trans "Heading" %}</button>
+        <button type="button" class="btn btn-outline-secondary table-text-default" data-selected-cells title="{% trans 'Default alignment' %}">{% trans "Default" %}</button>
+        <button type="button" class="btn btn-outline-secondary table-text-left" data-selected-cells title="{% trans 'Align left' %}"><i class="fas fa-align-left"></i></button>
+        <button type="button" class="btn btn-outline-secondary table-text-center" data-selected-cells title="{% trans 'Centre' %}"><i class="fas fa-align-center"></i></button>
+        <button type="button" class="btn btn-outline-secondary table-text-right" data-selected-cells title="{% trans 'Align right' %}"><i class="fas fa-align-right"></i></button>
+        <button type="button" class="btn btn-outline-secondary table-text-justify" data-selected-cells title="{% trans 'Justify' %}"><i class="fas fa-align-justify"></i></button>
+        <button type="button" class="btn btn-outline-secondary table-merge-cells" data-selected-cells>{% trans "Merge cells" %}</button>
+        <button type="button" class="btn btn-outline-secondary table-toggle-heading" data-selected-cells><i class="fas fa-heading"></i> {% trans "Heading" %}</button>
       </div>
 
       <div class="btn-group btn-group-sm">
-        <button type="button" class="btn btn-outline-secondary table-text-bold"><i class="fas fa-bold"></i></button>
-        <button type="button" class="btn btn-outline-secondary table-text-italic"><i class="fas fa-italic"></i></button>
-        <button type="button" class="btn btn-outline-secondary table-text-underline"><i class="fas fa-underline"></i></button>
+        <button type="button" class="btn btn-outline-secondary table-text-bold" data-selected-cells><i class="fas fa-bold"></i></button>
+        <button type="button" class="btn btn-outline-secondary table-text-italic" data-selected-cells><i class="fas fa-italic"></i></button>
+        <button type="button" class="btn btn-outline-secondary table-text-underline" data-selected-cells><i class="fas fa-underline"></i></button>
+      </div>
+      <div class="btn-group btn-group-sm ms-2">
+        <button type="button" class="btn btn-outline-secondary dropdown-toggle table-cell-size-toggle" data-bs-toggle="dropdown" aria-expanded="false" data-selected-cells title="{% trans 'Selected cells: text size' %}">
+          <i class="fas fa-font" aria-hidden="true"></i> <span class="table-cell-size-label">{% trans "Default" %}</span>
+        </button>
+        <div class="dropdown-menu dropdown-menu-end">
+          <button type="button" class="dropdown-item table-format-action" data-format="size" data-format-target="cells" value="" data-selected-cells>{% trans "Default" %}</button>
+          <button type="button" class="dropdown-item table-format-action" data-format="size" data-format-target="cells" value="normal" data-selected-cells>{% trans "Normal" %}</button>
+          <button type="button" class="dropdown-item table-format-action" data-format="size" data-format-target="cells" value="small" data-selected-cells>{% trans "Small" %}</button>
+          <button type="button" class="dropdown-item table-format-action" data-format="size" data-format-target="cells" value="xsmall" data-selected-cells>{% trans "Extra small" %}</button>
+          <button type="button" class="dropdown-item table-format-action" data-format="size" data-format-target="cells" value="xxsmall" data-selected-cells>{% trans "Extra-extra small" %}</button>
+          <span class="dropdown-item-text table-cell-size-mixed d-none text-muted">{% trans "Mixed" %}</span>
+        </div>
       </div>
     </div>
   </div>

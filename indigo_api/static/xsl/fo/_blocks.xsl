@@ -45,6 +45,7 @@
   <!-- p and friends -->
   <xsl:template match="akn:listIntroduction | akn:listWrapUp | akn:p">
     <fo:block margin-top="{$para-spacing}">
+      <xsl:call-template name="formatting-attributes"/>
       <xsl:if test="self::akn:listIntroduction or parent::akn:intro">
         <xsl:attribute name="keep-with-next">always</xsl:attribute>
       </xsl:if>

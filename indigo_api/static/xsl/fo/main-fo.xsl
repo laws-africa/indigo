@@ -7,6 +7,7 @@
   <xsl:output method="xml"/>
 
   <xsl:include href="_blocks.xsl"/>
+  <xsl:include href="_formatting.xsl"/>
   <xsl:include href="_coverpage.xsl"/>
   <xsl:include href="_footnotes.xsl"/>
   <xsl:include href="_front-matter.xsl"/>

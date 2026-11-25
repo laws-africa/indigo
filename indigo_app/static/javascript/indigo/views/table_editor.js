@@ -18,10 +18,15 @@
       'click .table-delete-column': 'deleteColumn',
       'click .table-merge-cells': 'toggleMergeCells',
       'click .table-toggle-heading': 'toggleHeading',
-      'click .table-toggle-border': 'toggleBorder',
+      'change .table-toggle-border': 'toggleBorder',
       'click .table-text-left': 'alignTextLeft',
       'click .table-text-center': 'alignTextCenter',
       'click .table-text-right': 'alignTextRight',
+      'click .table-text-justify': 'alignTextJustify',
+      'click .table-text-default': 'alignTextDefault',
+      'change .table-format-select': 'changeFormat',
+      'click .table-format-action': 'changeFormat',
+      'change .table-remove-padding': 'changePadding',
       'click .table-text-bold': 'toggleTextBold',
       'click .table-text-italic': 'toggleTextItalic',
       'click .table-text-underline': 'toggleTextUnderline',
@@ -55,12 +60,12 @@
 
         // this must align with the elements and attributes supported by indigo-akn
         // https://github.com/laws-africa/indigo-akn/blob/master/src/xsl.js
-        allowedContent: 'a[!data-href,!href]; img[!src,!data-src]; span(akn-remark); span(akn-p);' +
-                        'b; i; u; p;' +
+        allowedContent: 'a[!data-href,!href]; img[!src,!data-src]; span(*)[data-eid];' +
+                        'b; i; u; p(*)[data-eid];' +
                         'sup; sub;' +
-                        'table[id, data-eid]; thead; tbody; tr;' +
-                        'th(akn--text-center,akn--text-right,akn--no-border){width}[colspan,rowspan];' +
-                        'td(akn--text-center,akn--text-right,akn--no-border){width}[colspan,rowspan];',
+                        'table(*)[id,data-eid]; thead; tbody; tr;' +
+                        'th(*){width}[colspan,rowspan];' +
+                        'td(*){width}[colspan,rowspan];',
       };
     },
 
@@ -139,6 +144,12 @@
       }
 
       if (table) {
+        table.querySelectorAll('table').forEach(this.removeRedundantColspans.bind(this));
+        // Retain the legacy PDF-only override from source XML. It is not
+        // exposed to HTML, CKEditor or the HTML-to-AKN converter.
+        if (oldTable && oldTable.hasAttribute('fontsize')) {
+          table.firstElementChild.setAttribute('fontsize', oldTable.getAttribute('fontsize'));
+        }
         // update DOM
         this.documentContent.replaceNode(oldTable, [table]);
       } else {
@@ -148,6 +159,35 @@
 
       this.parent.render();
       this.trigger('save');
+    },
+
+    removeRedundantColspans: function(table) {
+      var plan = Indigo.TableLayout.fromTable(table).plan();
+      if (!plan) return;
+      var rows = Array.from(table.children).filter(function(el) { return el.localName === 'tr'; });
+      var group = Array.from(table.children).find(function(el) { return el.localName === 'colgroup'; });
+      if (group && plan.compact_widths.length < plan.columns) {
+        group.replaceChildren();
+        plan.compact_widths.forEach(function(width) {
+          var col = table.ownerDocument.createElementNS(table.namespaceURI, 'col');
+          col.setAttribute('width', width + '%');
+          group.appendChild(col);
+        });
+      }
+      plan.cells.forEach(function(placement) {
+        var cells = Array.from(rows[placement.row].children).filter(function(el) { return el.localName === 'td' || el.localName === 'th'; });
+        var cell = cells[placement.index];
+        if (placement.colspan === 1) cell.removeAttribute('colspan');
+        else cell.setAttribute('colspan', placement.colspan);
+        if (plan.compact_widths.length < plan.columns) {
+          // Width styles are already supported throughout the editing round trip.
+          // Save every visible cell's width so later PDF planning reconstructs
+          // the same (possibly unequal) compacted column widths.
+          var style = (cell.getAttribute('style') || '').split(';').filter(function(part) { return part.trim() && !/^\s*width\s*:/i.test(part); });
+          style.push('width: ' + placement.width + '%');
+          cell.setAttribute('style', style.join('; ') + ';');
+        }
+      });
     },
 
     discardChanges: function(force) {
@@ -207,6 +247,7 @@
             throw "CKEditor ready, but no table in editable. " + table.id;
           }
           self.manageTableWidth(self.table);
+          self.updateToolbar();
         });
 
         // remove foreign content
@@ -305,23 +346,91 @@
     },
 
     updateToolbar: function() {
+      if (!this.table || !this.editable) return;
+      var toolbar = this.editable.closest('.table-editor-wrapper');
+      if (!toolbar) return;
       var selected = this.getSelectedCells(),
-          alignment = {},
-          border = false;
+          alignment = {};
 
       // toggle alignment buttons
       selected.forEach(function(cell) {
-        if (cell.classList.contains('akn--text-center')) alignment.center = (alignment.center || 0) + 1;
-        else if (cell.classList.contains('akn--text-right')) alignment.right = (alignment.right || 0) + 1;
-        else alignment.left = (alignment.left || 0) + 1;
-        border = border || cell.classList.contains('akn--no-border');
-      });
+        var value = this.getFormat(cell, 'alignment') || 'default';
+        alignment[value] = (alignment[value] || 0) + 1;
+      }, this);
 
-      $('.table-text-left, .table-text-center, .table-text-right').removeClass('active');
+      $(toolbar).find('.table-text-left, .table-text-center, .table-text-right, .table-text-justify, .table-text-default').removeClass('active');
       alignment = _.keys(alignment);
-      if (alignment.length === 1) $('.table-text-' + alignment[0]).addClass('active');
+      if (alignment.length === 1) $(toolbar).find('.table-text-' + alignment[0]).addClass('active');
 
-      $('.table-toggle-border').toggleClass('active', border);
+      var borderControl = toolbar.querySelector('.table-toggle-border');
+      // Older editor versions stored this whole-table PDF control on cells.
+      borderControl.checked = this.table.classList.contains('akn--no-border') ||
+        Array.from(this.table.querySelectorAll('td.akn--no-border, th.akn--no-border')).some(function(cell) {
+          return cell.closest('table') === this.table;
+        }, this);
+      toolbar.querySelectorAll('.table-format-select').forEach(function(select) {
+        var elements = select.dataset.formatTarget === 'table' ? [this.table] : selected;
+        var values = Array.from(new Set(elements.map(function(el) { return this.getFormat(el, select.dataset.format); }, this)));
+        select.value = values.length > 1 ? '__mixed' : (values[0] || '');
+        select.disabled = elements.length === 0;
+      }, this);
+      var sizes = Array.from(new Set(selected.map(function(cell) { return this.getFormat(cell, 'size'); }, this)));
+      var mixed = sizes.length > 1;
+      var currentSize = sizes[0] || '';
+      toolbar.querySelectorAll('.table-format-action').forEach(function(action) {
+        var active = selected.length > 0 && !mixed && action.value === currentSize;
+        action.classList.toggle('active', active);
+        action.setAttribute('aria-pressed', active ? 'true' : 'false');
+        if (action.value === currentSize && !mixed) toolbar.querySelector('.table-cell-size-label').textContent = action.textContent;
+      });
+      var mixedLabel = toolbar.querySelector('.table-cell-size-mixed');
+      mixedLabel.classList.toggle('d-none', !mixed);
+      if (mixed) toolbar.querySelector('.table-cell-size-label').textContent = mixedLabel.textContent;
+      toolbar.querySelector('.table-remove-padding').checked = this.table.classList.contains('akn--no-padding');
+      toolbar.querySelectorAll('[data-selected-cells]').forEach(function(control) { control.disabled = selected.length === 0; });
+    },
+
+    formatValues: {
+      size: ['normal', 'small', 'xsmall', 'xxsmall'],
+      alignment: ['left', 'center', 'right', 'justify'],
+    },
+
+    getFormat: function(element, kind) {
+      return this.formatValues[kind].find(function(value) {
+        return element.classList.contains('akn--text-' + value);
+      }) || '';
+    },
+
+    setFormat: function(element, kind, value) {
+      this.formatValues[kind].forEach(function(name) { element.classList.remove('akn--text-' + name); });
+      if (this.formatValues[kind].includes(value)) element.classList.add('akn--text-' + value);
+    },
+
+    changeFormat: function(e) {
+      var control = e.currentTarget;
+      this.editFormatting(function() {
+        var elements = control.dataset.formatTarget === 'table' ? [this.table] : this.getSelectedCells();
+        elements.forEach(function(el) { this.setFormat(el, control.dataset.format, control.value); }, this);
+      });
+    },
+
+    changePadding: function(e) {
+      this.editFormatting(function() { this.table.classList.toggle('akn--no-padding', e.currentTarget.checked); });
+    },
+
+    editFormatting: function(callback) {
+      if (!this.table || !this.ckeditor) return;
+      this.ckeditor.fire('saveSnapshot');
+      callback.call(this);
+      this.ckeditor.fire('saveSnapshot');
+      this.ckeditor.fire('change');
+      this.updateToolbar();
+    },
+
+    alignCells: function(value) {
+      this.editFormatting(function() {
+        this.getSelectedCells().forEach(function(cell) { this.setFormat(cell, 'alignment', value); }, this);
+      });
     },
 
     insertRowAbove: function() {
@@ -391,37 +500,30 @@
     },
 
     toggleBorder: function(e) {
-      var cells = this.getSelectedCells(),
-          setBorder = !_.any(cells, function(c) { return c.classList.contains('akn--no-border'); });
-
-      this.getSelectedCells().forEach(function(cell) {
-        cell.classList.toggle('akn--no-border', setBorder);
+      var removeBorders = e.currentTarget.checked;
+      this.editFormatting(function() {
+        this.table.classList.toggle('akn--no-border', removeBorders);
+        // Consolidate legacy cell flags only when the user changes this setting.
+        this.table.querySelectorAll('td.akn--no-border, th.akn--no-border').forEach(function(cell) {
+          if (cell.closest('table') === this.table) cell.classList.remove('akn--no-border');
+        }, this);
       });
-      this.updateToolbar();
     },
 
     alignTextCenter: function(e) {
-      this.getSelectedCells().forEach(function(cell) {
-        cell.classList.remove('akn--text-left', 'akn--text-right');
-        cell.classList.add('akn--text-center');
-      });
-      this.updateToolbar();
+      this.alignCells('center');
     },
 
     alignTextRight: function(e) {
-      this.getSelectedCells().forEach(function(cell) {
-        cell.classList.remove('akn--text-left', 'akn--text-center');
-        cell.classList.add('akn--text-right');
-      });
-      this.updateToolbar();
+      this.alignCells('right');
     },
 
     alignTextLeft: function(e) {
-      this.getSelectedCells().forEach(function(cell) {
-        cell.classList.remove('akn--text-right', 'akn--text-center');
-      });
-      this.updateToolbar();
+      this.alignCells('left');
     },
+
+    alignTextJustify: function() { this.alignCells('justify'); },
+    alignTextDefault: function() { this.alignCells(''); },
 
     toggleTextBold: function(e) {
       this.ckeditor.execCommand('bold');
@@ -461,7 +563,8 @@
 
       if (!cells.length) {
         // selection is the currently active cell
-        var ranges = this.ckeditor.getSelection().getRanges();
+        var selection = this.ckeditor && this.ckeditor.getSelection();
+        var ranges = selection ? selection.getRanges() : [];
         if (ranges.length) {
           var cell = ranges[0].startContainer.getAscendant({th: 1, td: 1}, true);
           if (cell) cells = [cell.$];

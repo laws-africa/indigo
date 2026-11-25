@@ -13,3 +13,5 @@ localities, languages and legal traditions.
     :maxdepth: 2
 
     plugins
+
+    formatting

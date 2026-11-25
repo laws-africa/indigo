@@ -30,7 +30,7 @@ async function run () {
   toolbar = '<div class="table-editor-wrapper' + toolbar;
   toolbar = english(toolbar.replace(/{% include 'indigo_api\/document\/_table_size_options.html' %}/g, fs.readFileSync(path.join(templates, '_table_size_options.html'), 'utf8')));
   const scripts = ['bower_components/jquery/dist/jquery.js', 'bower_components/underscore/underscore.js', 'bower_components/backbone/backbone.js', 'ckeditor/ckeditor.js', 'javascript/indigo/table_layout.js', 'javascript/indigo/views/table_editor.js'];
-  const html = `<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="/static/stylesheets/app.css"></head><body>${toolbar}<div class="document-primary-pane-content-pane"><la-akoma-ntoso></la-akoma-ntoso></div>${scripts.map(s => `<script src="/static/${s}"></script>`).join('')}<script src="/bootstrap.js"></script><script src="/converter.js"></script></body></html>`;
+  const html = `<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="/static/stylesheets/app.css"></head><body class="document-editor-view">${toolbar}<div class="document-primary-pane-content-pane"><la-akoma-ntoso></la-akoma-ntoso></div>${scripts.map(s => `<script src="/static/${s}"></script>`).join('')}<script src="/bootstrap.js"></script><script src="/converter.js"></script></body></html>`;
   const appCss = execFileSync('sass', ['--no-source-map', '--load-path', path.join(root, 'indigo_app/static'),
     '--load-path', path.join(root, 'node_modules'), path.join(root, 'indigo_app/static/stylesheets/app.scss')], {encoding: 'utf8'});
   const widgetCss = fs.readFileSync(require.resolve('@lawsafrica/law-widgets/dist/collection/components/akoma-ntoso/akoma-ntoso.css'), 'utf8');
@@ -151,6 +151,18 @@ async function run () {
     assert.equal(await page.evaluate(() => view.table.querySelector('.akn--no-border') === null), true);
     await page.click('.table-toggle-border');
     assert.equal(await page.evaluate(() => view.table.classList.contains('akn--no-border')), true);
+    const borderStyles = await page.evaluate(() => {
+      const nodes = [view.table, ...view.table.querySelectorAll('th, td')];
+      const read = () => nodes.map(el => { const s = getComputedStyle(el); return [s.borderTopWidth, s.borderTopStyle]; });
+      const editing = read();
+      document.body.classList.remove('document-editor-view');
+      const published = read();
+      document.body.classList.add('document-editor-view');
+      return {editing, published};
+    });
+    assert.ok(borderStyles.editing.every(border => border[0] === '1px' && border[1] === 'dashed'));
+    assert.ok(borderStyles.published.every(border => border[0] === '0px'));
+
     assert.equal(await page.evaluate(() => view.table.querySelector('.akn--no-border') === null), true);
     await page.click('.table-toggle-border');
     assert.equal(await page.evaluate(() => view.table.classList.contains('akn--no-border')), false);

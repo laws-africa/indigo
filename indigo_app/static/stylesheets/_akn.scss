@@ -48,3 +48,18 @@ la-akoma-ntoso {
   // prevent long lines of dots and other things that would not normally be broken from overflowing the content box
   word-break: break-word;
 }
+
+// Show borderless tables as an editing guide without changing published output.
+body.document-editor-view la-akoma-ntoso table.akn--no-border {
+  &,
+  > tr > th,
+  > tr > td,
+  > thead > tr > th,
+  > thead > tr > td,
+  > tbody > tr > th,
+  > tbody > tr > td,
+  > tfoot > tr > th,
+  > tfoot > tr > td {
+    border: 1px dashed #ddd;
+  }
+}
